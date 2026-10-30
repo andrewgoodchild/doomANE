@@ -1,10 +1,13 @@
 # doomANE
 
 **A 421M decision model plays Freedoom in real time, with every forward pass on the Apple Neural Engine.**
-A System 1 planner lets the same small model choose objectives as well as moves: code works out what each
-objective would open, and the model picks one. It finishes the first three maps and, at skill 1, the
-fourth; at skill 3 it finds the fourth map's whole route and then dies in the fights. This repository has
-the code, the data, and an honest account of what helped and what did not.
+It works as a fast decision-maker you can audit, but what it learned did not carry over to new maps. On
+the maps the stack was developed on, the model's choices are what make it play: it finishes the first three
+and, at skill 1, the fourth, while the same code with random choices finishes none. On six maps it has never
+seen it finishes nothing, even at skill 1, where it barely dies. The model chooses every command, target,
+weapon, movement and objective, but from menus that code has already built with knowledge of the whole map,
+from the engine's internal state rather than pixels. This repository has the code, the data, and an honest
+account of what helped and what did not.
 
 ![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-Neural%20Engine-555?logo=apple)
 ![Python 3.13](https://img.shields.io/badge/python-3.13-3776AB?logo=python&logoColor=white)
@@ -16,7 +19,7 @@ the code, the data, and an honest account of what helped and what did not.
 
 *Freedoom MAP03, skill 3, real time: a win with no deaths in 319 s. The panel shows the command the model
 chose, its probability for every command, the weapon and movement it picked, and the decision latency.
-Nothing on the panel is chosen by code.*
+Nothing on the panel is chosen by code; code decides which options are on the menu ([Rules we kept](#rules-we-kept)).*
 
 ## Results in short
 
@@ -26,10 +29,10 @@ Nothing on the panel is chosen by code.*
 | | |
 |---|---|
 | **Speed** | Encoder and question heads on the ANE: a median of about 110–140 ms per decision in play (about 420 ms with only the encoder there). Real time at 35 tics/s. |
-| **MAP01–03** | Skill 3, real time, a death restarts the map from a pistol start (batch exec5): 10/10, 8/10, 4/10. MAP03 is noisy: 16/51 over the later stacks. |
-| **MAP04** | A development map since 2026-10-23 (its failures drove the route fixes). Generic route rules find its whole route: **3/3 at skill 1**, and once more inside a campaign. At skill 3, **0/79**: the route takes 500–700 s, and one death after the keys ends the run. |
-| **Held-out maps** | 0/18 on six held-out maps, like the doomLaya v0.3.1 we started from. With the route rules, from a frozen snapshot on new seeds: 0/18 again, with no more keys or doors. At skill 1, where it barely dies on most of them: 0/18, with twice the keys. MAP11 and MAP15 lost real time in both, so those games are invalid. |
-| **Random baseline** | The same stack with every choice replaced by a random option: 0/12 on MAP01–03, against 7/12 for Laya in the same session, with 370 deaths against 45. |
+| **MAP01–03** | Skill 3, real time, a death restarts the map from a pistol start (final 10-game batch per map): 10/10, 8/10, 4/10 (95 % intervals 72–100 %, 49–94 %, 17–69 %). MAP03 is noisy: 16/51 over the later stacks (20–45 %). |
+| **MAP04** | A development map since 2026-10-23 (its failures drove the route fixes). Generic route rules find its whole route: **3/3 at skill 1** (44–100 %; two of the three on GPU servers), and once more inside a campaign. At skill 3, **0/79** (0–5 %): the route takes 500–700 s, and one death after the keys ends the run. |
+| **Held-out maps** | 0/18 (0–18 %) on six held-out maps, like the doomLaya v0.3.1 we started from. With the route rules, from a frozen snapshot on new seeds: 0/18 again, with no more keys or doors. At skill 1, where it barely dies on most of them: 0/18, with twice the keys. MAP11 and MAP15 lost real time in both, so those games are invalid. |
+| **Random baseline** | The same stack with every choice replaced by a random option: 0/12 (0–24 %) on MAP01–03, against 7/12 (32–81 %) for Laya in the same session, with 370 deaths against 45. |
 | **Campaigns** | One hour from MAP01. Pistol start on every map: skill 3 reached MAP03 and MAP04, skill 1 MAP03 and MAP05. With the inventory carried over as in vanilla Doom: skill 3 MAP03 and MAP02, skill 1 MAP05 twice. Within the noise of 2 seeds. |
 | **Where it stopped** | Fighting. Every lever on the decision side was tested and came up flat. |
 
@@ -60,6 +63,10 @@ flowchart LR
 
 ![Milliseconds per decision: 612 with the encoder on the ANE, 276 with the heads too, 206 when one-option questions are skipped](assets/latency-light.svg#gh-light-mode-only)
 ![Milliseconds per decision: 612 with the encoder on the ANE, 276 with the heads too, 206 when one-option questions are skipped](assets/latency-dark.svg#gh-dark-mode-only)
+
+*An offline benchmark used to compare the optimisation steps: 40 recorded MAP03 packets replayed in one
+process. The 110–140 ms in the table above is the server's median measured in real games. The two are
+measured differently, so compare each with its own kind.*
 
 ## System 1 planning
 
@@ -163,7 +170,7 @@ This starts an ANE model server, plays, verifies the run and audits authority. T
   does (ViZDoom would otherwise start every map from a pistol start), and stops the run if any field is not
   restored exactly.
 - **Reproducing exact numbers:** `scripts/setup.sh` builds the final stack (2026-10-29). Earlier batches ran
-  on earlier code (up to exec6 with `doom/patches/doomLaya-executor-fixes.patch`); each run directory keeps
+  on earlier code (the oldest with `doom/patches/doomLaya-executor-fixes.patch`); each run directory keeps
   the exact source it ran. The run directories and videos are not in this repository.
 
 ## Repository layout
@@ -171,13 +178,26 @@ This starts an ANE model server, plays, verifies the run and audits authority. T
 | Path | What |
 |---|---|
 | `doom/ane_doomlaya.py`, `doom/export_doom_*.py`, `doom/merge_doom_encoder.py` | The ANE model server and the Core ML export |
-| `doom/planner.py`, `doom/system2.py` | The System 1 objective planner; the optional local LLM planner |
+| `doom/planner.py`, `doom/system2.py` | The System 1 objective planner used for every headline number; the optional local LLM planner |
+| `doom/planner_v6.py` | An earlier planner, frozen only for A/B comparisons (config `planner6`) |
 | `doom/repeat_map.py`, `doom/scenarios.py`, `doom/fight_rollouts.py` | Game batches, scenarios from saved states, outcome rollouts |
 | `doom/route_solver.py`, `doom/map_split.json` | Static route checks; the development / held-out split |
 | `doom/patches/doomLaya-dev.patch` | Everything we changed in doomLaya v0.3.1 |
 | `coreml_cache.py` | Compile each Core ML package once (`MLModel(path)` leaks a compiled copy per load) |
 | `results/doom/`, `results/doom_heads/` | Every batch's results; outcome labels and the trained movement residual |
 | `docs/WRITEUP.md`, `docs/LAB_NOTEBOOK.md`, [`docs/research/`](docs/research/README.md) | Summary, dated record, research notes |
+
+Most of the game-side code is in [`doom/patches/doomLaya-dev.patch`](doom/patches/doomLaya-dev.patch), against
+doomLaya v0.3.1 (`scripts/setup.sh` applies it). The files worth reading in it:
+
+| File in the patch | What |
+|---|---|
+| `doomlib/executor.py` | Carries out the model's commands; no combat, item or weapon preferences of its own |
+| `doomlib/policy.py`, `serve_doom_laya.py` | Turns the game state into the model's questions and options |
+| `doomlib/specials.py`, `doomlib/mission.py`, `doomlib/navigation.py` | Doom 2's linedef specials as one table, level exits and routes |
+| `doomlib/combat_facts.py` | What the player can see of a fight (projectiles, threat types), for the movement question |
+| `doomlib/carry.py`, `assets/carry_inventory.acs` | Inventory carried to the next map in campaigns |
+| `tools/check_authority.py`, `tests/test_authority.py` | The audit that every executed choice is the model's own |
 
 ## Rules we kept
 
@@ -193,7 +213,7 @@ Where code still decides, or we broke a rule:
 
 - **Crusher safety** (in `planner_ext_safe`): the executor moves the player out from under a closing
   crusher whatever movement the model chose.
-- **Rocket gate:** no rockets at targets closer than 5.5 m (4 m before batch `cm1`).
+- **Rocket gate:** no rockets at targets closer than 5.5 m (4 m in the earlier batches).
 - **Item options:** the planner decides which items are worth offering (keys, new weapons within 15 m,
   health below 50, items within 6 m); the model chooses among them.
 - **Commitment** (configs `commit`, `resume*`, 2026-10-19 only): the server could keep Laya's previous
