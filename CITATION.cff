@@ -4,7 +4,7 @@ title: "doomANE: a small decision model playing Doom from the Apple Neural Engin
 type: software
 license: Apache-2.0
 repository-code: "https://github.com/andrewgoodchild/doomANE"
-date-released: 2026-10-25
+date-released: 2026-10-30
 authors:
   - given-names: "Andrew"
     family-names: "Goodchild"
