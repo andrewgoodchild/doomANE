@@ -1,0 +1,1720 @@
+{
+ "initial": {
+  "retain": {
+   "n": 1615,
+   "same_as_parent": 1615,
+   "pickup": 591
+  },
+  "repair_train": {
+   "n": 580,
+   "same_as_parent": 580,
+   "pickup": 0
+  },
+  "repair_valid": {
+   "n": 249,
+   "same_as_parent": 249,
+   "pickup": 0
+  }
+ },
+ "final": {
+  "retain": {
+   "n": 1615,
+   "same_as_parent": 1615,
+   "pickup": 591
+  },
+  "repair_train": {
+   "n": 580,
+   "same_as_parent": 0,
+   "pickup": 580
+  },
+  "repair_valid": {
+   "n": 249,
+   "same_as_parent": 0,
+   "pickup": 249
+  }
+ },
+ "best_epoch": 35,
+ "seconds": 11.9,
+ "history": [
+  {
+   "epoch": 5,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1608,
+     "pickup": 598
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 10,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1612,
+     "pickup": 594
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 15,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1612,
+     "pickup": 594
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 20,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1612,
+     "pickup": 594
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 25,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1613,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 30,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1613,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 35,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 40,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 45,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 50,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 55,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 60,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 65,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 70,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1613,
+     "pickup": 589
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 75,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1613,
+     "pickup": 589
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 80,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 85,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 90,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 95,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 100,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1612,
+     "pickup": 594
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 105,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 110,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 115,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1613,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 120,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1611,
+     "pickup": 595
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 125,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 130,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 135,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 140,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 145,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 150,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 155,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 160,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 165,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 170,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 175,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 180,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 185,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 190,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 195,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 200,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 205,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1612,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 210,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 215,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 220,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 225,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 230,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 235,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 240,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 592
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 245,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 250,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 255,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 260,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 265,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 270,
+   "eligible": false,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1614,
+     "pickup": 590
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 275,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 280,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 285,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 290,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 295,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 300,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 305,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 310,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 315,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 320,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 325,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 330,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 335,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 340,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 345,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 350,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 355,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 360,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 365,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 370,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 375,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 380,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 385,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 390,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 395,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  },
+  {
+   "epoch": 400,
+   "eligible": true,
+   "metrics": {
+    "retain": {
+     "n": 1615,
+     "same_as_parent": 1615,
+     "pickup": 591
+    },
+    "repair_train": {
+     "n": 580,
+     "same_as_parent": 0,
+     "pickup": 580
+    },
+    "repair_valid": {
+     "n": 249,
+     "same_as_parent": 0,
+     "pickup": 249
+    }
+   }
+  }
+ ]
+}

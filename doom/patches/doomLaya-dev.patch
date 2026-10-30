@@ -1,0 +1,2576 @@
+diff --git a/agent.py b/agent.py
+index 1f0226e..3af5f09 100644
+--- a/agent.py
++++ b/agent.py
+@@ -21,6 +21,7 @@ from doomlib.overlay import Overlay, Recorder
+ from doomlib.mission import Mission, map_data
+ from doomlib.report import build_report
+ from doomlib.executor import Executor
++from doomlib import carry
+ from doomlib.policy import request as policy_request, decode as policy_decode, ACTIONS
+ from doomlib import ensure_utf8_stdio
+ 
+@@ -211,7 +212,9 @@ class Sensors:
+             weapon=int(var('USER11')) or weapon
+             owned=int(var('USER12'))
+             inventory={str(i):{'owned':int(bool(owned&(1<<i))),'ammo':0 if i in (1,9) else int(var('AMMO'+str(WEAPON_SLOTS[i])))} for i in range(1,10)}
++        from doomlib.combat_facts import compute as combat_facts
+         return raw, {
++            'combat_facts': combat_facts(raw.labels, objects, px, py, angle, var('HEALTH')),
+             'seconds': round(tick / TICRATE, 3), 'hp': var('HEALTH'), 'armor': var('ARMOR'),
+             'ammo': var('SELECTED_WEAPON_AMMO'), 'weapon': weapon, 'weapon_slot':int(var('SELECTED_WEAPON')),
+             'kills': int(var('KILLCOUNT')), 'itemcount': int(var('ITEMCOUNT')),
+@@ -246,6 +249,7 @@ class LayaClient:
+         self.session = requests.Session()
+         self.session.trust_env = False
+         self.endpoint, self.model = endpoint, model
++        self.force_command = None  # development labels only (--force-first-command): replaces the model's next command
+ 
+     def health(self):
+         response = self.session.get(self.endpoint.rsplit('/', 1)[0] + '/health', timeout=5)
+@@ -267,6 +271,10 @@ class LayaClient:
+         started=time.perf_counter()
+         primary={k:questions[k] for k in ('command','weapon')}
+         first=self.predict(text,primary)
++        if getattr(self,'force_command',None):
++            # Label collection only: the model still answers every dependent question for the forced command.
++            first['answers']['command']['choice']=first['choice']=first['forced_command']=self.force_command
++            self.force_command=None
+         required=dependencies.get(first['answers']['command']['choice'],[])
+         secondary={k:questions[k] for k in required if k not in primary}
+         parts=[(primary,first)]
+@@ -342,10 +350,23 @@ class JevClient(LayaClient):
+ Controller=Executor
+ 
+ 
++def map_wad(game, args, name):
++    """The WAD that holds this map: the --wad PWAD when it has the map, else the IWAD."""
++    if getattr(args,'wad',None):
++        import struct
++        data=Path(args.wad).read_bytes()
++        count,offset=struct.unpack_from('<ii',data,4)
++        if any(struct.unpack_from('<8s',data,offset+i*16+8)[0].rstrip(b'\0').decode()==name.upper() for i in range(count)):
++            return str(Path(args.wad).resolve())
++    return game.get_doom_game_path()
++
++
+ def make_game(args, no_monsters=False):
+     game = vzd.DoomGame()
+     game.set_doom_game_path(str(Path(vzd.__file__).parent / 'freedoom2.wad'))
+     if getattr(args,'weapon_sensor',False):game.set_doom_scenario_path(str(ROOT/'assets/weapon_sensor.pk3'))
++    if getattr(args,'wad',None):game.add_game_args('-file '+str(Path(args.wad).resolve()))
++    if getattr(args,'carry_inventory',False):game.add_game_args('-file '+str(ROOT/'assets/carry_inventory.pk3'))
+     game.set_doom_map(args.map)
+     game.set_doom_skill(args.skill)
+     game.set_seed(args.seed)
+@@ -359,7 +380,8 @@ def make_game(args, no_monsters=False):
+     game.set_window_visible(args.show)
+     game.set_sound_enabled(args.sound)
+     game.set_render_hud(True)
+-    game.set_available_buttons(BUTTONS)
++    # SPEED is appended only for --run-combat-movement, so the 14 executor buttons keep their indices.
++    game.set_available_buttons(BUTTONS+([vzd.Button.SPEED] if getattr(args,'run_combat_movement',False) or getattr(args,'run_navigation',False) else []))
+     game.set_episode_timeout(0)
+     game.add_game_args('+freelook 0 +sv_cheats 1 +neverswitchonpickup 1')
+     if no_monsters:game.add_game_args('-nomonsters')
+@@ -372,6 +394,10 @@ def main():
+     parser.add_argument('--seconds', type=float, default=300)
+     parser.add_argument('--stop-after-level', action='store_true', help='Завершить после входа на следующий уровень и 3 секунд игры на нём')
+     parser.add_argument('--map', default='MAP01')
++    parser.add_argument('--carry-inventory',action='store_true',help='Carry weapons, ammo, backpack, health and armour to the next map as in a vanilla campaign (doomlib/carry.py)')
++    parser.add_argument('--wad', help='PWAD with the map to play (e.g. an Obsidian map); the IWAD stays freedoom2')
++    parser.add_argument('--combat-facts',action='store_true',help='Add observed projectile, health and threat facts to the movement question (doomlib/combat_facts.py)')
++    parser.add_argument('--fight-states',action='store_true',help='Save the engine state at every movement question, for offline combat rollouts (data collection)')
+     parser.add_argument('--skill', type=int, choices=range(1, 6), default=3)
+     parser.add_argument('--seed', type=int, default=42)
+     parser.add_argument('--record', nargs='?', const='auto')
+@@ -388,6 +414,13 @@ def main():
+     parser.add_argument('--weapon-sensor',action='store_true',help='Read exact weapon types, including the super shotgun, from the observation-only ACS library')
+     parser.add_argument('--reachable-items',action='store_true',help='Expose item reachability without altering combat observations')
+     parser.add_argument('--mechanism-facts',action='store_true',help='Expose mapped keys connected to each lift upper platform')
++    parser.add_argument('--crusher-safety',action='store_true',help='Routes wait outside a closing crusher; a body caught under one steps out (motor only; command, target, aim and fire unchanged)')
++    parser.add_argument('--run-combat-movement',action='store_true',help='Run (SPEED) while executing a model-chosen strafe or backward movement and a retreat; walking otherwise')
++    parser.add_argument('--load-state',help='Development scenario only: start from this saved engine state (.zds, e.g. a fight state) on --map; the run ends at the first death')
++    parser.add_argument('--force-first-command',help='Development labels only (with --load-state): the first decision executes this command instead of the model\'s; the model still answers target, weapon and movement for it. Fails the authority audit by design')
++    parser.add_argument('--stall-seconds',type=float,default=0,help='Screening only: end the run after this many game seconds without progress in the current life (a new 4 m cell, key or activated mechanism); 0 never')
++    parser.add_argument('--run-navigation',action='store_true',help='Run (SPEED) while following the route of a pickup, door, switch, exit or explore command')
++    parser.add_argument('--extended-mechanisms',action='store_true',help='Model every vanilla door, lift and floor special, including walk-over lines (doomlib/specials.py)')
+     parser.add_argument('--explicit-movement',action='store_true',help='Require an explicit movement instead of the duplicate continue option')
+     parser.add_argument('--movement-facts',action='store_true',help='Attach measured body clearance only to the movement question')
+     parser.add_argument('--movement-obstacle-facts',action='store_true',help='Describe close obstacles and clear space as measured facts without removing movement options')
+@@ -413,6 +446,7 @@ def main():
+     parser.add_argument('--interval', type=float, default=.5, help='Минимальный интервал запросов, секунды')
+     parser.add_argument('--minimum-decision-delay-ticks',type=int,default=0,help='Optional lower bound for response application, in game ticks; real RTT is still measured and slow responses are never applied early')
+     args = parser.parse_args()
++    if args.force_first_command and not args.load_state:parser.error('--force-first-command needs --load-state')
+     if not 0<=args.minimum_decision_delay_ticks<2*TICRATE:parser.error('--minimum-decision-delay-ticks must be in 0..69')
+     if args.minimum_decision_delay_ticks and (args.dry or not args.realtime):parser.error('Delayed decisions require a real model and realtime game clock')
+     if args.model=='doom-adapted' and args.endpoint=='http://127.0.0.1:8000/predict':
+@@ -462,18 +496,24 @@ def main():
+         health = client.health()
+         if args.enemy_sequences and health.get('question_heads',{}).get('enemy',{}).get('question_format')!='enemy-sequence-v1':raise RuntimeError('Server has no trained enemy-sequence head')
+         if args.look_gate and 'look_gate' not in health.get('question_heads',{}):raise RuntimeError('Server has no learned look_gate head')
+-    config = {'args': vars(args), 'wad_sha256':hashlib.sha256((Path(vzd.__file__).parent/'freedoom2.wad').read_bytes()).hexdigest(), 'protocol':'model-authority-v1', 'questions':'dynamic; exact request in decisions.jsonl', 'map_knowledge':['geometry','exit','switches','key_markers'], 'laya_health': health,
++    config = {'args': vars(args), 'wad_sha256':hashlib.sha256((Path(vzd.__file__).parent/'freedoom2.wad').read_bytes()).hexdigest(), 'pwad_sha256':hashlib.sha256(Path(args.wad).read_bytes()).hexdigest() if args.wad else None, 'protocol':'model-authority-v1', 'questions':'dynamic; exact request in decisions.jsonl', 'map_knowledge':['geometry','exit','switches','key_markers'], 'laya_health': health,
+               'vizdoom': vzd.__version__, 'tics_per_second': TICRATE,
+               'command_ttl_seconds':2, 'automatic_weapon_pickup_switch':False,
+               'source_sha256': {name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+-                                for name in ['agent.py', 'doomlib/__init__.py', 'doomlib/overlay.py', 'doomlib/report.py', 'doomlib/navigation.py', 'doomlib/combat.py', 'doomlib/items.py', 'doomlib/mission.py', 'doomlib/policy.py', 'doomlib/executor.py', 'doomlib/decision_questions.py', 'doomlib/decision_timing.py', 'doomlib/look_questions.py', 'doomlib/floor_hazards.py', 'doomlib/enemy_commitment.py', 'doomlib/enemy_sequences.py', 'doomlib/compact_movement.py', 'doomlib/compact_enemy.py', 'doomlib/compact_weapon.py', 'doomlib/compact_item.py', 'doomlib/enemy_ranking.py', 'doomlib/ranked_inference.py', 'doomlib/resource_questions.py', 'serve_doom_laya.py', 'doomlib/model_decoding.py', 'doomlib/laya_runtime.py', 'doomlib/question_heads.py', 'doomlib/command_keys.py', 'doomlib/command_facts.py', 'doomlib/numeric_command.py', 'doomlib/numeric_item.py', 'doomlib/numeric_movement.py', 'doomlib/movement_questions.py']}}
++                                for name in ['agent.py', 'doomlib/__init__.py', 'doomlib/carry.py', 'doomlib/overlay.py', 'doomlib/report.py', 'doomlib/navigation.py', 'doomlib/combat.py', 'doomlib/items.py', 'doomlib/mission.py', 'doomlib/policy.py', 'doomlib/executor.py', 'doomlib/decision_questions.py', 'doomlib/decision_timing.py', 'doomlib/look_questions.py', 'doomlib/floor_hazards.py', 'doomlib/enemy_commitment.py', 'doomlib/enemy_sequences.py', 'doomlib/compact_movement.py', 'doomlib/compact_enemy.py', 'doomlib/compact_weapon.py', 'doomlib/compact_item.py', 'doomlib/enemy_ranking.py', 'doomlib/ranked_inference.py', 'doomlib/resource_questions.py', 'serve_doom_laya.py', 'doomlib/model_decoding.py', 'doomlib/laya_runtime.py', 'doomlib/question_heads.py', 'doomlib/command_keys.py', 'doomlib/command_facts.py', 'doomlib/numeric_command.py', 'doomlib/numeric_item.py', 'doomlib/numeric_movement.py', 'doomlib/movement_questions.py']}}
+     config['source_sha256']['doomlib/typed_movement.py'] = hashlib.sha256((ROOT / 'doomlib/typed_movement.py').read_bytes()).hexdigest()
+     config['source_sha256']['doomlib/numeric_switch.py'] = hashlib.sha256((ROOT / 'doomlib/numeric_switch.py').read_bytes()).hexdigest()
++    config['source_sha256']['doomlib/combat_facts.py'] = hashlib.sha256((ROOT / 'doomlib/combat_facts.py').read_bytes()).hexdigest()
++    config['source_sha256']['doomlib/specials.py'] = hashlib.sha256((ROOT / 'doomlib/specials.py').read_bytes()).hexdigest()
+     config['source_sha256']['doomlib/numeric_enemy.py'] = hashlib.sha256((ROOT / 'doomlib/numeric_enemy.py').read_bytes()).hexdigest()
+     if health.get('laya_source_commit'):
+         config['laya_source_commit'] = health['laya_source_commit']
+     if args.map_weapons:config['map_knowledge'].append('weapon_markers')
+     if args.mechanism_facts:config['map_knowledge'].append('upper_lift_routes')
++    if args.extended_mechanisms:config['map_knowledge'].append('extended_mechanisms')
++    if args.carry_inventory:
++        for name in ('assets/carry_inventory.acs','assets/carry_inventory.cvarinfo','assets/carry_inventory.pk3'):
++            config['source_sha256'][name]=hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
+     if args.weapon_sensor:
+         for name in ('assets/weapon_sensor.acs','assets/weapon_sensor.pk3'):
+             config['source_sha256'][name]=hashlib.sha256((ROOT/name).read_bytes()).hexdigest()
+@@ -565,25 +605,37 @@ def main():
+         for item in filter(None, args.give.split(',')):
+             game.send_game_command('give ' + item)
+         # Первые тики после старта движок игнорирует управление.
+-        game.make_action([0] * len(BUTTONS), 12)
++        game.make_action([0] * game.get_available_buttons_size(), 12)
+ 
+     try:
+         game = make_game(args)
+         spawn()
+-        controller=Controller(game.get_state().sectors,Mission(map_data(game.get_doom_game_path(),current_map,args.skill)),map_weapons=args.map_weapons,mechanism_facts=args.mechanism_facts,attack_turn_rate=args.attack_turn_rate)
++        if args.load_state:
++            # Development scenario: play on from a saved engine state. ZDoom loads only relative paths without
++            # '..' (it ignores others silently), so the state is copied into the run first.
++            import shutil
++            shutil.copy(args.load_state, run/'start-state.zds')
++            game.load(os.path.relpath(run/'start-state.zds'))
++            game.make_action([0] * game.get_available_buttons_size(), 1)
++            event('state_loaded', 0, path=str(args.load_state))
++        controller=Controller(game.get_state().sectors,Mission(map_data(map_wad(game,args,current_map),current_map,args.skill,extended=args.extended_mechanisms)),map_weapons=args.map_weapons,mechanism_facts=args.mechanism_facts,attack_turn_rate=args.attack_turn_rate,crusher_safety=args.crusher_safety,run_navigation=args.run_navigation)
+         sensors=Sensors(controller.mission.data['door_sectors'],controller.mission.data['doors'],weapon_sensor=args.weapon_sensor)
+         if args.floor_hazard_facts:
+             from doomlib.floor_hazards import FloorHazards
+-            floor_hazards=FloorHazards(game.get_doom_game_path(),current_map,game.get_state().sectors)
++            floor_hazards=FloorHazards(map_wad(game,args,current_map),current_map,game.get_state().sectors)
+         overlay = Overlay(ACTIONS, 'dry idle' if args.dry else args.model)
+         if args.record:
+             dest = run / 'video.mp4' if args.record == 'auto' else Path(args.record).expanduser().resolve()
+             recorder = Recorder(dest)
+         started = time.perf_counter()
+         interval_ticks = max(1, round(args.interval * TICRATE))
++        progress, progress_tick = set(), 0  # this life's visited cells, keys and activated mechanisms
++        carried,carry_serial=None,0
+         for tick in range(round(args.seconds * TICRATE)):
+             if game.is_episode_finished():
++                progress, progress_tick = set(), tick
+                 if game.is_player_dead():
++                    if args.load_state:break  # a scenario ends with the life it started; the death is recorded below
+                     stats['deaths'] += 1
+                     event('death', tick)
+                 else:
+@@ -592,16 +644,23 @@ def main():
+                     current_map=f'MAP{int(current_map[3:])+1:02d}'
+                     game.set_doom_map(current_map)
+                     next_level_tick=tick
++                    if args.carry_inventory:carry.hand_over(game,carried,episode+1);carry_serial=episode+1
+                 episode += 1
+                 enemy_commitment.reset()
+                 game.new_episode()
+                 spawn()
+-                controller=Controller(game.get_state().sectors,Mission(map_data(game.get_doom_game_path(),current_map,args.skill)),map_weapons=args.map_weapons,mechanism_facts=args.mechanism_facts,attack_turn_rate=args.attack_turn_rate)
++                if carry_serial:
++                    wrong=carry.check(game,carried,carry_serial)
++                    event('inventory_carried',tick,map=current_map,serial=carry_serial,inventory=carried,mismatch={k:list(v) for k,v in wrong.items()})
++                    if wrong:raise RuntimeError(f'Inventory was not carried to {current_map}: {wrong}')
++                    carry_serial=0
++                controller=Controller(game.get_state().sectors,Mission(map_data(map_wad(game,args,current_map),current_map,args.skill,extended=args.extended_mechanisms)),map_weapons=args.map_weapons,mechanism_facts=args.mechanism_facts,attack_turn_rate=args.attack_turn_rate,crusher_safety=args.crusher_safety,run_navigation=args.run_navigation)
+                 sensors=Sensors(controller.mission.data['door_sectors'],controller.mission.data['doors'],weapon_sensor=args.weapon_sensor)
+-                if args.floor_hazard_facts:floor_hazards=FloorHazards(game.get_doom_game_path(),current_map,game.get_state().sectors)
++                if args.floor_hazard_facts:floor_hazards=FloorHazards(map_wad(game,args,current_map),current_map,game.get_state().sectors)
+                 event('episode_started',tick,map=current_map,episode=episode,engine_map=game.get_doom_map(),x=float(game.get_game_variable(vzd.GameVariable.POSITION_X)),y=float(game.get_game_variable(vzd.GameVariable.POSITION_Y)))
+                 tactic, switched, previous = 'wait', tick, None
+             raw, s = sensors.read(game, tick)
++            if args.carry_inventory:carried=carry.read(game)  # last state alive before the exit
+             s['map']=current_map
+             s['map_weapons_known']=args.map_weapons
+             controller.mission.observe(s,raw.sectors)
+@@ -691,11 +750,25 @@ def main():
+                     if args.movement_obstacle_facts:
+                         from doomlib.movement_questions import with_movement_obstacle_facts
+                         packet=with_movement_obstacle_facts(packet)
++                if args.combat_facts and 'movement' in packet['questions']:
++                    from doomlib.combat_facts import describe
++                    packet['questions']['movement']['instructions']+=' '+describe(s['combat_facts'])
+                 if args.question_schedule=='conditional':
+                     from doomlib.decision_questions import dependencies
+                     packet['question_dependencies']=dependencies(packet)
+                 text=packet['state']
+                 pending={'tick':tick,'episode':episode,'request_reason':trigger,'state':text,'packet':packet,'snapshot_tactic':tactic,'hp':s['hp']}
++                if args.fight_states and 'movement' in packet['questions']:
++                    # Data collection only: the engine state the model saw, for offline rollouts of each movement.
++                    # ZDoom saves only to relative paths.
++                    saves=run/'fight-states';saves.mkdir(exist_ok=True)
++                    game.save(os.path.relpath(saves/f'{tick:06d}.zds'))
++                    pending['fight_state']=f'fight-states/{tick:06d}.zds'
++                if args.force_first_command and stats['decisions']==0 and future is None:
++                    if args.question_schedule!='conditional' or args.force_first_command not in packet['questions']['command']['criteria']:
++                        raise SystemExit(f'forced command {args.force_first_command} is not offered in this state')
++                    client.force_command=args.force_first_command
++                    event('forced_command',tick,command=args.force_first_command)
+                 last_request=tick
+                 last_inventory=inventory
+                 last_visible_enemies=visible_enemies
+@@ -706,6 +779,7 @@ def main():
+                     accept(result,tick)
+                 else:future=pool.submit(client.predict,text,packet['questions'],packet.get('question_dependencies'))
+             action,refs=controller.act(s,tick)
++            if args.run_combat_movement or args.run_navigation:action=action+[float(controller.running)]
+             tactic=s['execution']['action']
+             gains=s.get('resource',{}).get('gains',{})
+             if gains:
+@@ -730,6 +804,16 @@ def main():
+             previous = s
+             if args.stop_after_level and next_level_tick is not None and tick-next_level_tick>=3*TICRATE:
+                 break
++            if args.stall_seconds:
++                marks = {('cell', current_map, int(s['x']//128), int(s['y']//128))} | {('key', current_map, k) for k in s.get('keys', ())}
++                marks |= {('switch', current_map, m['id']) for m in s.get('switches', ()) if m.get('activated')}
++                if not marks <= progress:
++                    progress |= marks
++                    progress_tick = tick
++                elif tick - progress_tick >= args.stall_seconds * TICRATE:
++                    stats['stalled'] = True
++                    event('stalled', tick, seconds=args.stall_seconds)
++                    break
+             if args.realtime:
+                 delay = started + total_ticks/TICRATE - time.perf_counter()
+                 if delay > 0:
+diff --git a/assets/carry_inventory.acs b/assets/carry_inventory.acs
+new file mode 100644
+index 0000000..41528a3
+--- /dev/null
++++ b/assets/carry_inventory.acs
+@@ -0,0 +1,106 @@
++#library "LAYACARRY"
++#include "zcommon.acs"
++
++// Carries the player's inventory to the next map, as a vanilla campaign does: weapons, ammo,
++// backpack, health and armour; keys and powerups are not carried. ViZDoom starts a new game for
++// every map, so the harness keeps the values in server CVARs (CVARINFO) and sets
++// laya_carry_pending to a serial number; the ENTER script restores them and reports the serial.
++
++// Published every tic for the harness (ViZDoom reads them as USER20..USER31).
++global int 20:carryReady;      // 2741 while the observer runs
++global int 21:carryHealth;
++global int 22:carryArmor;
++global int 23:carryArmorType;  // 0 none, 1 saves 33 % (green armour or bonuses), 2 saves 50 % (blue)
++global int 24:carryBackpack;
++global int 25:carryClip;
++global int 26:carryShell;
++global int 27:carryRocket;
++global int 28:carryCell;
++global int 29:carryWeapons;    // bit i = weapon i, numbered as in weapon_sensor.acs
++global int 30:carrySelected;
++global int 31:carryRestored;   // serial of the last restore
++
++str weaponNames[10] = {"", "Fist", "Pistol", "Shotgun", "Chaingun", "RocketLauncher",
++                       "PlasmaRifle", "BFG9000", "SuperShotgun", "Chainsaw"};
++
++function void SetAmmo(str type, int amount)
++{
++    TakeInventory(type, CheckInventory(type));
++    if (amount > 0)
++        GiveInventory(type, amount);
++    // Skills 1 and 5 double ammo given, so remove the excess.
++    int extra = CheckInventory(type) - amount;
++    if (extra > 0)
++        TakeInventory(type, extra);
++}
++
++script "LayaCarryRestore" ENTER
++{
++    int serial = GetCVar("laya_carry_pending");
++    if (serial <= 0)
++        terminate;
++    if (GetCVar("laya_carry_backpack"))
++        GiveInventory("Backpack", 1);
++    int owned = GetCVar("laya_carry_weapons");
++    for (int i = 1; i < 10; i++)
++        if (owned & (1 << i))
++            GiveInventory(weaponNames[i], 1);
++    SetAmmo("Clip", GetCVar("laya_carry_clip"));
++    SetAmmo("Shell", GetCVar("laya_carry_shell"));
++    SetAmmo("RocketAmmo", GetCVar("laya_carry_rocket"));
++    SetAmmo("Cell", GetCVar("laya_carry_cell"));
++    int armor = GetCVar("laya_carry_armor");
++    if (armor > 0)
++    {
++        if (GetCVar("laya_carry_armortype") == 2)
++        {
++            GiveInventory("BlueArmor", 1);
++            TakeInventory("BasicArmor", CheckInventory("BasicArmor") - armor);
++        }
++        else
++        {
++            GiveInventory("GreenArmor", 1);
++            if (armor < 100)
++                TakeInventory("BasicArmor", 100 - armor);
++            for (int b = 100; b < armor; b++)
++                GiveInventory("ArmorBonus", 1);
++        }
++    }
++    int selected = GetCVar("laya_carry_selected");
++    if (selected > 0 && selected < 10)
++        SetWeapon(weaponNames[selected]);
++    SetActorProperty(0, APROP_Health, GetCVar("laya_carry_health"));
++    carryRestored = serial;
++}
++
++script "LayaCarryObserve" ENTER
++{
++    while (TRUE)
++    {
++        carryReady = 2741;
++        carryHealth = GetActorProperty(0, APROP_Health);
++        carryArmor = CheckInventory("BasicArmor");
++        carryArmorType = 0;
++        if (carryArmor > 0)
++        {
++            carryArmorType = 1;
++            if (GetArmorType("BlueArmor", PlayerNumber()) || GetArmorType("BlueArmorForMegasphere", PlayerNumber()))
++                carryArmorType = 2;
++        }
++        carryBackpack = CheckInventory("Backpack") > 0;
++        carryClip = CheckInventory("Clip");
++        carryShell = CheckInventory("Shell");
++        carryRocket = CheckInventory("RocketAmmo");
++        carryCell = CheckInventory("Cell");
++        carryWeapons = 0;
++        carrySelected = 0;
++        for (int i = 1; i < 10; i++)
++        {
++            if (CheckInventory(weaponNames[i]) > 0)
++                carryWeapons |= 1 << i;
++            if (CheckWeapon(weaponNames[i]))
++                carrySelected = i;
++        }
++        Delay(1);
++    }
++}
+diff --git a/assets/carry_inventory.cvarinfo b/assets/carry_inventory.cvarinfo
+new file mode 100644
+index 0000000..d10c1d0
+--- /dev/null
++++ b/assets/carry_inventory.cvarinfo
+@@ -0,0 +1,12 @@
++// Inventory carried to the next map by assets/carry_inventory.acs (set by the harness).
++server noarchive int laya_carry_pending = 0;
++server noarchive int laya_carry_health = 100;
++server noarchive int laya_carry_armor = 0;
++server noarchive int laya_carry_armortype = 0;
++server noarchive int laya_carry_backpack = 0;
++server noarchive int laya_carry_clip = 50;
++server noarchive int laya_carry_shell = 0;
++server noarchive int laya_carry_rocket = 0;
++server noarchive int laya_carry_cell = 0;
++server noarchive int laya_carry_weapons = 6;
++server noarchive int laya_carry_selected = 2;
+diff --git a/assets/carry_inventory.pk3 b/assets/carry_inventory.pk3
+new file mode 100644
+index 0000000000000000000000000000000000000000..41fc44d2bae8ddeea5f19cb7c3b40d1c9208cf65
+GIT binary patch
+literal 2223
+zcma)8L2MgE6rEk$37CLGV<&ODNf%TJ5S3%lrWL9xw03bC)$v+(DMUh46MLwwtar`s
+zCT(s=T#AIKqKG3xT)K!;IV=}WTq+>}5f^S%YYC1>1`db|<^A2baV(*F?Kl6=|L^}9
+z&-|Hn^-?UJX3_K9JAW;|ZYR+pOaf&?zn~ZEWqn;Q>b2T>vU-GWer23GonVZR0-ZP9
+zrAOSHjYxJ1E(M>xT}ATQtg!$Z`qC|!6e*RJ6`9OhWR`b-^pm}QDhrO!=8P4XCI2Z{
+zjJKfrQ$1h0<v&df$(O?5WM=sWT-q+0oUCm?U?fSA%NLE0sUz<*1ZnR>_n+zcDFpw(
+z{OO+mY@{9Q`7@E0?)jNWn}x{6lo(CzWeI_EF!=I}@jGRi4`-3>`Ptr{5=-rBA>}w(
+z5z@>U6BGh}le~U28&~2=EVHb_9CCAUElHFU6ryEGRcOS7lE8>)l9`fm5oRT^&mNrl
+znz04A`w4{wC-K{iw9Hs6z$OLhJB;-wf(%V1nDtpO_YK-v;|t0u1#_5df3k1OGt6Hc
+zXe*IdhIgvB2X-)zh1m<TSd_isxPJ`o2|tZiLBa)K5o=95g0=n?iM1(=pJUojG()z}
+zD2MS+IHJPJ{R<0Zyl+f`g&8ku_d?fM?FuBmtX{obn}&S&FwT}C|Ai!9y`rz>(MKGc
+z0;pEXe1{jg<LuOg>)DPtG#DGMaJB_Fr8g_ZCm?0yAX!2l%1>ia-xVJ3bZl0?Tq{pg
+zay%y^!EQo+1bhN~3Va6K1_Iza;CtW~;6CstKwFyvo(En4&I0Fw3a}1r0$tz(U>CRz
+z+yTA??gBppzX5*(tkiZrRz+i*tlqM{Yg-m8ws_kjrDiuag;(ZVR-+{xRyDcX;kEXA
+zreKBA%4_+2p4GRy!Z{M?^6SjRl3i`knqBP*tBGvGrVZZM>;kMXP=@%|1@GFH%Zg^Z
+zI~>%Ye!V43bJ*&JhG?ETE$~n#C!9Sij)XKu`rPT*&Tw34@OHZRk>-}rLwA9@?M9@o
+zI6_#F8ny-7+H!~EU15rbCz`{ymf)t>I!suyoi%ZdyIrg+)sK$Ch(pq|_Qu;)x({i4
+zsCJ?iv3N(gOt0zdWTS^}NPV@kdOGYy4aHD-#Q@5OtB*|pbdyrtlYm}cEkLk&5OF`!
+z@ZodxV*UKX!n;K<2ozboqSsa{C1YtxUA4A_g_E$O(iXQxQ}t}sYYEj7H$1h&yXwY{
+z%3ajFyA%~cdk~Ss{j9zS4^b$j#T`qy?n}93c$6H~vbob}wYP=ZwmfxcI}Zv;J+J1^
+zJ(e7;H@L6l$6#~X<M9%QR4R_~=z~%pk4-fW=JFU*4hw(0tkF3bk4uMRJm$eU1^LY5
+zw_|W5z<%`{-r$m)j{W~D|DYbj3+&M!fYG4Q7yn_<64a5u0i(gA#eEoj6DMX+>eWjL
+QIy*Q_G4>_oA9RY?e-bWUiU0rr
+
+literal 0
+HcmV?d00001
+
+diff --git a/doomlib/carry.py b/doomlib/carry.py
+new file mode 100644
+index 0000000..2058d34
+--- /dev/null
++++ b/doomlib/carry.py
+@@ -0,0 +1,37 @@
++"""Carry the inventory to the next map, as a vanilla campaign does (assets/carry_inventory.acs).
++
++ViZDoom ends the episode at the exit and new_episode() starts a new game with a pistol start.
++With --carry-inventory the harness keeps what the ACS observer last published while the player
++was alive, hands it to the next map through server CVARs, and checks the restore exactly.
++Keys and powerups are not carried, as in vanilla. A death still restarts the map from a pistol start.
++"""
++import vizdoom as vzd
++
++FIELDS = ('health', 'armor', 'armortype', 'backpack', 'clip', 'shell', 'rocket', 'cell', 'weapons', 'selected')
++READY = 2741
++
++
++def _user(game, n):
++    return int(game.get_game_variable(getattr(vzd.GameVariable, f'USER{n}')))
++
++
++def read(game):
++    if _user(game, 20) != READY:
++        raise RuntimeError('Inventory observer is not running')
++    return {name: _user(game, 21 + i) for i, name in enumerate(FIELDS)}
++
++
++def hand_over(game, inventory, serial):
++    """Before new_episode(): the next map's ENTER script restores this inventory."""
++    for name in FIELDS:
++        game.send_game_command(f'set laya_carry_{name} {int(inventory[name])}')
++    game.send_game_command(f'set laya_carry_pending {int(serial)}')
++
++
++def check(game, inventory, serial):
++    """After the first tics of the next map: the fields that differ, as {name: (wanted, got)}."""
++    game.send_game_command('set laya_carry_pending 0')
++    if _user(game, 31) != serial:
++        return {'restored_serial': (serial, _user(game, 31))}
++    got = read(game)
++    return {name: (inventory[name], got[name]) for name in FIELDS if got[name] != inventory[name]}
+diff --git a/doomlib/combat.py b/doomlib/combat.py
+index 5a9c3ae..22b1896 100644
+--- a/doomlib/combat.py
++++ b/doomlib/combat.py
+@@ -1,10 +1,33 @@
+ """Удержание видимой цели и выбор оружия из настоящего инвентаря."""
+ import math
++import os
+ 
+ WEAPON_NAMES = {1:'melee',2:'pistol',3:'shotgun',4:'chaingun',5:'rocket_launcher',6:'plasma_rifle',7:'BFG',8:'super_shotgun',9:'chainsaw'}
+ 
+ WEAPON_SLOTS={**{i:i for i in range(1,8)},8:3,9:1}
+ AMMO_COST={1:0,2:1,3:1,4:1,5:1,6:1,7:40,8:2,9:0}
++# A rocket's 128-unit blast also hurts the player: 20 of 186 MAP03 deaths followed a rocket choice, 16 within 6 m.
++ROCKET_SAFE_METERS=5.5  # splash reaches 128 units past the target's edge plus the player's 16-unit radius (linuxdoom P_RadiusAttack)
++
++
++# Fire while the aim is inside the target's body: most monsters are 20 units in radius. A fixed 5 degree
++# gate held fire in 37 % of close-range ticks with the selected enemy 5-20 degrees off centre.
++ENEMY_RADIUS_UNITS=20
++# DOOM_FIRE_LEGACY=1 restores the fixed 5 degree gate and unrestricted rockets, for A/B runs.
++FIRE_LEGACY=os.environ.get('DOOM_FIRE_LEGACY')=='1'
++
++
++def fire_tolerance(distance):
++    """Largest aim error in degrees that still hits an enemy at this distance in metres."""
++    if FIRE_LEGACY:return 5.0
++    return max(5.0,0.8*math.degrees(math.atan2(ENEMY_RADIUS_UNITS,max(distance,0.1)*32)))
++
++
++def fire_reaches(slot, distance):
++    """Whether the weapon in this slot can hit an enemy at this distance without hurting the player."""
++    if AMMO_COST[slot]==0:return distance<=1.5
++    if slot==5 and not FIRE_LEGACY:return distance>ROCKET_SAFE_METERS
++    return True
+ 
+ 
+ def target_bearing(target, s):
+diff --git a/doomlib/combat_facts.py b/doomlib/combat_facts.py
+new file mode 100644
+index 0000000..c0a86a7
+--- /dev/null
++++ b/doomlib/combat_facts.py
+@@ -0,0 +1,73 @@
++"""Observed combat facts for the movement question: incoming projectiles, health and threat types.
++
++Only what the player can see is used: projectiles and monsters in the labels buffer (on screen), with
++the engine's velocity for a visible projectile (its motion between frames). A projectile is any visible
++moving object of category Explosive, so no list of projectile names is needed. Monster classes are
++Doom's own (melee-only monsters, hitscan shooters), the same on every map.
++
++The facts travel in the movement question's instructions ("Combat facts: ..."), which the compact
++movement projections replace, so heads trained without them see unchanged inputs.
++"""
++import math
++import re
++
++MELEE_MONSTERS = ('Demon', 'Spectre', 'LostSoul')
++HITSCAN_MONSTERS = ('Zombieman', 'ShotgunGuy', 'ChaingunGuy', 'WolfensteinSS', 'SpiderMastermind')
++HORIZON_TICS = 35  # projectiles reaching the player within a second
++HIT_RADIUS = 64  # passing this close counts as incoming (player radius 16 plus most missiles' 6-20, plus margin)
++FAR = 99.0
++
++
++def compute(labels, objects, px, py, angle, hp):
++    """labels: ViZDoom labels (name, category, id, position); objects: id -> object with velocity."""
++    facing = math.radians(angle)
++    left = (-math.sin(facing), math.cos(facing))
++    incoming = []
++    melee, hitscan = FAR, 0
++    for label in labels:
++        category = str(label.object_category)
++        name = label.object_name
++        rx, ry = label.object_position_x - px, label.object_position_y - py
++        if category == 'Monster' and not name.startswith('Dead'):
++            if name in MELEE_MONSTERS:
++                melee = min(melee, math.hypot(rx, ry) / 32)
++            elif name in HITSCAN_MONSTERS:
++                hitscan += 1
++            continue
++        obj = objects.get(label.object_id)
++        if category != 'Explosive' or obj is None:
++            continue
++        vx, vy = obj.velocity_x, obj.velocity_y
++        speed2 = vx * vx + vy * vy
++        if speed2 < 1:
++            continue  # barrels and other resting explosives
++        t = -(rx * vx + ry * vy) / speed2
++        if not 0 < t <= HORIZON_TICS:
++            continue
++        mx, my = rx + vx * t, ry + vy * t
++        miss = math.hypot(mx, my)
++        if miss <= HIT_RADIUS:
++            incoming.append((t, miss, 'left' if mx * left[0] + my * left[1] > 0 else 'right'))
++    soonest = min(incoming, default=None)
++    return dict(incoming=len(incoming), seconds=round(soonest[0] / 35, 2) if soonest else None,
++                miss=round(soonest[1] / 32, 2) if soonest else None, side=soonest[2] if soonest else 'none',
++                hp=round(float(hp)), melee=round(melee, 1), hitscan=hitscan)
++
++
++def describe(facts):
++    return (f"Combat facts: incoming={facts['incoming']}; incoming_seconds={facts['seconds'] if facts['seconds'] is not None else 'none'}; "
++            f"incoming_miss={facts['miss'] if facts['miss'] is not None else 'none'}; incoming_side={facts['side']}; "
++            f"hp={facts['hp']}; melee_nearest={facts['melee']}; hitscan_visible={facts['hitscan']}.")
++
++
++PATTERN = re.compile(r'Combat facts: incoming=(\d+); incoming_seconds=([0-9.]+|none); incoming_miss=([0-9.]+|none); '
++                     r'incoming_side=(left|right|none); hp=(-?\d+); melee_nearest=([0-9.]+); hitscan_visible=(\d+)\.')
++
++
++def parse(text):
++    found = PATTERN.search(text or '')
++    if not found:
++        return None
++    incoming, seconds, miss, side, hp, melee, hitscan = found.groups()
++    return dict(incoming=int(incoming), seconds=None if seconds == 'none' else float(seconds),
++                miss=None if miss == 'none' else float(miss), side=side, hp=int(hp), melee=float(melee), hitscan=int(hitscan))
+diff --git a/doomlib/combat_movement.py b/doomlib/combat_movement.py
+new file mode 100644
+index 0000000..6fd63c6
+--- /dev/null
++++ b/doomlib/combat_movement.py
+@@ -0,0 +1,44 @@
++"""Movement input with observed combat facts (doomlib/combat_facts.py) for an outcome-trained residual.
++
++Extends the enemy-type projection with one line of combat facts taken from the movement question's
++instructions. The frozen Laya text branch still reads the original v1 compact text (semantic_state);
++only the numeric residual sees the new facts.
++"""
++import math
++import re
++from doomlib.combat_facts import parse
++from doomlib.typed_movement import typed_movement_input, PREFIX as TYPED_PREFIX
++
++PROJECTION = 'movement-compact-v3-combat'
++PREFIX = 'Observed combat: '
++FEATURES = ('incoming', 'incoming_seconds', 'incoming_miss', 'incoming_left', 'incoming_right',
++            'health', 'melee_nearest', 'hitscan_visible')
++
++
++def combat_movement_input(state, question):
++    facts = parse(question.get('instructions', ''))
++    if facts is None:
++        raise ValueError('Missing combat facts in the movement question')
++    projected, result = typed_movement_input(state, question)
++    line = (f"{PREFIX}incoming {facts['incoming']}; soonest {facts['seconds'] if facts['seconds'] is not None else 'none'} s; "
++            f"miss {facts['miss'] if facts['miss'] is not None else 'none'} m; side {facts['side']}; health {facts['hp']}; "
++            f"nearest melee {facts['melee']:.1f} m; visible hitscan {facts['hitscan']}.")
++    return projected + '\n' + line, result
++
++
++def semantic_state(state):
++    """The frozen text branch keeps its original v1 input."""
++    return '\n'.join(line for line in state.splitlines() if not line.startswith((PREFIX, TYPED_PREFIX)))
++
++
++def combat_features(state):
++    found = re.search(re.escape(PREFIX) + r'incoming (\d+); soonest ([0-9.]+|none) s; miss ([0-9.]+|none) m; side (left|right|none); '
++                      r'health (-?\d+); nearest melee ([0-9.]+) m; visible hitscan (\d+)\.', state)
++    if not found:
++        raise ValueError('Missing observed combat facts')
++    incoming, seconds, miss, side, hp, melee, hitscan = found.groups()
++    values = [min(int(incoming), 5) / 3, 1.0 if seconds == 'none' else float(seconds), 2.0 if miss == 'none' else min(float(miss), 2) / 2,
++              float(side == 'left'), float(side == 'right'), max(0, int(hp)) / 100, min(float(melee), 32) / 32, min(int(hitscan), 10) / 5]
++    if not all(math.isfinite(v) for v in values):
++        raise ValueError('Invalid observed combat facts')
++    return values
+diff --git a/doomlib/executor.py b/doomlib/executor.py
+index 90a91be..c2cf6ca 100644
+--- a/doomlib/executor.py
++++ b/doomlib/executor.py
+@@ -1,20 +1,32 @@
+ """Execute explicit model commands; no combat, item or weapon preference policy."""
+-import math
++import math,os
+ from doomlib.navigation import Navigator
++from doomlib.mission import navigator_doors
+ from doomlib.decision_questions import NAVIGATION_ACTIONS
+-from doomlib.combat import target_bearing,WEAPON_SLOTS,AMMO_COST
++from doomlib.combat import target_bearing,WEAPON_SLOTS,AMMO_COST,fire_reaches,fire_tolerance
++
++# Diagnostic only, not a model result: DOOM_DIAG_AMBUSH_HOLD=1 holds navigation in place for 8 s
++# after an unmapped area opens within 30 m. It overrides model navigation and breaks authority.
++DIAG_AMBUSH_HOLD=os.environ.get('DOOM_DIAG_AMBUSH_HOLD')=='1'
++DIAG_HOLD_TICKS=280
++DIAG_HOLD_METERS=30
+ 
+ 
+ class Executor:
+-    def __init__(self,sectors=None,mission=None,map_weapons=False,mechanism_facts=False,attack_turn_rate=9):
++    def __init__(self,sectors=None,mission=None,map_weapons=False,mechanism_facts=False,attack_turn_rate=9,crusher_safety=False,run_navigation=False):
+         if attack_turn_rate not in (9,18,36):raise ValueError('Attack turn rate must be 9, 18 or 36 degrees per tick')
+         self.attack_turn_rate=attack_turn_rate
+-        doors=list(mission.data.get('doors',())) if mission else []
+-        if mission:doors.extend({'sector':i,'key':None} for switch in mission.data.get('switches',()) for i in switch['sectors'])
++        doors=navigator_doors(mission.data) if mission else []
+         self.navigator=Navigator(sectors,doors,mission.data.get('teleports',()) if mission else ())
+         self.mission=mission
++        # Crusher safety (--crusher-safety): routes wait outside a closing crusher, and a body caught under one
++        # steps out to the nearest safe cell while the command, target, aim and fire stay as chosen.
++        self.crushers=set(mission.data.get('crushers',())) if crusher_safety and mission else set()
++        self.crusher_state={}  # sector -> (ceiling minus floor, closing)
++        self.last_body=None  # (x, y, tick) of the previous act, for the body's momentum
+         if mechanism_facts and mission:mission.annotate_lift_routes(self.navigator)
+         self.map_weapons=map_weapons
++        self.run_navigation=run_navigation  # --run-navigation: run while following a route, as players keep always-run on
+         self.directive=None
+         self.known={}
+         self.previous=None
+@@ -31,20 +43,76 @@ class Executor:
+         self.last_selection=-1000
+         self.reachable_cache=None
+         self.look_goal_angle=None
++        self.progress=None
++        self.stall_expiry={}
++        self.running=False
++        self.diag_hold_until=-1
++        self.diag_hold_point=None
++
++    def crushed(self,cell):
++        """The cell overlaps a crusher that is closing below 96 units or is lower than 64."""
++        for i in self.navigator.body_sectors.get(cell,()):
++            if i in self.crushers and i in self.crusher_state:
++                gap,closing=self.crusher_state[i]
++                if gap<64 or (closing and gap<96):return True
++        return False
++
++    def safe_cell(self,start,limit=400):
++        from collections import deque
++        seen,queue={start},deque([start])
++        while queue and len(seen)<limit:
++            node=queue.popleft()
++            for nxt,_ in self.navigator.neighbors(node):
++                if nxt in seen:continue
++                if not self.crushed(nxt):return nxt
++                seen.add(nxt);queue.append(nxt)
++        return None
++
++    def slide_crushes(self,s,velocity,a):
++        """Whether the body's slide reaches a closing crusher: momentum until friction stops it (about ten
++        tics of the current velocity) plus half a second of the pressed movement."""
++        angle=math.radians(s['angle'])
++        forward,right=a[0]-a[1],a[3]-a[2]
++        dx=velocity[0]*10+(forward*math.cos(angle)+right*math.sin(angle))*24
++        dy=velocity[1]*10+(forward*math.sin(angle)-right*math.cos(angle))*24
++        steps=max(1,math.ceil(math.hypot(dx,dy)/8))
++        return any(self.crushed(self.navigator.nearest((s['x']+dx*i/steps,s['y']+dy*i/steps))) for i in range(1,steps+1))
++
++    @staticmethod
++    def move_toward(point,s,turn):
++        """Eight-way movement buttons toward a point, allowing for this tic's view turn."""
++        direction=round((target_bearing(dict(x=point[0],y=point[1]),s)-turn)/45)%8
++        return list([(1,0,0,0),(1,0,0,1),(0,0,0,1),(0,1,0,1),(0,1,0,0),(0,1,1,0),(0,0,1,0),(1,0,1,0)][direction])
+ 
+     def observe(self,s,tick,sectors=None):
++        if self.crushers and sectors is not None:
++            for i in self.crushers:
++                gap=sectors[i].ceiling_height-sectors[i].floor_height
++                previous=self.crusher_state.get(i)
++                closing=gap<previous[0] or (gap==previous[0] and previous[1]) if previous else False
++                self.crusher_state[i]=(gap,closing)
+         s['geometry_changes']=self.navigator.update_geometry(sectors) if sectors is not None else []
+         s['floor_changes']=self.navigator.update_floors(sectors) if sectors is not None else []
+         if s['floor_changes'] or s['geometry_changes']:self.reachable_cache=None
++        if DIAG_AMBUSH_HOLD and s['geometry_changes']:
++            cells=[c for i in s['geometry_changes'] for c in self.navigator.sector_cells.get(i,())]
++            if cells:
++                point=tuple(sum(self.navigator.point(c)[k] for c in cells)/len(cells) for k in (0,1))
++                if math.dist(point,(s['x'],s['y']))/32<DIAG_HOLD_METERS:
++                    self.diag_hold_until,self.diag_hold_point=tick+DIAG_HOLD_TICKS,point
+         self.navigator.observe(s,tick)
+         keys=(tuple(s.get('keys',())),tuple(s.get('closed_remote_doors',())))
+         # Normal doors are already traversable in the graph; opening one cannot repair a failed path.
+         if (self.failure_component is not None and self.navigator.nearest((s['x'],s['y'])) not in self.failure_component) or s.get('floor_changes') or s.get('geometry_changes') or keys!=self.previous_keys:
+-            self.failures.clear()
++            # Watchdog set-asides are time-limited and survive the area/geometry reset.
++            self.failures={key:value for key,value in self.failures.items() if key in self.stall_expiry}
+             self.command_failures.clear()
+             self.failure_origin=None
+             self.failure_component=None
+         self.previous_keys=keys
++        for key,expiry in list(self.stall_expiry.items()):
++            if tick>=expiry:
++                self.failures.pop(key,None);del self.stall_expiry[key]
+         # Keep an observed, model-selected door available while turning toward its approach.
+         selected=(self.directive or {}).get('target')
+         if (self.directive or {}).get('action')=='open_door' and selected and selected['id'] in s.get('closed_doors',()):
+@@ -98,7 +166,8 @@ class Executor:
+             cached=(signature,self.navigator.reachable((s['x'],s['y'])))
+             self.reachable_cache=cached
+         for item in self.known.values():
+-            point=self.navigator.pickup_point(item) if 'z' in item else (item['x'],item['y'])
++            point=(item['x'],item['y'])
++            if 'z' in item or self.navigator.nearest(point) not in cached[1]:point=self.navigator.pickup_point(item,cached[1])
+             item['reachable']=self.navigator.nearest(point) in cached[1]
+         s['reachable_items']={str(i['id']):i['reachable'] for i in self.known.values()}
+ 
+@@ -128,6 +197,7 @@ class Executor:
+         kind=d['action'];target=d.get('target')
+         if kind=='attack':target,self.sequence_index=advance_sequence(d,s['enemies'],getattr(self,'sequence_index',0))
+         a=[0.]*14
++        self.running=False  # SPEED with --run-combat-movement: only for the model's own movement choice
+         refs=[]
+         status='executing';detail=kind
+         current=None
+@@ -146,12 +216,13 @@ class Executor:
+                 a[4]=max(-self.attack_turn_rate,min(self.attack_turn_rate,b))
+                 melee=AMMO_COST[s['weapon']]==0
+                 usable=s['ammo']>=AMMO_COST[s['weapon']]
+-                a[5]=float(current.get('visible',True) and abs(b)<5 and usable and (not melee or current['distance']<=1.5))
++                a[5]=float(current.get('visible',True) and abs(b)<fire_tolerance(current['distance']) and usable and fire_reaches(s['weapon'],current['distance']))
+                 refs=['aim_selected_enemy']
+                 if melee and current['distance']>1.4 and not d.get('movement'):
+                     move,motor_refs=self.navigator.steer(s,tick,(current['x'],current['y']))
+                     if 'navigation_exhausted' not in motor_refs:
+-                        a[:5]=move[:5]
++                        # Approach with forward and turn only; backing up and strafing are model movements.
++                        a[0],a[4]=move[0],move[4]
+                         a[5]=float(a[5] and abs(move[4]-b)<5)
+                         refs+=motor_refs+['approach_selected_enemy']
+                     elif melee:
+@@ -162,12 +233,16 @@ class Executor:
+             if d.get('movement')=='strafe_left':a[2]=1
+             elif d.get('movement')=='strafe_right':a[3]=1
+             elif d.get('movement')=='backward':a[1]=1
++            self.running=d.get('movement') in ('strafe_left','strafe_right','backward')
+         elif kind in ('pickup','open_door','use_switch','exit','explore'):
+             objective=None;available=True
+             if kind=='pickup':
+                 current=self.known.get(target['id']) if target else None
+                 if current:
+-                    objective=self.navigator.pickup_point(current) if 'z' in current else (current['x'],current['y'])
++                    reach=self.reachable_cache[1] if self.reachable_cache else None
++                    objective=(current['x'],current['y'])
++                    if 'z' in current or (reach is not None and self.navigator.nearest(objective) not in reach):
++                        objective=self.navigator.pickup_point(current,reach)
+                     s['resource']['target']=dict(current)
+                 else:available=False
+             elif kind=='open_door':
+@@ -178,6 +253,10 @@ class Executor:
+                 current=next((v for v in s.get('switches',()) if target and v['id']==target['id']),None)
+                 available=bool(current and not current['activated'] and not current['locked'])
+                 if available:objective=current['board'] if current.get('phase')=='board' else current['approach']
++                if available and current.get('trigger')=='walk' and current.get('phase')=='call':
++                    # A walk-over line acts when crossed: head for the point on its far side.
++                    front=(s['x']-current['x'])*(current['approach'][0]-current['x'])+(s['y']-current['y'])*(current['approach'][1]-current['y'])>0
++                    objective=current['board'] if front else current['approach']
+             elif kind=='exit':
+                 available=bool(self.mission and self.mission.exit)
+                 if available:objective=self.mission.objective()
+@@ -186,6 +265,10 @@ class Executor:
+                 a[:7],refs=self.navigator.steer(s,tick,objective)
+                 if kind=='pickup' and current['distance']<2 and self.navigator.clear_segment((s['x'],s['y']),objective):
+                     b=target_bearing(dict(x=objective[0],y=objective[1]),s)
++                    item_xy=(current['x'],current['y'])
++                    if objective!=item_xy and math.dist((s['x'],s['y']),objective)<24 and not self.navigator.clear_segment((s['x'],s['y']),item_xy):
++                        # Contact across a fence or ledge: press on towards the item itself.
++                        b=target_bearing(current,s)
+                     a[:7]=[float(abs(b)<20),0,0,0,max(-6,min(6,b)),0,0]
+                     refs=['approach_selected_item']
+                 if kind=='open_door' and current['distance']<2.8 and ('approach' not in current or math.dist((s['x'],s['y']),current['approach'])<32):
+@@ -199,7 +282,10 @@ class Executor:
+                 elif kind=='use_switch' and current.get('phase')=='board' and math.dist((s['x'],s['y']),current['board'])<96:
+                     point=dict(x=current['board'][0],y=current['board'][1]);b=target_bearing(point,s)
+                     a[:7]=[float(abs(b)<20),0,0,0,max(-6,min(6,b)),0,0];refs=['board_selected_lift']
+-                elif kind=='use_switch' and current['distance']<2:
++                elif kind=='use_switch' and current.get('trigger')!='walk' and current['distance']<2 and (
++                        (s['x']-current['x'])*(current['approach'][0]-current['x'])+(s['y']-current['y'])*(current['approach'][1]-current['y'])>0):
++                    # USE switch lines respond only from the front side. From behind keep the
++                    # navigator's result, so an unreachable front side reports blocked.
+                     b=target_bearing(current,s)
+                     a[:7]=[float(abs(b)<20 and current['distance']>1.6),0,0,0,max(-6,min(6,b)),0,float(abs(b)<10 and tick%12==0)]
+                     refs=['use_selected_switch']
+@@ -222,9 +308,13 @@ class Executor:
+                     if target:
+                         self.failures[str(target['id'])]='Unreachable from the current area'
+                         if self.failure_origin is None:self.failure_origin=(s['x'],s['y'])
+-                elif target:self.failures.pop(str(target['id']),None)
+-        elif kind=='retreat':a[1]=1
++                elif target and str(target['id']) not in self.stall_expiry:self.failures.pop(str(target['id']),None)
++        elif kind=='retreat':a[1]=1;self.running=True
+         else:status,detail='waiting','Model chose wait' if d['decision_id'] is not None else 'No accepted model command'
++        if DIAG_AMBUSH_HOLD and kind in NAVIGATION_ACTIONS and tick<self.diag_hold_until and status=='executing':
++            b=target_bearing(dict(x=self.diag_hold_point[0],y=self.diag_hold_point[1]),s)
++            a[:7]=[0,0,0,0,max(-9,min(9,b)),0,0]
++            refs=['diag_ambush_hold'];detail=kind+' (diagnostic hold)'
+         combat_target=d.get('combat_target') if kind in NAVIGATION_ACTIONS else None
+         combat_enemy=next((e for e in s['enemies'] if combat_target and e['id']==combat_target['id']),None)
+         if combat_enemy:
+@@ -249,9 +339,8 @@ class Executor:
+                 combat_enemy=None
+             if combat_enemy:
+                 a[4]=turn
+-                melee=AMMO_COST[s['weapon']]==0
+                 usable=s['ammo']>=AMMO_COST[s['weapon']]
+-                a[5]=float(combat_enemy.get('visible',True) and abs(b)<5 and usable and (not melee or combat_enemy['distance']<=1.5))
++                a[5]=float(combat_enemy.get('visible',True) and abs(b)<fire_tolerance(combat_enemy['distance']) and usable and fire_reaches(s['weapon'],combat_enemy['distance']))
+                 refs.append('aim_secondary_model_enemy')
+         fighting=kind=='attack' or combat_enemy is not None
+         # Collision recovery changes motor commands, never the requested objective.
+@@ -275,6 +364,35 @@ class Executor:
+                 a[5]=0
+             a[6]=0
+             refs.append('recover_same_goal')
++        previous_body,self.last_body=self.last_body,(s['x'],s['y'],tick)
++        if self.crushers and d['decision_id'] is not None:
++            here=self.navigator.nearest(xy)
++            elapsed=tick-previous_body[2] if previous_body else 0
++            velocity=((s['x']-previous_body[0])/elapsed,(s['y']-previous_body[1])/elapsed) if 0<elapsed<=3 else (0.,0.)
++            if here is not None and self.crushed(here):
++                # A closing crusher kills in about a second whatever the command: move the body out, keep the
++                # view turn and fire.
++                safe=self.safe_cell(here)
++                if safe is not None:
++                    a[:4]=self.move_toward(self.navigator.point(safe),s,a[4])
++                    a[6]=0
++                    self.running=True
++                    refs.append('escape_crusher')
++            elif here is not None and kind in ('pickup','open_door','use_switch','exit','explore') and any(a[:4]) and any(
++                    self.crushed(c) for c in self.navigator.path[:4]):
++                # Wait at the edge, as for a door, until the crusher opens again.
++                a[:4]=[0.]*4
++                refs.append('wait_for_crusher')
++            elif here is not None and self.slide_crushes(s,velocity,a):
++                # Whatever moves the body (a model strafe, a route, momentum), it must not slide under a closing
++                # crusher: push against the momentum, or just stop pressing when nearly still.
++                if math.hypot(*velocity)>1:
++                    a[:4]=self.move_toward((s['x']-velocity[0]*16,s['y']-velocity[1]*16),s,a[4])
++                    self.running=True
++                else:a[:4]=[0.]*4
++                a[6]=0
++                refs.append('brake_for_crusher')
++        if self.run_navigation and kind in ('pickup','open_door','use_switch','exit','explore') and any(a[:4]):self.running=True
+         selection=d.get('weapon')
+         if selection and s['weapon']!=selection:a[5]=0
+         if selection and s['inventory'][str(selection)]['owned'] and s['weapon']!=selection and tick-self.last_selection>=12:
+@@ -284,6 +402,22 @@ class Executor:
+             refs.append('select_model_weapon')
+         if self.mission and kind=='use_switch' and target and a[6] and target.get('kind')=='door':
+             self.mission.note_switch_use(target['id'],s.get('engine_tic',tick))
++        # No-progress watchdog: a calm navigation command that leaves the player within 32 units
++        # for 10 s (lift boarding and riding excepted) is an executor failure. It reports blocked
++        # and sets the target aside for 30 s, as an unreachable target is set aside.
++        key=(kind,target['id'] if target else None)
++        calm=not any(e.get('visible',True) for e in s.get('enemies',()))
++        lift_wait=kind=='use_switch' and current is not None and current.get('phase') in ('board','ride')
++        if (status!='executing' or kind not in ('pickup','open_door','use_switch','exit') or not calm or lift_wait
++                or self.progress is None or self.progress[0]!=key or math.dist(xy,self.progress[1])>32):
++            self.progress=(key,xy,tick)
++        elif tick-self.progress[2]>=350:
++            a[:7]=[0.]*7
++            status,detail='blocked','No progress toward the selected target'
++            if target:
++                self.failures[str(target['id'])]='No progress toward it from here'
++                self.stall_expiry[str(target['id'])]=tick+1050
++            self.progress=(key,xy,tick)
+         if target:detail+=f" ({target.get('name',kind)} #{target['id']})"
+         self.execution={'status':status,'detail':detail,'decision_id':d['decision_id'],'command':d['command'],'action':kind,
+                         'target_id':target['id'] if target else None,'weapon':selection,'movement':d.get('movement'),
+diff --git a/doomlib/mission.py b/doomlib/mission.py
+index 3c4248b..b2d3308 100644
+--- a/doomlib/mission.py
++++ b/doomlib/mission.py
+@@ -2,9 +2,48 @@
+ import math
+ import struct
+ from pathlib import Path
++from doomlib import specials
+ 
++# S1/SR doors, the SR lift and S1/SR floor lowering, as modelled before the specials table.
++LEGACY_SWITCHES=(61,62,103,112,99,133,134,135,136,137,71,23,102,70,60,45)
+ 
+-def map_data(wad, name, skill=3):
++
++def navigator_doors(data):
++    """Moving sectors for the navigator: doors, every switch-moved sector and crushers. A legacy SR lift
++    carries its lowest floor, so the headroom check judges a drop beside it at that floor, as the executor
++    calls and boards those lifts on the way. Other lifts are judged at their current floor: a walk-over line
++    lowers its lift only if the route crosses it, and a switch may face the other side, so the model has to
++    choose the mechanism first (MAP04's lift cage)."""
++    doors=list(data.get('doors',()))
++    for switch in data.get('switches',()):
++        lowers=switch.get('kind')=='lift' and switch.get('legacy',True)
++        for i in switch['sectors']:
++            door={'sector':i,'key':None}
++            move=switch.get('moves',{}).get(i)
++            if lowers and move and move[0]=='floor':door['lowest']=move[1]
++            doors.append(door)
++    doors.extend({'sector':i,'key':None} for i in data.get('crushers',()))
++    return doors
++
++
++def lift_board(switch,vertices,lines,sides):
++    """A point on the lift platform. Behind the switch line when that line is the lift's own edge; for a switch
++    on a separate wall, the platform point nearest the switch's approach. A sector too narrow for the player's
++    body keeps the point behind the line."""
++    from shapely.geometry import LineString,Point
++    from shapely.ops import nearest_points,polygonize,unary_union
++    sector=switch['sectors'][0]
++    edges=[LineString([vertices[l[0]],vertices[l[1]]]) for l in lines
++           if vertices[l[0]]!=vertices[l[1]] and any(side!=65535 and sides[side][-1]==sector for side in l[5:7])]
++    area=unary_union(list(polygonize(edges)))
++    inner=area.buffer(-24)
++    if inner.is_empty or area.buffer(-8).covers(Point(switch['board'])):return switch['board']
++    point=nearest_points(inner,Point(switch['approach']))[0]
++    return (point.x,point.y)
++
++
++def map_data(wad, name, skill=3, extended=False):
++    """Map knowledge from the WAD; extended adds the non-legacy mechanisms of the specials table."""
+     data=Path(wad).read_bytes()
+     count,offset=struct.unpack_from('<ii',data,4)
+     directory=[struct.unpack_from('<ii8s',data,offset+i*16) for i in range(count)]
+@@ -34,18 +73,35 @@ def map_data(wad, name, skill=3):
+             a,b=vertices[start],vertices[end]
+             doors.append({'line':index,'sector':sides[back][-1],'key':locks.get(special),
+                           'a':a,'b':b,'center':((a[0]+b[0])/2,(a[1]+b[1])/2)})
+-        if special in (61,62,71,103,112,99,133,134,135,136,137):
++        # Mechanisms on tagged sectors, from the generic specials table. The switches doomLaya modelled
++        # before (S1/SR doors, SR lift 62, S1/SR floor lowering) are marked legacy; the others are
++        # walk-over lines and further lift, door and floor types.
++        rule=specials.describe(special)
++        targets=[i for i,sector in enumerate(sectors) if sector[-1]==tag] if tag else []
++        if rule and rule.trigger in ('use','walk') and rule.mover in specials.OPENS_ROUTE and targets and (extended or special in LEGACY_SWITCHES):
++            floor=rule.mover.startswith('floor') or rule.mover=='stairs'
++            kind='lift' if rule.mover=='lift' else ('floor' if floor else 'door')
+             a,b=vertices[start],vertices[end];length=math.dist(a,b)
+             center=((a[0]+b[0])/2,(a[1]+b[1])/2)
+             normal=((b[1]-a[1])/length,-(b[0]-a[0])/length)
+-            targets=[i for i,sector in enumerate(sectors) if sector[-1]==tag]
+-            switches.append({'id':index,'kind':'lift' if special==62 else ('floor' if special==71 else 'door'),'name':'Lift' if special==62 else ('Floor switch' if special==71 else 'Door switch'),'x':center[0],'y':center[1],
++            moves={}
++            if rule.mover=='stairs':
++                # A stair builder raises a chain of sectors beyond the tagged ones.
++                moves={i:('floor',h) for i,h in specials.stairs(rule,targets,sectors,lines,sides).items()}
++                targets=sorted(moves)
++            else:
++                for i in targets:
++                    move=specials.destination(rule,i,sectors,specials.neighbours(i,lines,sides))
++                    if move is not None:moves[i]=move
++            switches.append({'id':index,'kind':kind,'name':{'lift':'Lift','floor':'Floor switch','door':'Door switch'}[kind],'x':center[0],'y':center[1],
+                              'board':(center[0]-normal[0]*32,center[1]-normal[1]*32),
+                              'upper_floor':max(sectors[i][0] for i in targets),
+                              'approach':(center[0]+normal[0]*40,center[1]+normal[1]*40),
+-                             'sectors':targets,'key':{99:'blue',133:'blue',134:'red',135:'red',136:'yellow',137:'yellow'}.get(special)})
+-            if special==61:switches[-1]['repeatable']=True
+-            if special==71:switches[-1]['initial_floors']={i:sectors[i][0] for i in targets}
++                             'a':a,'b':b,'sectors':targets,'key':rule.key,'special':special,'trigger':rule.trigger,
++                             'mover':rule.mover,'moves':moves,'legacy':special in LEGACY_SWITCHES})
++            # Legacy switches keep their old flags: only SR 61 counted as repeatable.
++            if rule.repeat and (special==61 or special not in LEGACY_SWITCHES):switches[-1]['repeatable']=True
++            if floor:switches[-1]['initial_floors']={i:sectors[i][0] for i in targets}
+         if special in (39,97):
+             from shapely.geometry import LineString,Point
+             from shapely.ops import polygonize
+@@ -70,10 +126,17 @@ def map_data(wad, name, skill=3):
+         exits.append({'line':index,'special':special,'center':center,
+                       'approach':(center[0]+normal[0]*40,center[1]+normal[1]*40),
+                       'use':special in (11,51),'secret':special in (51,124)})
++    # Crushing ceilings move up and down for good once started; the sectors stay in the geometry as passable
++    # floor instead of opening and closing it every couple of seconds (extended mechanisms).
++    crushers=sorted({i for l in lines for i,sector in enumerate(sectors)
++                     if l[4] and sector[-1]==l[4] and getattr(specials.describe(l[3]),'mover',None)=='crusher'}) if extended else []
++    for switch in switches:
++        # A walk-over line's board point is also the crossing target, so only USE lifts move it.
++        if switch['kind']=='lift' and switch['trigger']=='use':switch['board']=lift_board(switch,vertices,lines,sides)
+     exit_sectors={sides[side][-1] for e in exits if not e['secret'] for side in lines[e['line']][5:] if side!=65535}
+     for switch in switches:
+         if switch['kind']=='floor' and exit_sectors.intersection(switch['sectors']):switch['route_exit']=True
+-    return {'name':name.upper(),'exits':exits,'door_sectors':sorted(door_sectors),'doors':doors,'teleports':teleports,'switches':switches,'key_markers':key_markers,'weapon_markers':weapon_markers}
++    return {'name':name.upper(),'exits':exits,'door_sectors':sorted(door_sectors),'doors':doors,'teleports':teleports,'switches':switches,'key_markers':key_markers,'weapon_markers':weapon_markers,'crushers':crushers}
+ 
+ 
+ class Mission:
+@@ -84,6 +147,11 @@ class Mission:
+         self.lowered_lifts=set()
+         self.used_switches=set()
+         self.pending_switches={}
++        self.walk_sides={}  # walk-over line id -> signed side of the player while near it
++        self.outside_z={}  # lift id -> player height when last seen off the platform
++        self.spent_lifts=set()  # one-shot walk-over lifts already crossed
++        self.descended=set()  # lifts ridden down from the upper floor, now at rest below
++        self.lift_floor={}  # lift id -> platform height at the previous observation
+ 
+     def annotate_lift_routes(self,navigator):
+         """Describe mapped keys connected to a lift's upper platform without descending."""
+@@ -104,10 +172,23 @@ class Mission:
+         """Record an executed USE; consume a one-shot button only after its door opens."""
+         self.pending_switches[switch_id]=engine_tick
+ 
++    def _crossing(self,switch,s):
++        """Record a walk-over line as used once the player's centre crosses it within the segment."""
++        (ax,ay),(bx,by)=switch['a'],switch['b']
++        dx,dy=bx-ax,by-ay;length=math.hypot(dx,dy)
++        px,py=s['x']-ax,s['y']-ay
++        along=(px*dx+py*dy)/length**2
++        side=dx*py-dy*px
++        previous=self.walk_sides.get(switch['id'])
++        self.walk_sides[switch['id']]=side if -.05<=along<=1.05 and abs(side)/length<64 else None
++        if previous is not None and self.walk_sides[switch['id']] is not None and (previous>0)!=(side>0):
++            self.used_switches.add(switch['id'])
++
+     def observe(self,s,sectors):
+         closed=[];switches=[]
+         for switch in self.data.get('switches',[]):
+             phase='call'
++            if switch.get('trigger')=='walk':self._crossing(switch,s)
+             if switch.get('kind')=='lift':
+                 sector=sectors[switch['sectors'][0]]
+                 floor=sector.floor_height
+@@ -115,12 +196,37 @@ class Mission:
+                 xs=[l.x1 for l in sector.lines]+[l.x2 for l in sector.lines]
+                 ys=[l.y1 for l in sector.lines]+[l.y2 for l in sector.lines]
+                 inside=min(xs)+16<s['x']<max(xs)-16 and min(ys)+16<s['y']<max(ys)-16
+-                if inside and switch['id'] in self.lowered_lifts:
++                if not inside:
++                    self.outside_z[switch['id']]=s.get('z',floor)
++                    if (switch.get('repeatable') and switch['id'] in self.activated_switches and floor>=switch['upper_floor']-4
++                            and s.get('z',floor)>=switch['upper_floor']-24):
++                        # Ridden up and stepped off at the top: a repeatable lift can be called again to ride down.
++                        self.activated_switches.discard(switch['id']);self.lowered_lifts.discard(switch['id'])
++                if switch.get('trigger')=='walk' and not switch.get('repeatable') and switch['id'] in self.used_switches:
++                    self.spent_lifts.add(switch['id']);self.activated_switches.add(switch['id'])
++                previous=self.lift_floor.get(switch['id']);self.lift_floor[switch['id']]=floor
++                if floor>=switch['upper_floor']-4:self.descended.discard(switch['id'])
++                elif (inside and switch['id'] in self.lowered_lifts and previous is not None and abs(floor-previous)<.5
++                      and floor<switch['upper_floor']-24 and s.get('z',floor)<=floor+4
++                      and self.outside_z.get(switch['id'],-math.inf)>=switch['upper_floor']-24):
++                    # Boarded on the upper floor and now at rest at the bottom: the ride down is over.
++                    # The lift is spent until it returns to the top, so the next command is chosen afresh.
++                    self.descended.add(switch['id'])
++                if switch['id'] in self.descended:pass  # phase stays 'call'; reported as activated below
++                elif inside and switch['id'] in self.lowered_lifts:
+                     phase='ride'
+-                    if floor>=switch['upper_floor']-1 and s.get('z',floor)>=switch['upper_floor']-1:self.activated_switches.add(switch['id'])
++                    if floor>=switch['upper_floor']-1 and s.get('z',floor)>=switch['upper_floor']-1:
++                        if self.outside_z.get(switch['id'],-math.inf)<switch['upper_floor']-24:self.activated_switches.add(switch['id'])
++                        else:
++                            # Boarded on the upper floor and back there without stepping off below: a round
++                            # trip, not a use. The lift is at rest again and can be called once more.
++                            self.lowered_lifts.discard(switch['id']);phase='call'
+                 elif floor<=s.get('z',floor)+24 and switch['id'] in self.lowered_lifts:phase='board'
+             elif switch.get('kind')=='floor':
+-                if any(sectors[i].floor_height<height-.5 for i,height in switch['initial_floors'].items()):self.activated_switches.add(switch['id'])
++                rises=switch.get('mover') in ('floor_raise','stairs')
++                if any((sectors[i].floor_height>height+.5) if rises else (sectors[i].floor_height<height-.5)
++                       for i,height in switch['initial_floors'].items()):self.activated_switches.add(switch['id'])
++                elif switch['id'] in self.used_switches and not switch.get('repeatable'):self.activated_switches.add(switch['id'])
+             else:
+                 opened=any(sectors[i].ceiling_height-sectors[i].floor_height>=56 for i in switch['sectors'])
+                 pressed=self.pending_switches.get(switch['id'])
+@@ -131,7 +237,8 @@ class Mission:
+                 if opened or (switch['id'] in self.used_switches and not switch.get('repeatable')):self.activated_switches.add(switch['id'])
+                 else:self.activated_switches.discard(switch['id'])
+                 closed.extend(i for i in switch['sectors'] if sectors[i].ceiling_height-sectors[i].floor_height<56)
+-            switches.append(dict(switch,phase=phase,activated=switch['id'] in self.activated_switches and (switch.get('kind')!='lift' or s.get('z',0)>=switch['upper_floor']-24),
++            switches.append(dict(switch,phase=phase,activated=switch['id'] in self.activated_switches and (switch.get('kind')!='lift' or s.get('z',0)>=switch['upper_floor']-24
++                                                                                       or switch['id'] in self.spent_lifts) or switch['id'] in self.descended,
+                                  distance=math.dist((s['x'],s['y']),(switch['x'],switch['y']))/32,
+                                  locked=bool(switch['key'] and switch['key'] not in s.get('keys',()))))
+         s['switches']=switches
+diff --git a/doomlib/navigation.py b/doomlib/navigation.py
+index c4368ba..0b8d186 100644
+--- a/doomlib/navigation.py
++++ b/doomlib/navigation.py
+@@ -10,6 +10,15 @@ from shapely.ops import polygonize, unary_union
+ 
+ STEP=16
+ REGION=256
++BLOCK_TICKS=60*35  # rejected edges come back after 60 s of game time
++
++
++def inside(point,lines):
++    """Even-odd rule: whether a ray from point towards +x crosses these lines an odd number of times."""
++    x,y=point.x,point.y;crossings=0
++    for l in lines:
++        if (l.y1>y)!=(l.y2>y) and x<l.x1+(y-l.y1)*(l.x2-l.x1)/(l.y2-l.y1):crossings+=1
++    return crossings%2==1
+ 
+ 
+ class Navigator:
+@@ -31,6 +40,8 @@ class Navigator:
+         self.entered=set()
+         self.path=[]
+         self.blocked=set()
++        self.blocked_at={}  # edge -> tick it was rejected; edges expire after BLOCK_TICKS
++        self.ceilings={}  # cell -> lowest fixed ceiling it overlaps (configure)
+         self.last_cell=None
+         self.last_xy=None
+         self.velocity=(0.,0.)
+@@ -54,16 +65,24 @@ class Navigator:
+         self.closed_unmapped={i for i,s in enumerate(sectors) if i not in mapped_doors and s.ceiling_height-s.floor_height<56}
+         areas=[]
+         records=[]
++        moving=set()
+         walls=[]
++        owners=Counter(frozenset(((l.x1,l.y1),(l.x2,l.y2))) for sector in sectors for l in sector.lines)
+         for sector_id,sector in enumerate(sectors):
+             lines=[LineString([(l.x1,l.y1),(l.x2,l.y2)]) for l in sector.lines if (l.x1,l.y1)!=(l.x2,l.y2)]
+-            polygons=list(polygonize(lines))
++            faces=list(polygonize(lines))
+             # Внутреннее кольцо другого сектора не превращаем в пол текущего.
+-            polygons=[p for p in polygons if not any(p is not q and Polygon(q.exterior).contains(p.representative_point()) for q in polygons)]
++            polygons=[p for p in faces if not any(p is not q and Polygon(q.exterior).contains(p.representative_point()) for q in faces)]
++            # A sector can also own floor nested inside another sector's ring (MAP20's start room): keep a nested
++            # face when a ray from it crosses the sector's boundary an odd number of times. Lines with this sector
++            # on both sides (owned by no other sector and not blocking) are not boundary.
++            boundary=[l for l in sector.lines if l.is_blocking or owners[frozenset(((l.x1,l.y1),(l.x2,l.y2)))]>1]
++            polygons+=[p for p in faces if not any(p is q for q in polygons) and inside(p.representative_point(),boundary)]
+             if not polygons:continue
+             area=unary_union(polygons)
+             height=sector.ceiling_height-sector.floor_height
+             door=sector_id in {d["sector"] for d in self.doors} if self.doors else height<=8 and len(sector.lines)<=8 and max(area.bounds[2]-area.bounds[0],area.bounds[3]-area.bounds[1])<=256
++            if door:moving.add(sector_id)
+             if height>=56 or door:
+                 areas.append(area)
+                 records.append((area,float(sector.floor_height),sector_id))
+@@ -91,6 +110,16 @@ class Navigator:
+                 self.key_blocks.setdefault(key,set()).update(zip(gx[blocked].tolist(),gy[blocked].tolist()))
+         self.free=set(zip(gx[mask].astype(int).tolist(),gy[mask].astype(int).tolist()))
+         self.floors={node:max(self.sector_heights[i] for i in self.body_sectors[node]) for node in self.free}
++        # Ceilings of sectors that do not move (doors, lifts and crushers are left out), for the headroom check:
++        # a drop into a low pocket under another sector's floor is a wall, not a step down.
++        self.sector_ceilings=[float(s.ceiling_height) for s in sectors]
++        self.fixed_ceiling=[i not in moving for i in range(len(sectors))]
++        self.ceilings={node:min((self.sector_ceilings[i] for i in self.body_sectors[node] if self.fixed_ceiling[i]),default=math.inf)
++                       for node in self.free}
++        self.lowest={}
++        for d in self.doors:
++            if 'lowest' in d:self.lowest[d['sector']]=min(self.lowest.get(d['sector'],math.inf),d['lowest'])
++        self.low_floors={node:self.low_floor(node) for node in self.free}
+         for portal in self.teleports:
+             entry,exit=self.nearest(portal['entry']),self.nearest(portal['destination'])
+             if entry is not None and exit is not None:self.portal_edges[entry]=(exit,portal['cross'])
+@@ -105,14 +134,19 @@ class Navigator:
+         nearby=[(x,y) for x in range(key[0]-4,key[0]+5) for y in range(key[1]-4,key[1]+5) if (x,y) in self.free]
+         return min(nearby,key=lambda p:math.dist(xy,self.point(p))) if nearby else None
+ 
+-    def pickup_point(self,item):
++    def pickup_point(self,item,reach=None):
+         """Find physical contact with the selected item, including its observed height."""
+         xy=(item['x'],item['y']);node=self.nearest(xy)
+-        if 'z' not in item or node is None or self.floors[node]<=item['z']+8:return xy
+-        candidates=[(x,y) for x in range(node[0]-2,node[0]+3) for y in range(node[1]-2,node[1]+3)
+-                    if (x,y) in self.free and (x,y) not in self.locked
+-                    and item['z']-56<self.floors[(x,y)]<=item['z']+8
+-                    and math.dist(xy,self.point((x,y)))<=30]
++        if node is not None and (reach is None or node in reach) and ('z' not in item or self.floors[node]<=item['z']+8):return xy
++        z=item['z'] if 'z' in item else self.floors[node] if node is not None else None
++        if z is None:return xy
++        # Doom picks an item up when the bodies' boxes overlap (16+20 units), also across a fence or
++        # ledge edge; a cell up to 44 units out leaves room to press on into the obstacle.
++        kx,ky=math.floor(xy[0]/STEP),math.floor(xy[1]/STEP)
++        candidates=[(x,y) for x in range(kx-3,kx+4) for y in range(ky-3,ky+4)
++                    if (x,y) in self.free and (x,y) not in self.locked and (reach is None or (x,y) in reach)
++                    and z-56<self.floors[(x,y)]<=z+8
++                    and max(abs(self.point((x,y))[0]-xy[0]),abs(self.point((x,y))[1]-xy[1]))<=44]
+         return self.point(min(candidates,key=lambda n:math.dist(xy,self.point(n)))) if candidates else xy
+ 
+     def observe(self,s,tick):
+@@ -124,6 +158,12 @@ class Navigator:
+                                     *(self.sector_blocks.get(i,set()) for i in s.get('closed_remote_doors',())))
+             self.path=[]
+             self.failed_request=None
++        # A rejected edge is an executor failure at one moment (a monster in the way, a door
++        # mid-motion); it is given back after a while instead of cutting the route for good.
++        expired=[e for e,t in self.blocked_at.items() if tick-t>=BLOCK_TICKS]
++        for edge in expired:
++            self.blocked.discard(edge);del self.blocked_at[edge]
++        if expired:self.failed_request=None
+         xy=(s['x'],s['y'])
+         self.velocity=(xy[0]-self.last_xy[0],xy[1]-self.last_xy[1]) if self.last_xy is not None and math.dist(xy,self.last_xy)<=128 else (0.,0.)
+         if self.last_xy is not None and math.dist(xy,self.last_xy)>128:
+@@ -147,9 +187,19 @@ class Navigator:
+             if nxt not in self.free or nxt in self.locked or (node,nxt) in self.blocked:continue
+             if dx and dy and ((node[0]+dx,node[1]) not in self.free or (node[0],node[1]+dy) not in self.free):continue
+             diff=self.floors[nxt]-self.floors[node]
+-            if diff>24:continue
++            if diff>24 or not self.headroom(node,nxt):continue
+             yield nxt,math.hypot(dx,dy)*STEP
+ 
++    def low_floor(self,node):
++        return max(min(self.sector_heights[i],self.lowest.get(i,math.inf)) for i in self.body_sectors[node])
++
++    def headroom(self,node,nxt):
++        # P_CheckPosition at the destination: the body needs 56 units between the highest floor and the lowest
++        # ceiling it overlaps. Cells along the lip of a low pocket fail, so the pocket is walled off; the cell
++        # being left is not checked, so a body in an odd spot (against a raised pillar) can always step out.
++        low=getattr(self,'low_floors',{})
++        return self.ceilings.get(nxt,math.inf)-low.get(nxt,self.floors[nxt])>=56
++
+     def update_geometry(self,sectors):
+         """Refresh walkable areas when automatic sectors open or close."""
+         mapped_doors={d['sector'] for d in self.doors}
+@@ -157,7 +207,7 @@ class Navigator:
+         if self.closed_unmapped is None or closed==self.closed_unmapped:return []
+         changed=sorted(closed^self.closed_unmapped)
+         self.configure(sectors)
+-        self.path=[];self.failed_request=None;self.blocked.clear();self.keys=None
++        self.path=[];self.failed_request=None;self.blocked.clear();self.blocked_at.clear();self.keys=None
+         return changed
+ 
+     def update_floors(self,sectors):
+@@ -169,8 +219,10 @@ class Navigator:
+                 self.sector_heights[i]=height
+         if changed:
+             affected=set().union(*(self.sector_cells.get(i,()) for i in changed))
+-            for node in affected:self.floors[node]=max(self.sector_heights[i] for i in self.body_sectors[node])
+-            self.path=[];self.failed_request=None;self.blocked.clear()
++            for node in affected:
++                self.floors[node]=max(self.sector_heights[i] for i in self.body_sectors[node])
++                self.low_floors[node]=self.low_floor(node)
++            self.path=[];self.failed_request=None;self.blocked.clear();self.blocked_at.clear()
+         return changed
+ 
+     def reachable(self,xy):
+@@ -203,10 +255,9 @@ class Navigator:
+         if self.path and self.last_cell is not None:
+             nxt=self.path[0]
+             # Блокируем конкретный неудачный переход, а не целую ветку маршрута.
+-            self.blocked.add((self.last_cell,nxt))
+-            self.blocked.add((nxt,self.last_cell))
+-            if len(self.path)>1:
+-                self.blocked.add((nxt,self.path[1]))
++            edges=[(self.last_cell,nxt),(nxt,self.last_cell)]+([(nxt,self.path[1])] if len(self.path)>1 else [])
++            for edge in edges:
++                self.blocked.add(edge);self.blocked_at[edge]=tick
+         self.path=[]
+         self.objective=None
+ 
+@@ -272,6 +323,7 @@ class Navigator:
+             node=self.nearest(point)
+             if node is None or previous is None:return False
+             if node in self.locked or self.floors[node]-self.floors[previous]>24:return False
++            if node!=previous and not self.headroom(previous,node):return False
+             if (previous,node) in self.blocked:return False
+             previous=node
+         return True
+diff --git a/doomlib/numeric_command.py b/doomlib/numeric_command.py
+index bba9c23..4e8649d 100644
+--- a/doomlib/numeric_command.py
++++ b/doomlib/numeric_command.py
+@@ -166,7 +166,8 @@ def attach_numeric_residual(agent, root):
+     from doomlib.numeric_item import FORMAT as ITEM_FORMAT, make_model as make_item_model, predict as predict_item
+     from doomlib.compact_item import CATEGORY_FORMAT
+     from doomlib.numeric_movement import FORMAT as MOVEMENT_FORMAT, PROJECTION as MOVEMENT_PROJECTION, make_model as make_movement_model, predict as predict_movement
+-    from doomlib.numeric_movement import TYPED_FORMAT as TYPED_MOVEMENT_FORMAT
++    from doomlib.numeric_movement import TYPED_FORMAT as TYPED_MOVEMENT_FORMAT, COMBAT_FORMAT as COMBAT_MOVEMENT_FORMAT
++    from doomlib.combat_movement import PROJECTION as COMBAT_MOVEMENT_PROJECTION
+     from doomlib.typed_movement import PROJECTION as TYPED_MOVEMENT_PROJECTION
+     from doomlib.numeric_switch import FORMAT as SWITCH_FORMAT, PROJECTION as SWITCH_PROJECTION, make_model as make_switch_model, predict as predict_switch
+     from doomlib.numeric_enemy import FORMAT as ENEMY_FORMAT, PROJECTION as ENEMY_PROJECTION, make_model as make_enemy_model, predict as predict_enemy
+@@ -176,6 +177,7 @@ def attach_numeric_residual(agent, root):
+         ITEM_FORMAT: ('item', CATEGORY_FORMAT, make_item_model, predict_item),
+         MOVEMENT_FORMAT: ('movement', MOVEMENT_PROJECTION, make_movement_model, predict_movement),
+         TYPED_MOVEMENT_FORMAT: ('movement', TYPED_MOVEMENT_PROJECTION, make_movement_model, predict_movement),
++        COMBAT_MOVEMENT_FORMAT: ('movement', COMBAT_MOVEMENT_PROJECTION, make_movement_model, predict_movement),
+         SWITCH_FORMAT: ('switch', SWITCH_PROJECTION, make_switch_model, predict_switch),
+         ENEMY_FORMAT: ('enemy', ENEMY_PROJECTION, make_enemy_model, predict_enemy),
+     }
+diff --git a/doomlib/numeric_movement.py b/doomlib/numeric_movement.py
+index 25e55d8..705b2d4 100644
+--- a/doomlib/numeric_movement.py
++++ b/doomlib/numeric_movement.py
+@@ -11,9 +11,15 @@ FEATURES = ('nearest', 'known', 'visible', 'left', 'right', 'back',
+             'nearest_under_twelve', 'left_at_least_two', 'left_at_least_four',
+             'right_at_least_two', 'right_at_least_four', 'back_at_least_two', 'back_at_least_four')
+ TYPED_FEATURES = FEATURES + ('visible_demons', 'nearest_visible_demon')
++COMBAT_FORMAT = 'laya-movement-numeric-residual-v3-combat'
+ 
+ 
+-def features(state, typed=False):
++def combat_feature_names():
++    from doomlib.combat_movement import FEATURES as COMBAT
++    return TYPED_FEATURES + COMBAT
++
++
++def features(state, typed=False, combat=False):
+     counts = re.search(r'Known enemies: (\d+); visible enemies: (\d+)', state)
+     nearest = re.search(r'Nearest visible threat, or remembered threat if none visible: ([0-9.]+) meters', state)
+     current = re.search(r'Current movement: (\w+)', state)
+@@ -33,9 +39,12 @@ def features(state, typed=False):
+     values.append(float(near_band[1] == 'yes'))
+     for band in bands:
+         values.extend([float(band[1] == 'yes'), float(band[2] == 'yes')])
+-    if typed:
++    if typed or combat:
+         from doomlib.typed_movement import typed_features
+         values.extend(typed_features(state))
++    if combat:
++        from doomlib.combat_movement import combat_features
++        values.extend(combat_features(state))
+     if not all(math.isfinite(value) for value in values):
+         raise ValueError('Non-finite movement observation')
+     return values
+@@ -51,7 +60,9 @@ def make_model(spec):
+     import torch
+     from torch import nn
+     from doomlib.typed_movement import PROJECTION as TYPED_PROJECTION
+-    schemas = {FORMAT: (PROJECTION, FEATURES), TYPED_FORMAT: (TYPED_PROJECTION, TYPED_FEATURES)}
++    from doomlib.combat_movement import PROJECTION as COMBAT_PROJECTION
++    schemas = {FORMAT: (PROJECTION, FEATURES), TYPED_FORMAT: (TYPED_PROJECTION, TYPED_FEATURES),
++               COMBAT_FORMAT: (COMBAT_PROJECTION, combat_feature_names())}
+     projection, feature_names = schemas.get(spec['format'], (None, ()))
+     if (spec['format'] not in schemas or spec['input_projection'] != projection or spec['actions'] != list(MOVEMENTS)
+             or spec['features'] != list(feature_names)):
+@@ -92,12 +103,14 @@ def predict(agent, state, questions):
+     if set(questions) != {'movement'} or set(questions['movement']['criteria']) != set(MOVEMENTS):
+         raise ValueError('Numeric movement requires all four explicit movements')
+     typed = agent.numeric_residual_spec['format'] == TYPED_FORMAT
++    combat = agent.numeric_residual_spec['format'] == COMBAT_FORMAT
+     from doomlib.typed_movement import semantic_state
+-    original = agent._semantic_predict(semantic_state(state) if typed else state, questions)
++    from doomlib.combat_movement import semantic_state as combat_semantic_state
++    original = agent._semantic_predict(combat_semantic_state(state) if combat else semantic_state(state) if typed else state, questions)
+     answer = original['answers']['movement']
+     base = semantic_logits(answer, agent.numeric_residual_spec['probability_floor'])
+     with torch.no_grad():
+-        x = torch.tensor([features(state, typed)], dtype=torch.float32, device=agent.device)
++        x = torch.tensor([features(state, typed, combat)], dtype=torch.float32, device=agent.device)
+         b = torch.tensor([base], dtype=torch.float32, device=agent.device)
+         scores = agent.numeric_residual(x, b)[0]
+         probabilities = dict(zip(MOVEMENTS, scores.cpu().double().softmax(-1).tolist()))
+diff --git a/doomlib/policy.py b/doomlib/policy.py
+index f6225a1..e525465 100644
+--- a/doomlib/policy.py
++++ b/doomlib/policy.py
+@@ -1,11 +1,17 @@
+ """Observation-to-question formatting; only model responses select commands."""
+-import math
+-from doomlib.combat import WEAPON_NAMES,AMMO_COST
++import math,os
++from doomlib.combat import WEAPON_NAMES,AMMO_COST,fire_reaches
+ 
+ ACTIONS={k:k for k in ('attack','pickup','open_door','use_switch','exit','retreat','explore','wait')}
+ WEAPON_DESCRIPTIONS={1:'Fists: melee, no ammunition needed.',2:'Pistol: use only when stronger guns have no ammo.',3:'Shotgun: prefer this powerful gun to the pistol when shells are available.',
+                      4:'Chaingun: rapid bullet fire.',5:'Rocket launcher: powerful, dangerous at close range.',
+                      6:'Plasma rifle: powerful rapid fire.',7:'BFG: powerful, consumes 40 cells per shot.'}
++# DOOM_WEAPON_TEXT_SHOTS=1 writes 'Shots left: N' instead of raw 'Ammo: N', for A/B runs only. The weapon
++# head was trained on 'Ammo: N': with shots it chose an empty gun in 35 of 200 replayed MAP02 questions
++# (0 with 'Ammo: N'), and MAP02 fell from 8/10 to 1/6.
++WEAPON_TEXT_SHOTS=os.environ.get('DOOM_WEAPON_TEXT_SHOTS')=='1'
++# DOOM_WEAPON_ORDER_LEGACY=1 lists weapons in slot order (fists first), for A/B runs.
++WEAPON_ORDER_LEGACY=os.environ.get('DOOM_WEAPON_ORDER_LEGACY')=='1'
+ 
+ 
+ def request(s, memory, mission):
+@@ -66,14 +72,23 @@ def request(s, memory, mission):
+     if execution.get('status') in ('blocked','unavailable','arrived'):
+         lines.append('Previous command result: '+execution.get('detail',execution['status'])+'.')
+     weapons={WEAPON_NAMES[int(k)]:int(k) for k,v in s['inventory'].items() if v['owned']}
++    if not WEAPON_ORDER_LEGACY:
++        # Melee options last: the weapon head favours the first option, and with fists listed first it chose
++        # them over a loaded pistol in 54 of 150 replayed MAP02 questions (0 with fists last).
++        weapons=dict(sorted(weapons.items(),key=lambda item:AMMO_COST[item[1]]==0))
+     nearest=min((e['distance'] for e in enemies),default=None)
+     weapon_options={}
+     for key,slot in weapons.items():
+         ammo=s['inventory'][str(slot)]['ammo']
+         loaded=ammo>=AMMO_COST[slot]
+-        reaches=nearest is not None and (AMMO_COST[slot]>0 or nearest<=1.5)
++        reaches=nearest is not None and fire_reaches(slot,nearest)
+         kind='Melee only, range 1.5m' if AMMO_COST[slot]==0 else ('Super shotgun: stronger than the shotgun, uses two shells' if slot==8 else 'Powerful ranged gun' if slot in (3,4,5,6,7) else 'Basic ranged gun')
+-        weapon_options[key]=f"{kind}. Loaded: {'yes' if loaded else 'no'}. Can hit visible enemies from here: {'yes' if loaded and reaches else 'no'}. Ammo: {ammo}."
++        supply=('No ammunition needed.' if AMMO_COST[slot]==0 else f"Shots left: {ammo//AMMO_COST[slot]}.") if WEAPON_TEXT_SHOTS else f"Ammo: {ammo}."
++        weapon_options[key]=f"{kind}. Loaded: {'yes' if loaded else 'no'}. Can hit visible enemies from here: {'yes' if loaded and reaches else 'no'}. {supply}"
++        if AMMO_COST[slot]==0 and not WEAPON_TEXT_SHOTS:
++            # Melee reads only its range and reach. With 'Loaded: yes … Ammo: 0' the head chose the chainsaw over a
++            # loaded shotgun once the chaingun was empty: 161 of 200 replayed questions could not hit (2 without).
++            weapon_options[key]=f"{kind}. Can hit visible enemies from here: {'yes' if reaches else 'no'}."
+     weapon_options['keep']='Keep the current weapon.'
+     q={'command':{'type':'choice','instructions':'Finish the level alive. Fight visible threats, get needed supplies, open blocking doors, activate switches to unlock passages, reach exit. Avoid unreachable targets and unnecessary detours.','criteria':criteria},
+        'weapon':{'type':'choice','instructions':'Choose an effective weapon. Use a loaded gun for ranged enemies. Prefer shotgun to pistol when both are loaded. Use melee when there is no usable gun.','criteria':weapon_options}}
+diff --git a/doomlib/question_heads.py b/doomlib/question_heads.py
+index ef3dffd..b05d55a 100644
+--- a/doomlib/question_heads.py
++++ b/doomlib/question_heads.py
+@@ -61,9 +61,11 @@ class QuestionHeads:
+                 from doomlib.compact_movement import compact_movement_input,FORMAT
+                 from doomlib.typed_movement import typed_movement_input,PROJECTION as TYPED_FORMAT
+                 trained_format=getattr(agent,'cfg',{}).get('doom_adaptation',{}).get('input_projection')
+-                projector=typed_movement_input if trained_format==TYPED_FORMAT else compact_movement_input
++                from doomlib.combat_movement import combat_movement_input,PROJECTION as COMBAT_FORMAT
++                projectors={TYPED_FORMAT:typed_movement_input,COMBAT_FORMAT:combat_movement_input}
++                projector=projectors.get(trained_format,compact_movement_input)
+                 selected_state,question=projector(state,question)
+-                projection=TYPED_FORMAT if trained_format==TYPED_FORMAT else FORMAT
++                projection=trained_format if trained_format in projectors else FORMAT
+             if self.enemy_compact_facts and name=='enemy':
+                 from doomlib.compact_enemy import compact_enemy_input,FORMAT
+                 selected_state,question=compact_enemy_input(state,question);projection=FORMAT
+diff --git a/doomlib/specials.py b/doomlib/specials.py
+new file mode 100644
+index 0000000..25ed19d
+--- /dev/null
++++ b/doomlib/specials.py
+@@ -0,0 +1,220 @@
++"""Vanilla Doom 2 linedef specials as data: trigger, repeat, mover and where the mover stops.
++
++One table for every map (from Doom's p_spec.c, p_doors.c, p_floor.c, p_plats.c), so route knowledge on an
++unseen map comes from the same engine rules, never from facts written for a particular map. Boom
++generalized specials are not decoded yet; `describe` reports them as unknown.
++"""
++from collections import namedtuple
++
++Special = namedtuple('Special', 'trigger repeat mover rule key')
++# trigger: manual (door acts on the line's back sector), use, walk, gun, monster (monsters only)
++# mover: door_open, door_raise (opens, waits, closes), door_close, floor_lower, floor_raise, lift, stairs,
++#        ceiling, crusher, teleport, exit, secret_exit, other
++
++
++def _table():
++    t = {}
++
++    def add(numbers, trigger, repeat, mover, rule=None, key=None):
++        for n in numbers:
++            t[n] = Special(trigger, repeat, mover, rule, key)
++
++    # Doors acting on the back sector of the used line.
++    add([1, 117], 'manual', True, 'door_raise')
++    add([31, 118], 'manual', False, 'door_open')
++    add([26], 'manual', True, 'door_raise', key='blue')
++    add([27], 'manual', True, 'door_raise', key='yellow')
++    add([28], 'manual', True, 'door_raise', key='red')
++    add([32], 'manual', False, 'door_open', key='blue')
++    add([33], 'manual', False, 'door_open', key='red')
++    add([34], 'manual', False, 'door_open', key='yellow')
++    # Remote doors on tagged sectors.
++    add([2, 109], 'walk', False, 'door_open')
++    add([86, 106], 'walk', True, 'door_open')
++    add([4, 108], 'walk', False, 'door_raise')
++    add([90, 105], 'walk', True, 'door_raise')
++    add([3, 16, 110], 'walk', False, 'door_close')
++    add([75, 76, 107], 'walk', True, 'door_close')
++    add([103, 112], 'use', False, 'door_open')
++    add([61, 115], 'use', True, 'door_open')
++    add([29, 111], 'use', False, 'door_raise')
++    add([63, 114], 'use', True, 'door_raise')
++    add([50, 113], 'use', False, 'door_close')
++    add([42, 116], 'use', True, 'door_close')
++    add([133], 'use', False, 'door_open', key='blue')
++    add([99], 'use', True, 'door_open', key='blue')
++    add([135], 'use', False, 'door_open', key='red')
++    add([134], 'use', True, 'door_open', key='red')
++    add([137], 'use', False, 'door_open', key='yellow')
++    add([136], 'use', True, 'door_open', key='yellow')
++    add([46], 'gun', True, 'door_open')
++    # Floors lowering.
++    add([38, 37], 'walk', False, 'floor_lower', 'lowest_floor')
++    add([82, 84], 'walk', True, 'floor_lower', 'lowest_floor')
++    add([23], 'use', False, 'floor_lower', 'lowest_floor')
++    add([60], 'use', True, 'floor_lower', 'lowest_floor')
++    add([19], 'walk', False, 'floor_lower', 'highest_floor')
++    add([83], 'walk', True, 'floor_lower', 'highest_floor')
++    add([102], 'use', False, 'floor_lower', 'highest_floor')
++    add([45], 'use', True, 'floor_lower', 'highest_floor')
++    add([36], 'walk', False, 'floor_lower', 'highest_floor_plus8')
++    add([98], 'walk', True, 'floor_lower', 'highest_floor_plus8')
++    add([71], 'use', False, 'floor_lower', 'highest_floor_plus8')
++    add([70], 'use', True, 'floor_lower', 'highest_floor_plus8')
++    # Floors rising.
++    add([5], 'walk', False, 'floor_raise', 'lowest_ceiling')
++    add([91], 'walk', True, 'floor_raise', 'lowest_ceiling')
++    add([101], 'use', False, 'floor_raise', 'lowest_ceiling')
++    add([64], 'use', True, 'floor_raise', 'lowest_ceiling')
++    add([24], 'gun', False, 'floor_raise', 'lowest_ceiling')
++    add([56], 'walk', False, 'floor_raise', 'lowest_ceiling_minus8')
++    add([94], 'walk', True, 'floor_raise', 'lowest_ceiling_minus8')
++    add([55], 'use', False, 'floor_raise', 'lowest_ceiling_minus8')
++    add([65], 'use', True, 'floor_raise', 'lowest_ceiling_minus8')
++    add([119, 130, 22], 'walk', False, 'floor_raise', 'next_floor')
++    add([128, 129, 95], 'walk', True, 'floor_raise', 'next_floor')
++    add([18, 131, 20], 'use', False, 'floor_raise', 'next_floor')
++    add([69, 132, 68], 'use', True, 'floor_raise', 'next_floor')
++    add([47], 'gun', False, 'floor_raise', 'next_floor')
++    add([58, 59], 'walk', False, 'floor_raise', 'plus24')
++    add([92, 93], 'walk', True, 'floor_raise', 'plus24')
++    add([15], 'use', False, 'floor_raise', 'plus24')
++    add([66], 'use', True, 'floor_raise', 'plus24')
++    add([14], 'use', False, 'floor_raise', 'plus32')
++    add([67], 'use', True, 'floor_raise', 'plus32')
++    add([140], 'use', False, 'floor_raise', 'plus512')
++    add([30], 'walk', False, 'floor_raise', 'shortest_texture')
++    add([96], 'walk', True, 'floor_raise', 'shortest_texture')
++    add([9], 'use', False, 'other')  # donut
++    # Lifts: down to the lowest neighbouring floor, wait, back up.
++    add([10, 121], 'walk', False, 'lift')
++    add([88, 120], 'walk', True, 'lift')
++    add([21, 122], 'use', False, 'lift')
++    add([62, 123], 'use', True, 'lift')
++    add([53], 'walk', False, 'lift')  # perpetual
++    add([87], 'walk', True, 'lift')
++    add([54, 89], 'walk', None, 'other')  # stop perpetual lift
++    # Stairs.
++    add([8], 'walk', False, 'stairs', 'step8')
++    add([100], 'walk', False, 'stairs', 'step16')
++    add([7], 'use', False, 'stairs', 'step8')
++    add([127], 'use', False, 'stairs', 'step16')
++    # Ceilings and crushers block or hurt; they never open a route.
++    add([40, 44], 'walk', False, 'ceiling')
++    add([72], 'walk', True, 'ceiling')
++    add([41], 'use', False, 'ceiling')
++    add([43], 'use', True, 'ceiling')
++    add([6, 25, 141], 'walk', False, 'crusher')
++    add([73, 77], 'walk', True, 'crusher')
++    add([49], 'use', False, 'crusher')
++    add([57, 74], 'walk', None, 'other')  # crusher stop
++    # Teleports, exits, lights, scrolling.
++    add([39], 'walk', False, 'teleport')
++    add([97], 'walk', True, 'teleport')
++    add([125], 'monster', False, 'teleport')
++    add([126], 'monster', True, 'teleport')
++    add([11], 'use', False, 'exit')
++    add([52], 'walk', False, 'exit')
++    add([51], 'use', False, 'secret_exit')
++    add([124], 'walk', False, 'secret_exit')
++    add([12, 13, 17, 35, 79, 80, 81, 104, 138, 139], 'walk', None, 'other')
++    add([48], None, None, 'other')
++    return t
++
++
++SPECIALS = _table()
++OPENS_ROUTE = ('door_open', 'door_raise', 'floor_lower', 'floor_raise', 'lift', 'stairs')
++
++
++def describe(number):
++    """The special's entry, or None for 0 and for numbers vanilla Doom does not define."""
++    return SPECIALS.get(number)
++
++
++def neighbours(sector, lines, sides):
++    """Sectors sharing a two-sided linedef with this one."""
++    result = set()
++    for line in lines:
++        front, back = line[5], line[6]
++        if back == 65535:
++            continue
++        a, b = sides[front][-1], sides[back][-1]
++        if a == sector and b != sector:
++            result.add(b)
++        elif b == sector and a != sector:
++            result.add(a)
++    return result
++
++
++def stairs(special, tagged, sectors, lines, sides):
++    """Final floor of every step a stair builder raises, as {sector: height} (p_floor.c EV_BuildStairs).
++
++    From each tagged sector (in sector order) the builder raises that sector by the step size, then moves on
++    through the first two-sided line, in linedef order, whose front side is the current step and whose back
++    sector has the same floor flat; each further step is one step size higher. As in vanilla, a sector that
++    is already moving ends the chain after the height has been counted."""
++    size = 16 if special.rule == 'step16' else 8
++    touching = {}
++    for line in lines:
++        for side in (line[5], line[6]):
++            if side != 65535:
++                touching.setdefault(sides[side][-1], []).append(line)
++    heights = {}
++    for start in sorted(tagged):
++        if start in heights:
++            continue
++        sector, height = start, sectors[start][0] + size
++        heights[sector] = height
++        while True:
++            for line in touching.get(sector, ()):
++                if not line[2] & 4 or line[6] == 65535 or sides[line[5]][-1] != sector:
++                    continue
++                step = sides[line[6]][-1]
++                if sectors[step][2] != sectors[start][2]:
++                    continue
++                height += size
++                if step in heights:
++                    continue
++                sector = step
++                heights[sector] = height
++                break
++            else:
++                break
++    return heights
++
++
++def destination(special, sector, sectors, around):
++    """(part, height) where the mover leaves this sector, from the WAD's initial heights; None if unknown.
++
++    sectors are WAD SECTORS tuples (floor, ceiling, ...); around is the neighbour set from `neighbours`.
++    Lifts report the low end of their travel: the high end is the sector's own floor.
++    """
++    floor, ceiling = sectors[sector][0], sectors[sector][1]
++    floors = [sectors[i][0] for i in around]
++    ceilings = [sectors[i][1] for i in around]
++    mover, rule = special.mover, special.rule
++    if mover in ('door_open', 'door_raise'):
++        return ('ceiling', min(ceilings) - 4) if ceilings else None
++    if mover == 'lift':
++        return ('floor', min([floor] + floors))
++    if mover == 'floor_lower':
++        if rule == 'lowest_floor':
++            return ('floor', min([floor] + floors))
++        if not floors:
++            return None
++        highest = max(floors)
++        if rule == 'highest_floor_plus8' and highest != floor:
++            highest += 8
++        return ('floor', highest)
++    if mover == 'floor_raise':
++        if rule in ('lowest_ceiling', 'lowest_ceiling_minus8'):
++            if not ceilings:
++                return None
++            height = min(min(ceilings), ceiling) - (8 if rule == 'lowest_ceiling_minus8' else 0)
++            return ('floor', height)
++        if rule == 'next_floor':
++            higher = [f for f in floors if f > floor]
++            return ('floor', min(higher)) if higher else ('floor', floor)
++        if rule in ('plus24', 'plus32', 'plus512'):
++            return ('floor', floor + int(rule[4:]))
++    return None
+diff --git a/serve_doom_laya.py b/serve_doom_laya.py
+index 5139e7d..782d95c 100644
+--- a/serve_doom_laya.py
++++ b/serve_doom_laya.py
+@@ -140,7 +140,8 @@ def main():
+             from doomlib.compact_movement import FORMAT
+             from doomlib.typed_movement import PROJECTION as TYPED_FORMAT
+             trained_format=overrides['movement'].cfg.get('doom_adaptation',{}).get('input_projection')
+-            projection=trained_format if trained_format==TYPED_FORMAT else FORMAT
++            from doomlib.combat_movement import PROJECTION as COMBAT_FORMAT
++            projection=trained_format if trained_format in (TYPED_FORMAT,COMBAT_FORMAT) else FORMAT
+             if head_metadata['movement'].get('question_format')!=projection:raise ValueError('Movement head was not trained on compact inputs')
+             head_metadata['movement']['input_projection']=projection
+         if args.enemy_compact_facts:
+@@ -211,6 +212,10 @@ def main():
+         if args.command_compact_facts:
+             if not any(line.startswith("HP ") for line in warmup_state.splitlines()):warmup_state+="\nHP 100; armor 0.\nInventory: pistol 50 ammo."
+             warmup_state+="\nCollected keys: none."
++        if "movement" in overrides and (overrides["movement"].numeric_residual_metadata or {}).get("composition","").endswith("-combat") and "movement" in warmup_questions:
++            # A combat movement head reads the combat facts that agent.py --combat-facts adds to the question.
++            from doomlib.combat_facts import describe as describe_combat
++            warmup_questions["movement"]=dict(warmup_questions["movement"],instructions=warmup_questions["movement"]["instructions"]+" "+describe_combat(dict(incoming=0,seconds=None,miss=None,side="none",hp=100,melee=99.0,hitscan=0)))
+         if "command" in overrides and overrides["command"].numeric_residual_metadata:
+             warmup_questions["command"] = dict(type="choice", instructions="Choose a command.", criteria={"wait":"Wait", "explore":"Explore"})
+         if "switch" in overrides and overrides["switch"].numeric_residual_metadata:
+diff --git a/tests/test_attack_movement_lifetime.py b/tests/test_attack_movement_lifetime.py
+index e4a5186..02d9c1c 100644
+--- a/tests/test_attack_movement_lifetime.py
++++ b/tests/test_attack_movement_lifetime.py
+@@ -27,6 +27,15 @@ class AttackMovementLifetimeTest(unittest.TestCase):
+     def test_stationary_choice_does_not_acquire_implicit_movement(self):
+         controller,state,_=self.case(None)
+         self.assertEqual(controller.act(state,1)[0],[0.]*14)
++        self.assertFalse(controller.running)
++
++    def test_running_follows_only_the_model_movement(self):
++        for movement in ('strafe_left','strafe_right','backward'):
++            controller,state,_=self.case(movement)
++            controller.act(state,1)
++            self.assertTrue(controller.running)
++            controller.act(state,21)
++            self.assertFalse(controller.running)
+ 
+     def test_expiry_stops_movement_even_when_target_is_missing(self):
+         controller,state,_=self.case('strafe_left')
+diff --git a/tests/test_authority.py b/tests/test_authority.py
+index 768b93c..bb7a3cf 100644
+--- a/tests/test_authority.py
++++ b/tests/test_authority.py
+@@ -251,7 +251,7 @@ class AuthorityTest(unittest.TestCase):
+         from types import SimpleNamespace
+         c,s=self.setup_state();item=dict(s['items'][0],x=0,y=0)
+         c.known={item['id']:item}
+-        c.navigator=SimpleNamespace(nearest=lambda xy:xy,
++        c.navigator=SimpleNamespace(nearest=lambda xy:xy,pickup_point=lambda item,reach=None:(item['x'],item['y']),
+             reachable=lambda xy:{(0,0),(1,0)} if xy==(0,0) else {(1,0)},
+             movement_clearance=lambda state:{'back':0.,'left':3.,'right':4.})
+         s.update(x=0,y=0);c.annotate_physical_facts(s)
+@@ -315,7 +315,7 @@ class AuthorityTest(unittest.TestCase):
+         item=dict(s['items'][0],x=s['x']+16,y=s['y'],z=0,distance=.5)
+         c.known={item['id']:item}
+         contact=(s['x'],s['y']+16)
+-        c.navigator.pickup_point=lambda value:contact
++        c.navigator.pickup_point=lambda value,reach=None:contact
+         c.navigator.clear_segment=lambda origin,target:True
+         enemy=dict(s['enemies'][0],aim_bearing=0,bearing=0,distance=4,visible=True)
+         s['enemies']=[enemy]
+diff --git a/tests/test_combat_facts.py b/tests/test_combat_facts.py
+new file mode 100644
+index 0000000..26a2838
+--- /dev/null
++++ b/tests/test_combat_facts.py
+@@ -0,0 +1,51 @@
++import unittest
++from types import SimpleNamespace as NS
++from doomlib import combat_facts
++from doomlib.combat_movement import combat_movement_input, semantic_state, combat_features, PREFIX
++from doomlib.typed_movement import PREFIX as TYPED_PREFIX
++
++
++def label(name, category, oid, x, y):
++    return NS(object_name=name, object_category=category, object_id=oid, object_position_x=x, object_position_y=y)
++
++
++class CombatFactsTest(unittest.TestCase):
++    def test_projectile_heading_for_the_player_is_incoming(self):
++        # Player at the origin facing east (angle 0); a fireball 320 units ahead, 20 units to the left, flying west.
++        labels = [label('DoomImpBall', 'Explosive', 5, 320, 20), label('Demon', 'Monster', 6, 96, 0),
++                  label('ShotgunGuy', 'Monster', 7, 600, 0), label('ExplosiveBarrel', 'Explosive', 8, 64, 64)]
++        objects = {5: NS(velocity_x=-10, velocity_y=0), 8: NS(velocity_x=0, velocity_y=0)}
++        facts = combat_facts.compute(labels, objects, 0, 0, 0, 45)
++        self.assertEqual(facts['incoming'], 1)
++        self.assertAlmostEqual(facts['seconds'], 32 / 35, places=2)
++        self.assertEqual(facts['side'], 'left')
++        self.assertEqual((facts['hp'], facts['melee'], facts['hitscan']), (45, 3.0, 1))
++
++    def test_projectile_flying_away_or_wide_is_not_incoming(self):
++        labels = [label('DoomImpBall', 'Explosive', 5, 320, 0), label('DoomImpBall', 'Explosive', 6, 320, 300)]
++        objects = {5: NS(velocity_x=10, velocity_y=0), 6: NS(velocity_x=-10, velocity_y=0)}
++        self.assertEqual(combat_facts.compute(labels, objects, 0, 0, 0, 100)['incoming'], 0)
++
++    def test_round_trip_and_projection(self):
++        facts = dict(incoming=1, seconds=0.4, miss=0.3, side='right', hp=60, melee=99.0, hitscan=2)
++        self.assertEqual(combat_facts.parse('x ' + combat_facts.describe(facts)), facts)
++        criteria = {m: 'Move. Body clearance in this direction: 3.0m.' for m in ('strafe_left', 'strafe_right', 'backward')}
++        criteria['stationary'] = 'Stand still.'
++        question = dict(type='choice', instructions='Choose movement. ' + combat_facts.describe(facts), criteria=criteria)
++        state = 'Movement: stationary.\nEnemies: DoomImp#3 6.0m (visible)'
++        projected, result = combat_movement_input(state, question)
++        self.assertNotIn('Combat facts', result['instructions'])
++        self.assertTrue(any(line.startswith(PREFIX) for line in projected.splitlines()))
++        self.assertFalse(any(line.startswith((PREFIX, TYPED_PREFIX)) for line in semantic_state(projected).splitlines()))
++        self.assertEqual(combat_features(projected), [1 / 3, 0.4, 0.15, 0.0, 1.0, 0.6, 1.0, 0.4])  # melee capped at 32 m
++
++    def test_missing_facts_are_an_error(self):
++        criteria = {m: 'Move. Body clearance in this direction: 3.0m.' for m in ('strafe_left', 'strafe_right', 'backward')}
++        criteria['stationary'] = 'Stand still.'
++        with self.assertRaises(ValueError):
++            combat_movement_input('Movement: stationary.\nEnemies: DoomImp#3 6.0m (visible)',
++                                  dict(type='choice', instructions='Choose movement.', criteria=criteria))
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tests/test_crusher_safety.py b/tests/test_crusher_safety.py
+new file mode 100644
+index 0000000..613a086
+--- /dev/null
++++ b/tests/test_crusher_safety.py
+@@ -0,0 +1,71 @@
++"""A closing crusher: routes wait outside, a body caught under one steps out; command and target unchanged."""
++import unittest
++from types import SimpleNamespace
++from doomlib.executor import Executor
++from doomlib.mission import Mission
++from tests.test_dynamic_geometry import room
++
++
++def setup(gaps, decision=True, safety=True):
++    sectors=[room(0,128),room(128,256,ceiling=88)]
++    mission=Mission(dict(name='TEST',exits=[],switches=[],crushers=[1],doors=[],teleports=[],key_markers=[]))
++    c=Executor(sectors,mission,crusher_safety=safety)
++    s=dict(x=200.,y=64.,z=0.,angle=0.,keys=[],enemies=[],items=[],walls=dict(left=3,right=3,ahead=3),door=None,
++           hp=100,armor=0,weapon=2,ammo=50,inventory={str(k):dict(owned=k==2,ammo=50) for k in range(1,10)},switches=[])
++    for tick,gap in enumerate(gaps):
++        sectors[1].ceiling_height=gap
++        c.observe(s,tick,sectors)
++    if decision:c.accept(dict(action='wait',command='wait',target=None,weapon=None,decision_id=1,expires_tick=99),len(gaps))
++    return c,s,len(gaps)
++
++
++class CrusherSafetyTest(unittest.TestCase):
++    def test_body_under_a_closing_crusher_steps_out_toward_the_safe_side(self):
++        c,s,tick=setup([88,80,72])
++        buttons,refs=c.act(s,tick)
++        self.assertIn('escape_crusher',refs)
++        self.assertEqual(buttons[1],1)  # facing east, the safe room is behind
++        self.assertEqual(buttons[5],0)
++        self.assertEqual(s['execution']['action'],'wait')
++
++    def test_open_crusher_or_no_decision_or_flag_off_leaves_the_body_alone(self):
++        for gaps,decision,safety in (([88,88,88],True,True),([88,80,72],False,True),([88,80,72],True,False)):
++            with self.subTest(gaps=gaps,decision=decision,safety=safety):
++                c,s,tick=setup(gaps,decision,safety)
++                buttons,refs=c.act(s,tick)
++                self.assertNotIn('escape_crusher',refs)
++                self.assertEqual(buttons[:4],[0,0,0,0])
++
++
++    def brake_case(self,x,step,action='wait',movement=None):
++        c,s,tick=setup([96,92,88])
++        enemy=dict(id=5,name='DoomImp',x=s['x'],y=s['y']+300,z=0,distance=9.,bearing=90,aim_bearing=90,visible=True)
++        target=enemy if action=='attack' else None
++        c.accept(dict(action=action,command=action,target=target,weapon=None,movement=movement,decision_id=2,expires_tick=99),tick)
++        s.update(x=x-step,enemies=[enemy] if target else [])
++        c.act(s,tick)
++        s['x']=x
++        return c.act(s,tick+1)
++
++    def test_momentum_toward_a_closing_crusher_is_braked(self):
++        # Sliding east at 8 units a tic, 40 units short of the crusher's body cells.
++        buttons,refs=self.brake_case(56.,8.)
++        self.assertIn('brake_for_crusher',refs)
++        self.assertEqual(buttons[:4],[0,1,0,0])  # facing east: push back west
++
++    def test_model_strafe_into_a_closing_crusher_is_held(self):
++        # Drifting east toward the crusher during the model's strafe: the strafe gives way to braking west,
++        # while the aim at the model's target stays as it would be.
++        buttons,refs=self.brake_case(80.,6.,'attack','strafe_left')
++        self.assertIn('brake_for_crusher',refs)
++        self.assertEqual(buttons[:4],[0,1,0,0])
++        self.assertEqual(buttons[4],self.brake_case(24.,0.,'attack','strafe_left')[0][4])
++
++    def test_still_body_far_from_the_crusher_keeps_its_movement(self):
++        buttons,refs=self.brake_case(24.,0.,'attack','strafe_left')
++        self.assertNotIn('brake_for_crusher',refs)
++        self.assertEqual(buttons[2],1)
++
++
++if __name__=='__main__':
++    unittest.main()
+diff --git a/tests/test_dynamic_geometry.py b/tests/test_dynamic_geometry.py
+index 238fcb5..e3ea187 100644
+--- a/tests/test_dynamic_geometry.py
++++ b/tests/test_dynamic_geometry.py
+@@ -30,3 +30,29 @@ class DynamicGeometryTest(unittest.TestCase):
+         self.assertNotIn(nav.nearest((256,64)),nav.reachable((64,64)))
+         sectors[1].floor_height=0;nav.update_geometry(sectors);nav.update_floors(sectors)
+         self.assertIn(nav.nearest((256,64)),nav.reachable((64,64)))
++
++
++class HeadroomTest(unittest.TestCase):
++    """A drop into a low pocket whose ceiling is below the current floor is a wall (MAP04's lift cage)."""
++
++    def test_pocket_below_a_higher_floor_is_not_a_step_down(self):
++        sectors=[room(0,128,floor=-32,ceiling=96),room(128,256,floor=-160,ceiling=-96)]
++        nav=Navigator(sectors,doors=[{'sector':99,'key':None}])
++        self.assertNotIn(nav.nearest((192,64)),nav.reachable((64,64)))
++        sectors[1].ceiling_height=40
++        nav=Navigator(sectors,doors=[{'sector':99,'key':None}])
++        self.assertIn(nav.nearest((192,64)),nav.reachable((64,64)))
++
++    def test_lift_that_lowers_on_the_way_is_judged_at_its_lowest_floor(self):
++        sectors=[room(0,128,floor=96,ceiling=168),room(128,256,floor=-72,ceiling=40)]
++        current=Navigator(sectors,doors=[{'sector':0,'key':None}])
++        self.assertNotIn(current.nearest((192,64)),current.reachable((64,64)))
++        nav=Navigator(sectors,doors=[{'sector':0,'key':None,'lowest':-72}])
++        self.assertIn(nav.nearest((192,64)),nav.reachable((64,64)))
++
++    def test_body_against_a_raised_pillar_can_step_out(self):
++        # The cell beside the pillar overlaps it (floor 8) under a 40-unit ceiling, which does not fit; the
++        # player standing there must still be able to leave.
++        sectors=[room(0,128,floor=-96,ceiling=40),room(128,160,floor=8,ceiling=8)]
++        nav=Navigator(sectors,doors=[{'sector':1,'key':None}])
++        self.assertIn(nav.nearest((40,64)),nav.reachable((120,64)))
+diff --git a/tests/test_floor_switches.py b/tests/test_floor_switches.py
+new file mode 100644
+index 0000000..a7a5397
+--- /dev/null
++++ b/tests/test_floor_switches.py
+@@ -0,0 +1,23 @@
++import unittest
++from pathlib import Path
++import vizdoom
++from doomlib.mission import map_data
++
++WAD = Path(vizdoom.__file__).parent / 'freedoom2.wad'
++
++
++class FloorSwitchTest(unittest.TestCase):
++    def test_lower_to_highest_neighbour_switch_is_a_floor_switch(self):
++        # MAP04 line 883 (S1 lower floor to highest neighbour) opens the way to the red key.
++        switch = next(s for s in map_data(WAD, 'MAP04')['switches'] if s['id'] == 883)
++        self.assertEqual(switch['kind'], 'floor')
++        self.assertEqual(switch['initial_floors'], {54: 8})
++
++    def test_known_maps_keep_their_switches(self):
++        kinds = {m: [(s['id'], s['kind']) for s in map_data(WAD, m)['switches']] for m in ('MAP01', 'MAP03')}
++        self.assertEqual(kinds['MAP01'], [(839, 'door')])
++        self.assertEqual([s for s in kinds['MAP03'] if s[1] == 'floor'], [(2839, 'floor')])
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tests/test_lift_round_trip.py b/tests/test_lift_round_trip.py
+new file mode 100644
+index 0000000..bd1b3c6
+--- /dev/null
++++ b/tests/test_lift_round_trip.py
+@@ -0,0 +1,102 @@
++"""Lift state: a round trip from the upper floor is not a use, one-shot walk lifts stay spent, and the
++boarding point lies on the platform."""
++import unittest
++from pathlib import Path
++from types import SimpleNamespace
++
++import vizdoom
++
++from doomlib.mission import Mission, map_data
++
++
++def lift_case(**extra):
++    lines=[SimpleNamespace(x1=0,y1=0,x2=256,y2=0),SimpleNamespace(x1=256,y1=256,x2=0,y2=256)]
++    sector=SimpleNamespace(lines=lines,floor_height=0,ceiling_height=128)
++    lift=dict(id=7,kind='lift',sectors=[0],upper_floor=0,x=300,y=128,key=None,**extra)
++    return Mission(dict(exits=[],switches=[lift])),sector
++
++
++class LiftRoundTripTest(unittest.TestCase):
++    def test_round_trip_from_the_upper_floor_keeps_the_lift_available(self):
++        mission,sector=lift_case(repeatable=True)
++        mission.observe(dict(x=300,y=128,z=0),[sector])       # on the upper floor, off the platform
++        sector.floor_height=-128
++        mission.observe(dict(x=128,y=128,z=-128),[sector])    # dropped on, lowered
++        sector.floor_height=0
++        top=dict(x=128,y=128,z=0)
++        mission.observe(top,[sector])                          # carried back up without stepping off
++        self.assertFalse(top['switches'][0]['activated'])
++        self.assertEqual(top['switches'][0]['phase'],'call')
++        again=dict(x=128,y=128,z=0)
++        mission.observe(again,[sector])
++        self.assertEqual(again['switches'][0]['phase'],'call')
++
++    def test_ride_up_from_the_lower_floor_is_a_use(self):
++        mission,sector=lift_case(repeatable=True)
++        sector.floor_height=-128
++        mission.observe(dict(x=300,y=128,z=-128),[sector])    # waiting below
++        mission.observe(dict(x=128,y=128,z=-128),[sector])    # boarded below
++        sector.floor_height=0
++        top=dict(x=128,y=128,z=0)
++        mission.observe(top,[sector])
++        self.assertTrue(top['switches'][0]['activated'])
++
++    def test_repeatable_lift_ridden_up_can_be_called_again_from_the_top(self):
++        mission,sector=lift_case(repeatable=True)
++        sector.floor_height=-128
++        mission.observe(dict(x=300,y=128,z=-128),[sector])
++        mission.observe(dict(x=128,y=128,z=-128),[sector])
++        sector.floor_height=0
++        top=dict(x=128,y=128,z=0)
++        mission.observe(top,[sector])
++        self.assertTrue(top['switches'][0]['activated'])
++        off=dict(x=300,y=128,z=0)
++        mission.observe(off,[sector])                          # stepped off at the top
++        self.assertFalse(off['switches'][0]['activated'])
++        self.assertEqual(off['switches'][0]['phase'],'call')
++
++    def test_ride_down_ends_when_the_lift_rests_below(self):
++        mission,sector=lift_case(repeatable=True)
++        mission.observe(dict(x=300,y=128,z=0),[sector])        # on the upper floor, off the platform
++        mission.observe(dict(x=128,y=128,z=0),[sector])        # boarded on the upper floor
++        sector.floor_height=-64
++        moving=dict(x=128,y=128,z=-64)
++        mission.observe(moving,[sector])
++        self.assertEqual(moving['switches'][0]['phase'],'ride')
++        sector.floor_height=-128
++        mission.observe(dict(x=128,y=128,z=-128),[sector])
++        rest=dict(x=128,y=128,z=-128)
++        mission.observe(rest,[sector])                         # at rest below: the trip is over
++        self.assertTrue(rest['switches'][0]['activated'])
++        self.assertEqual(rest['switches'][0]['phase'],'call')
++        off=dict(x=300,y=128,z=-128)
++        mission.observe(off,[sector])
++        self.assertTrue(off['switches'][0]['activated'])
++        sector.floor_height=0                                  # back at the top: it can be called from below
++        later=dict(x=300,y=128,z=-128)
++        mission.observe(later,[sector])
++        self.assertFalse(later['switches'][0]['activated'])
++        self.assertEqual(later['switches'][0]['phase'],'call')
++
++    def test_crossed_one_shot_walk_lift_stays_spent_below(self):
++        mission,sector=lift_case(trigger='walk',a=(100,0),b=(100,256))
++        mission.observe(dict(x=90,y=128,z=0),[sector])
++        mission.observe(dict(x=110,y=128,z=0),[sector])
++        below=dict(x=300,y=128,z=-128)
++        mission.observe(below,[sector])
++        self.assertTrue(below['switches'][0]['activated'])
++
++    def test_board_point_is_on_the_platform(self):
++        data=map_data(Path(vizdoom.__file__).parent/'freedoom2.wad','MAP04',extended=True)
++        lifts={s['id']:s for s in data['switches'] if s['kind']=='lift'}
++        # Switch on a separate wall east of the 256x256 platform (x 0-256, y 1472-1728).
++        x,y=lifts[917]['board']
++        self.assertTrue(0<x<256 and 1472<y<1728,(x,y))
++        # The line is the platform's own edge: the point behind it stays.
++        self.assertEqual(lifts[992]['board'],(128.0,1600.0))
++        # An 8-unit strip cannot hold the player: unchanged.
++        self.assertEqual(lifts[909]['board'],(224.0,1600.0))
++
++
++if __name__=='__main__':
++    unittest.main()
+diff --git a/tests/test_rocket_safety.py b/tests/test_rocket_safety.py
+new file mode 100644
+index 0000000..f0d5983
+--- /dev/null
++++ b/tests/test_rocket_safety.py
+@@ -0,0 +1,32 @@
++import unittest
++
++from doomlib.combat import ROCKET_SAFE_METERS, fire_reaches, fire_tolerance
++from doomlib.executor import Executor
++
++
++class RocketSafetyTest(unittest.TestCase):
++    def test_rocket_launcher_does_not_reach_inside_its_blast_radius(self):
++        self.assertFalse(fire_reaches(5, ROCKET_SAFE_METERS - 0.5))
++        self.assertTrue(fire_reaches(5, ROCKET_SAFE_METERS + 0.5))
++
++    def test_melee_and_guns_keep_their_ranges(self):
++        self.assertTrue(fire_reaches(1, 1.4))
++        self.assertFalse(fire_reaches(9, 2.0))
++        self.assertTrue(fire_reaches(4, 1.0))
++
++    def test_close_enemies_are_fired_at_when_the_aim_is_inside_their_body(self):
++        self.assertGreater(fire_tolerance(1.6), 15)
++        self.assertEqual(fire_tolerance(10), 5.0)
++        for distance, fires in ((1.6, 1), (10, 0)):
++            e = Executor()
++            s = dict(x=0, y=0, angle=0, hp=100, weapon=3, ammo=10, walls=dict(left=10, right=10),
++                     enemies=[dict(id=1, bearing=8, aim_bearing=8, distance=distance, visible=True)],
++                     inventory={'3': {'owned': 1, 'ammo': 10}})
++            e.accept(dict(action='attack', target={'id': 1, 'name': 'Enemy'}, weapon=3, decision_id=1,
++                          command='attack', expires_tick=70), 0)
++            buttons, _ = e.act(s, 0)
++            self.assertEqual(buttons[5], fires)
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tests/test_run_navigation.py b/tests/test_run_navigation.py
+new file mode 100644
+index 0000000..efbac10
+--- /dev/null
++++ b/tests/test_run_navigation.py
+@@ -0,0 +1,37 @@
++"""--run-navigation: a route is followed running; without the flag, and for a model's wait, the body walks."""
++import unittest
++from doomlib.executor import Executor
++from doomlib.mission import Mission
++from tests.test_dynamic_geometry import room
++
++
++def act(action, run_navigation):
++    sectors=[room(0,128),room(128,256)]
++    mission=Mission(dict(name='TEST',exits=[],switches=[],crushers=[],doors=[],teleports=[],key_markers=[]))
++    c=Executor(sectors,mission,run_navigation=run_navigation)
++    s=dict(x=40.,y=64.,z=0.,angle=0.,keys=[],enemies=[],items=[],walls=dict(left=3,right=3,ahead=3),door=None,
++           hp=100,armor=0,weapon=2,ammo=50,inventory={str(k):dict(owned=k==2,ammo=50) for k in range(1,10)},switches=[])
++    item=dict(id=7,name='Medikit',category='Health',x=220.,y=64.,z=0.,distance=5.6,bearing=0)
++    c.observe(s,0,sectors)
++    c.known[7]=item
++    c.accept(dict(action=action,command=action,target=item if action=='pickup' else None,weapon=None,decision_id=1,expires_tick=99),1)
++    buttons,_=c.act(s,1)
++    return c,buttons
++
++
++class RunNavigationTest(unittest.TestCase):
++    def test_route_is_followed_running_only_with_the_flag(self):
++        c,buttons=act('pickup',True)
++        self.assertTrue(any(buttons[:4]))
++        self.assertTrue(c.running)
++        c,buttons=act('pickup',False)
++        self.assertTrue(any(buttons[:4]))
++        self.assertFalse(c.running)
++
++    def test_wait_does_not_run(self):
++        c,_=act('wait',True)
++        self.assertFalse(c.running)
++
++
++if __name__=='__main__':
++    unittest.main()
+diff --git a/tests/test_specials.py b/tests/test_specials.py
+new file mode 100644
+index 0000000..02e3277
+--- /dev/null
++++ b/tests/test_specials.py
+@@ -0,0 +1,79 @@
++import unittest
++from pathlib import Path
++import vizdoom
++from doomlib import specials
++from doomlib.mission import map_data, Mission, LEGACY_SWITCHES
++
++WAD = Path(vizdoom.__file__).parent / 'freedoom2.wad'
++
++
++class SpecialsTableTest(unittest.TestCase):
++    def test_vanilla_numbers(self):
++        self.assertEqual(specials.describe(88), specials.Special('walk', True, 'lift', None, None))
++        self.assertEqual(specials.describe(109).mover, 'door_open')
++        self.assertEqual(specials.describe(99).key, 'blue')
++        self.assertEqual(specials.describe(38).rule, 'lowest_floor')
++        self.assertIsNone(specials.describe(0))
++        self.assertIsNone(specials.describe(0x3000))  # Boom generalized: not decoded
++
++    def test_destinations_follow_engine_rules(self):
++        # (floor, ceiling) per sector; sector 0 neighbours 1 and 2.
++        sectors = [(64, 128), (0, 200), (32, 96)]
++        around = {1, 2}
++        move = lambda n: specials.destination(specials.describe(n), 0, sectors, around)
++        self.assertEqual(move(38), ('floor', 0))       # lowest neighbouring floor
++        self.assertEqual(move(19), ('floor', 32))      # highest neighbouring floor
++        self.assertEqual(move(36), ('floor', 40))      # turbo: highest neighbour + 8
++        self.assertEqual(move(5), ('floor', 96))       # lowest neighbouring ceiling
++        self.assertEqual(move(56), ('floor', 88))      # ... minus 8 (crushing)
++        self.assertEqual(move(119), ('floor', 64))     # no higher neighbour floor: stays
++        self.assertEqual(move(58), ('floor', 88))      # +24
++        self.assertEqual(move(2), ('ceiling', 92))     # doors stop 4 below the lowest neighbour ceiling
++        self.assertEqual(move(88), ('floor', 0))       # lifts lower to the lowest floor around
++
++
++class MapMechanismsTest(unittest.TestCase):
++    def test_legacy_switch_set_is_unchanged_by_default(self):
++        for name in ('MAP01', 'MAP02', 'MAP03', 'MAP04'):
++            switches = map_data(WAD, name)['switches']
++            self.assertTrue(all(s['special'] in LEGACY_SWITCHES and s['legacy'] for s in switches))
++        self.assertEqual([(s['id'], s['kind']) for s in map_data(WAD, 'MAP01')['switches']], [(839, 'door')])
++
++    def test_extended_mechanisms_include_walk_over_lines(self):
++        switches = map_data(WAD, 'MAP02', extended=True)['switches']
++        lifts = [s for s in switches if s['trigger'] == 'walk']
++        self.assertEqual(sorted(s['special'] for s in lifts), [88, 88, 88])
++        self.assertTrue(all(s['kind'] == 'lift' and not s['legacy'] and s['repeatable'] for s in lifts))
++
++    def test_walk_over_line_counts_as_used_after_a_crossing(self):
++        line = dict(id=7, kind='door', trigger='walk', a=(0, 0), b=(0, 128), x=0, y=64, sectors=[], key=None,
++                    approach=(40, 64), board=(-32, 64))
++        mission = Mission(dict(exits=[], switches=[line]))
++        for x in (20, 5, -5):
++            mission._crossing(line, dict(x=x, y=64))
++        self.assertIn(7, mission.used_switches)
++        far = Mission(dict(exits=[], switches=[line]))
++        for x in (20, -20):
++            far._crossing(line, dict(x=x, y=400))  # beside the segment, not across it
++        self.assertNotIn(7, far.used_switches)
++
++
++if __name__ == '__main__':
++    unittest.main()
++
++
++class StairsTest(unittest.TestCase):
++    def test_builder_raises_the_chain_through_front_sides_with_the_same_flat(self):
++        # Sectors 0 (tagged), 1, 2 share flat FLAT1; 3 has another flat. Lines: 0->1, 1->2, 2->3 (front->back).
++        sectors = [(0, 128, b'FLAT1', b'C', 160, 0, 5), (0, 128, b'FLAT1', b'C', 160, 0, 0),
++                   (0, 128, b'FLAT1', b'C', 160, 0, 0), (0, 128, b'FLAT2', b'C', 160, 0, 0)]
++        sides = [(0, 0, b'-', b'-', b'-', s) for s in (0, 1, 1, 2, 2, 3)]
++        lines = [(0, 1, 4, 0, 0, 0, 1), (1, 2, 4, 0, 0, 2, 3), (2, 3, 4, 0, 0, 4, 5)]
++        self.assertEqual(specials.stairs(specials.describe(7), [0], sectors, lines, sides), {0: 8, 1: 16, 2: 24})
++        self.assertEqual(specials.stairs(specials.describe(127), [0], sectors, lines, sides), {0: 16, 1: 32, 2: 48})
++
++    def test_chain_follows_front_sides_only(self):
++        sectors = [(0, 128, b'F', b'C', 160, 0, 5), (0, 128, b'F', b'C', 160, 0, 0)]
++        sides = [(0, 0, b'-', b'-', b'-', s) for s in (1, 0)]
++        lines = [(0, 1, 4, 0, 0, 0, 1)]  # front side is sector 1, so the step from 0 does not continue
++        self.assertEqual(specials.stairs(specials.describe(8), [0], sectors, lines, sides), {0: 8})
+diff --git a/tests/test_weapon_text.py b/tests/test_weapon_text.py
+new file mode 100644
+index 0000000..810fc3b
+--- /dev/null
++++ b/tests/test_weapon_text.py
+@@ -0,0 +1,40 @@
++import unittest
++from unittest import mock
++
++from doomlib import policy
++from doomlib.policy import request
++
++
++def criteria():
++    inventory = {str(k): dict(owned=int(k in (1, 3, 4, 5, 9)), ammo={3: 50, 5: 2}.get(k, 0))
++                 for k in range(1, 10)}
++    state = dict(hp=50, armor=0, inventory=inventory, door=None, keys=[], walls=dict(left=3, right=3), execution={},
++                 enemies=[dict(id=1, name='DoomImp', distance=8.0, bearing=0, visible=True, x=0, y=0, z=0)])
++    return request(state, {}, None)['questions']['weapon']['criteria']
++
++
++class WeaponTextTest(unittest.TestCase):
++    def test_weapon_options_keep_the_trained_raw_ammo_text(self):
++        # The weapon head was trained on 'Ammo: N'; other wordings make it pick empty guns.
++        with mock.patch.object(policy, 'WEAPON_TEXT_SHOTS', False):
++            c = criteria()
++        self.assertTrue(c['shotgun'].endswith('Ammo: 50.'))
++        self.assertTrue(c['rocket_launcher'].endswith('Ammo: 2.'))
++        self.assertIn('Loaded: no', c['chaingun'])
++        self.assertNotIn('Shots left', ' '.join(c.values()))
++
++    def test_melee_options_state_only_range_and_reach(self):
++        # 'Loaded: yes ... Ammo: 0' drew the head to the chainsaw once the chaingun was empty.
++        with mock.patch.object(policy, 'WEAPON_TEXT_SHOTS', False):
++            c = criteria()
++        self.assertEqual(c['chainsaw'], 'Melee only, range 1.5m. Can hit visible enemies from here: no.')
++        self.assertNotIn('Ammo', c['melee'])
++
++    def test_shots_left_text_is_an_explicit_a_b_option(self):
++        with mock.patch.object(policy, 'WEAPON_TEXT_SHOTS', True):
++            c = criteria()
++        self.assertTrue(c['shotgun'].endswith('Shots left: 50.'))
++        self.assertTrue(c['chainsaw'].endswith('No ammunition needed.'))
++
++    def test_melee_options_are_listed_last(self):
++        self.assertEqual([k for k in criteria() if k != 'keep'][-2:], ['melee', 'chainsaw'])
+diff --git a/tools/build_weapon_sensor.py b/tools/build_weapon_sensor.py
+index 0b55594..2aeccb7 100644
+--- a/tools/build_weapon_sensor.py
++++ b/tools/build_weapon_sensor.py
+@@ -1,4 +1,4 @@
+-"""Build the read-only ACS weapon observer with the official ZDoom ACC compiler."""
++"""Build the ACS libraries (the read-only weapon observer, the inventory carry-over) with the official ZDoom ACC compiler."""
+ import argparse
+ from pathlib import Path
+ import subprocess
+@@ -6,14 +6,21 @@ import tempfile
+ import zipfile
+ 
+ ROOT=Path(__file__).resolve().parents[1]
++# target: (source, library name, pk3, extra lumps from files)
++TARGETS={'weapon_sensor':('assets/weapon_sensor.acs','LAYAOBS','assets/weapon_sensor.pk3',{}),
++         'carry_inventory':('assets/carry_inventory.acs','LAYACARRY','assets/carry_inventory.pk3',{'CVARINFO':'assets/carry_inventory.cvarinfo'})}
+ 
+ def main():
+-    p=argparse.ArgumentParser();p.add_argument('--acc',type=Path,required=True);p.add_argument('--include',type=Path,required=True);a=p.parse_args()
++    p=argparse.ArgumentParser();p.add_argument('--acc',type=Path,required=True);p.add_argument('--include',type=Path,required=True)
++    p.add_argument('--target',choices=TARGETS,default='weapon_sensor');a=p.parse_args()
++    source,library,pk3,extra=TARGETS[a.target]
+     with tempfile.TemporaryDirectory() as work:
+-        compiled=Path(work)/'LAYAOBS.o'
+-        subprocess.run([str(a.acc.resolve()),'-i',str(a.include.resolve()),str(ROOT/'assets/weapon_sensor.acs'),str(compiled)],check=True)
+-        with zipfile.ZipFile(ROOT/'assets/weapon_sensor.pk3','w') as output:
+-            for name,data in [('LOADACS',b'LAYAOBS\n'),('acs/LAYAOBS.o',compiled.read_bytes())]:
++        compiled=Path(work)/f'{library}.o'
++        subprocess.run([str(a.acc.resolve()),'-i',str(a.include.resolve()),str(ROOT/source),str(compiled)],check=True)
++        lumps=[('LOADACS',f'{library}\n'.encode()),(f'acs/{library}.o',compiled.read_bytes())]
++        lumps+=[(name,(ROOT/path).read_bytes()) for name,path in extra.items()]
++        with zipfile.ZipFile(ROOT/pk3,'w') as output:
++            for name,data in lumps:
+                 info=zipfile.ZipInfo(name,date_time=(2026,1,1,0,0,0));info.compress_type=zipfile.ZIP_STORED
+                 output.writestr(info,data)
+ 
+diff --git a/tools/check_authority.py b/tools/check_authority.py
+index f035e68..fc8e25c 100644
+--- a/tools/check_authority.py
++++ b/tools/check_authority.py
+@@ -103,7 +103,10 @@ def check(run):
+   require(e['target_id']==((selected or {}).get('id')),prefix+'Target override')
+   require(e.get('movement')==command.get('movement'),prefix+'Combat movement override')
+   if kind=='attack':require(abs(a[4])<=cfg['args'].get('attack_turn_rate',9)+.00001,prefix+'Attack turn exceeds configured motor limit')
+-  if kind=='attack' and 'recover_same_goal' not in s.get('reflexes',[]):
++  # Crusher safety moves the body out from under, or brakes it short of, a closing crusher.
++  escaping=bool({'escape_crusher','brake_for_crusher'}&set(s.get('reflexes',[])))
++  if escaping:require(cfg['args'].get('crusher_safety'),prefix+'Crusher escape without --crusher-safety')
++  if kind=='attack' and 'recover_same_goal' not in s.get('reflexes',[]) and not escaping:
+    if a[1]:require(command.get('movement')=='backward',prefix+'Unauthorized backward attack')
+    if a[2]:require(command.get('movement')=='strafe_left',prefix+'Unauthorized left strafe')
+    if a[3]:require(command.get('movement')=='strafe_right',prefix+'Unauthorized right strafe')
+@@ -115,11 +118,14 @@ def check(run):
+    shot_target=e['target_id'] if kind=='attack' else e.get('combat_target_id')
+    require(any(x['id']==shot_target and x.get('visible',True) for x in s['enemies']),prefix+'Shooting at unobserved/different enemy')
+   if a[6]:require(kind in ('open_door','use_switch','exit'),prefix+'Unauthorized USE')
++  if len(a)>14 and a[14]:
++   require((cfg['args'].get('run_combat_movement') and (escaping or kind=='retreat' or (kind=='attack' and command.get('movement') in ('strafe_left','strafe_right','backward'))))
++           or (cfg['args'].get('run_navigation') and kind in ('pickup','open_door','use_switch','exit','explore')),prefix+'Unauthorized running')
+   for slot in range(1,8):
+    if a[6+slot]:require(WEAPON_SLOTS.get(command['weapon'])==slot,prefix+'Unauthorized weapon selection')
+   if kind=='look_back':
+-   require(not any(a[:4]+a[5:7]) and 0<=a[4]<=9,prefix+'Look-back motor override')
+-  if kind=='wait':require(not any(a[:7]),prefix+'Wait overridden')
++   require(not any((a[:4] if not escaping else [])+a[5:7]) and 0<=a[4]<=9,prefix+'Look-back motor override')
++  if kind=='wait':require(not any(a[4:7] if escaping else a[:7]),prefix+'Wait overridden')
+  require(bool(accepted),'No accepted model decisions')
+  require(summary['video_frames']==len(rows) if cfg['args']['record'] else True,'Video/telemetry frame mismatch')
+  result={'pass':not errors,'frames':len(rows),'accepted_decisions':len(accepted),'errors':errors,
+diff --git a/tools/check_carry_inventory.py b/tools/check_carry_inventory.py
+new file mode 100644
+index 0000000..2a0d469
+--- /dev/null
++++ b/tools/check_carry_inventory.py
+@@ -0,0 +1,76 @@
++"""Check the inventory carry-over in the engine, without a model: give an inventory on MAP01, exit with
++changemap, hand it over as agent.py does, and compare on MAP02. A death restart must stay a pistol start.
++
++    .venv/bin/python -m tools.check_carry_inventory
++"""
++import argparse
++import json
++
++import vizdoom as vzd
++
++from agent import BUTTONS, make_game
++from doomlib import carry
++
++CASES = [
++    ('pistol start', 3, []),
++    ('green 33 % armour, shells', 3, ['Shotgun', 'GreenArmor', 'Shell']),
++    ('armour bonuses over 100', 3, ['GreenArmor'] + ['ArmorBonus'] * 7 + ['Stimpack']),
++    ('blue armour, backpack, super shotgun, soulsphere', 3, ['SuperShotgun', 'BlueArmor', 'Backpack', 'Soulsphere', 'ClipBox']),
++    ('everything, ammo doubled on skill 1', 1, ['Chainsaw', 'Chaingun', 'RocketLauncher', 'PlasmaRifle', 'BFG9000', 'Backpack', 'Megasphere', 'CellPack']),
++    ('chaingun selected, armour below 100', 3, ['Chaingun', 'GreenArmor', '!take BasicArmor 40', '@4']),
++    ('everything, ammo doubled on skill 5', 5, ['Shotgun', 'RocketLauncher', 'ShellBox', 'RocketBox', 'GreenArmor']),
++]
++
++
++def idle(game, ticks):
++    game.make_action([0] * game.get_available_buttons_size(), ticks)
++
++
++def run(name, skill, items):
++    args = argparse.Namespace(map='MAP01', skill=skill, seed=1, show=False, sound=False, carry_inventory=True)
++    game = make_game(args, no_monsters=True)
++    try:
++        idle(game, 12)
++        for item in items:
++            if item.startswith('@'):  # press SELECT_WEAPONn for a few tics
++                press = [0] * game.get_available_buttons_size()
++                press[BUTTONS.index(getattr(vzd.Button, 'SELECT_WEAPON' + item[1:]))] = 1
++                game.make_action(press, 4)
++            else:
++                game.send_game_command(item[1:] if item.startswith('!') else 'give ' + item)
++                idle(game, 2)
++        idle(game, 35)  # a weapon switch takes a few tics
++        before = carry.read(game)
++        game.send_game_command('changemap MAP02')
++        for _ in range(200):
++            if game.is_episode_finished():
++                break
++            idle(game, 1)
++        assert game.is_episode_finished(), 'changemap did not finish the episode'
++        carry.hand_over(game, before, 1)
++        game.set_doom_map('MAP02')
++        game.new_episode()
++        idle(game, 12)
++        wrong = carry.check(game, before, 1)
++        # A new game without a pending serial (a death restart) is a pistol start again.
++        game.new_episode()
++        idle(game, 12)
++        restart = carry.read(game)
++        pistol = dict(health=100, armor=0, armortype=0, backpack=0, clip=50, shell=0, rocket=0, cell=0, weapons=6, selected=2)
++        restart_wrong = {k: (pistol[k], restart[k]) for k in pistol if restart[k] != pistol[k]}
++        return dict(case=name, skill=skill, carried=before, mismatch=wrong, restart_mismatch=restart_wrong,
++                    ok=not wrong and not restart_wrong)
++    finally:
++        game.close()
++
++
++def main():
++    results = [run(*case) for case in CASES]
++    for r in results:
++        print(json.dumps(r))
++    print('ALL OK' if all(r['ok'] for r in results) else 'FAILED')
++    raise SystemExit(0 if all(r['ok'] for r in results) else 1)
++
++
++if __name__ == '__main__':
++    main()
+diff --git a/training/finetune_combat_movement.py b/training/finetune_combat_movement.py
+new file mode 100644
+index 0000000..718717d
+--- /dev/null
++++ b/training/finetune_combat_movement.py
+@@ -0,0 +1,160 @@
++"""Train a movement residual on rollout outcomes (doom/fight_rollouts.py) with a frozen Laya head.
++
++Each row is a movement question from a collection run (agent.py --fight-states --combat-facts) with the
++outcome of every movement replayed from the saved engine state. The residual learns soft targets
++softmax(score / temperature) over the four movements; the frozen Laya text branch keeps its own input.
++Validation is on other runs (maps or seeds), and the epoch is chosen by validation regret: the score of
++the best movement minus the score of the movement the head would choose.
++
++  .venv/bin/python training/finetune_combat_movement.py --base checkpoints/laya-doom-v031/laya-v031-movement-numeric-v1 \
++      --rollouts ../../results/doom_heads/fight-rollouts-v1.jsonl --validation-runs <run-name>... \
++      --cache ../../results/doom_heads/combat-movement-cache.json --output ../../results/doom_heads/laya-combat-movement-v1
++"""
++import argparse
++import copy
++import hashlib
++import json
++import os
++from pathlib import Path
++import shutil
++import subprocess
++import sys
++import time
++os.environ.update(USE_TF='0', USE_TORCH='1', TOKENIZERS_PARALLELISM='false')
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++from doomlib.compact_movement import MOVEMENTS
++from doomlib.combat_movement import PROJECTION, combat_movement_input, semantic_state
++from doomlib.numeric_movement import COMBAT_FORMAT, combat_feature_names, features, semantic_logits, make_model
++
++
++def digest(path):
++    with Path(path).open('rb') as stream:
++        return hashlib.file_digest(stream, 'sha256').hexdigest()
++
++
++def load(paths):
++    rows = []
++    for path in paths:
++        for line in Path(path).read_text().splitlines():
++            r = json.loads(line)
++            state, question = combat_movement_input(r['raw_state'], r['raw_question'])
++            rows.append(dict(run=r['run'], tick=r['tick'], state=state, question=question,
++                             scores=[r['scores'][m] for m in MOVEMENTS], chosen=r['chosen']))
++    return rows
++
++
++def main():
++    p = argparse.ArgumentParser(description=__doc__)
++    for name in ('base', 'cache', 'output'):
++        p.add_argument('--' + name, type=Path, required=True)
++    p.add_argument('--rollouts', type=Path, nargs='+', required=True)
++    p.add_argument('--validation-runs', nargs='+', required=True, help='run names held out for validation')
++    p.add_argument('--epochs', type=int, default=200)
++    p.add_argument('--temperature', type=float, default=5.0, help='score units (health points) per logit')
++    p.add_argument('--device', default='mps')
++    a = p.parse_args()
++    if a.output.exists():
++        raise ValueError('Output exists')
++    import torch
++    from safetensors.torch import save_file
++    from laya import Agent
++    from doomlib.laya_runtime import enable_single_option_padding
++    torch.manual_seed(771)
++    torch.set_num_threads(2)
++    rows = load(a.rollouts)
++    held = set(a.validation_runs)
++    splits = {'train': [r for r in rows if r['run'] not in held], 'validation': [r for r in rows if r['run'] in held]}
++    if not splits['train'] or not splits['validation']:
++        raise ValueError('Both splits need rows')
++    identity = dict(semantic_weights=digest(a.base / 'model.safetensors'), config=digest(a.base / 'rl_agent_config.json'),
++                    rollouts={str(path): digest(path) for path in a.rollouts}, validation_runs=sorted(held))
++    cache = json.loads(a.cache.read_text()) if a.cache.exists() else dict(identity=identity, answers={})
++    if cache['identity'] != identity:
++        raise ValueError('Semantic cache identity differs')
++    agent = Agent(str(a.base), device=a.device)
++    enable_single_option_padding(agent.model)
++    for split, group in splits.items():
++        if split not in cache['answers']:
++            cache['answers'][split] = [agent.predict(semantic_state(r['state']), {'movement': r['question']})['answers']['movement'] for r in group]
++    a.cache.write_text(json.dumps(cache) + '\n')
++    del agent
++    prepared = {}
++    for split, group in splits.items():
++        scores = torch.tensor([r['scores'] for r in group], dtype=torch.float32)
++        prepared[split] = (torch.tensor([features(r['state'], combat=True) for r in group], dtype=torch.float32),
++                           torch.tensor([semantic_logits(answer) for answer in cache['answers'][split]], dtype=torch.float32),
++                           scores, (scores / a.temperature).softmax(-1),
++                           torch.tensor([MOVEMENTS.index(r['chosen']) for r in group]))
++    names = combat_feature_names()
++    thresholds = {}
++    for index in range(len(names)):
++        unique = prepared['train'][0][:, index].unique().sort().values
++        if len(unique) > 3:
++            thresholds[str(index)] = torch.quantile(unique, torch.linspace(0, 1, min(33, len(unique)))).tolist()
++    spec = dict(format=COMBAT_FORMAT, input_projection=PROJECTION, actions=list(MOVEMENTS), features=list(names),
++                thresholds=thresholds, hidden_size=64, probability_floor=.0001)
++    model = make_model(spec)
++    optimizer = torch.optim.AdamW(model.parameters(), lr=.002, weight_decay=.001)
++
++    def regret(split, choice=None):
++        x, b, scores, _, chosen = prepared[split]
++        if choice is None:
++            model.eval()
++            with torch.no_grad():
++                choice = model(x, b).argmax(-1)
++        picked = scores.gather(1, choice[:, None])[:, 0]
++        return float((scores.max(-1).values - picked).mean())
++
++    x, b, scores, target, chosen = prepared['validation']
++    baselines = dict(semantic=regret('validation', b.argmax(-1)), recorded=regret('validation', chosen),
++                     stationary=regret('validation', torch.zeros(len(x), dtype=torch.long)))
++    print('BASELINE validation regret', baselines, flush=True)
++    best, history = None, []
++    start = time.monotonic()
++    for epoch in range(a.epochs):
++        model.train()
++        x, b, _, target, _ = prepared['train']
++        for indices in torch.randperm(len(x)).split(256):
++            log_p = torch.log_softmax(model(x[indices], b[indices]), -1)
++            loss = -(target[indices] * log_p).sum(-1).mean()
++            optimizer.zero_grad()
++            loss.backward()
++            optimizer.step()
++        value = regret('validation')
++        history.append(dict(epoch=epoch + 1, validation_regret=value, train_regret=regret('train')))
++        if best is None or value < best[0]:
++            best = (value, epoch + 1, copy.deepcopy(model.state_dict()))
++        if epoch % 25 == 0:
++            print('EPOCH', epoch + 1, 'validation regret', round(value, 3), 'best', round(best[0], 3), flush=True)
++    if best[0] >= baselines['semantic']:
++        raise ValueError(f'No improvement on validation regret ({best[0]:.3f} vs semantic {baselines["semantic"]:.3f})')
++
++    def clone(source, target):
++        if sys.platform == 'darwin':
++            subprocess.run(['/bin/cp', '-c', str(source), str(target)], check=True)
++        else:
++            shutil.copyfile(source, target)
++        return target
++    shutil.copytree(a.base, a.output, copy_function=clone)
++    (a.output / 'numeric-residual.json').write_text(json.dumps(spec, indent=2) + '\n')
++    save_file(best[2], str(a.output / 'numeric-residual.safetensors'))
++    config = json.loads((a.output / 'rl_agent_config.json').read_text())
++    config['doom_adaptation']['input_projection'] = PROJECTION
++    config['doom_adaptation']['question_format'] = PROJECTION
++    config['doom_adaptation']['numeric_residual'] = dict(format=COMBAT_FORMAT, spec_sha256=digest(a.output / 'numeric-residual.json'),
++        weights_sha256=digest(a.output / 'numeric-residual.safetensors'), semantic_parent=a.base.name, identity=identity,
++        seed=771, epochs=a.epochs, best_epoch=best[1], temperature=a.temperature, learning_rate=.002,
++        trainer_sha256=digest(__file__), inference_sha256=digest('doomlib/numeric_movement.py'),
++        projection_sha256=digest('doomlib/combat_movement.py'), facts_sha256=digest('doomlib/combat_facts.py'),
++        note='Frozen Laya semantic scores plus a residual trained on replayed outcomes of each movement (health lost, '
++             'damage dealt, death) from saved engine states. Labels come from the game only; validation on other runs.')
++    (a.output / 'rl_agent_config.json').write_text(json.dumps(config, indent=2) + '\n')
++    metrics = dict(baselines=baselines, best_validation_regret=best[0], best_epoch=best[1], seconds=time.monotonic() - start,
++                   rows={k: len(v) for k, v in splits.items()}, epochs=history, identity=identity)
++    (a.output / 'training-metrics.json').write_text(json.dumps(metrics, indent=2) + '\n')
++    (a.output / 'best-epoch.json').write_text(json.dumps(dict(epoch=best[1], validation={'movement_regret': best[0]}, numeric_residual=True), indent=2) + '\n')
++    print('CHECKPOINT', a.output, 'validation regret', round(best[0], 3), 'baselines', baselines, flush=True)
++
++
++if __name__ == '__main__':
++    main()

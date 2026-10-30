@@ -1,0 +1,324 @@
+diff --git a/doomlib/combat.py b/doomlib/combat.py
+index 5a9c3ae..07c7f8c 100644
+--- a/doomlib/combat.py
++++ b/doomlib/combat.py
+@@ -1,10 +1,33 @@
+ """Удержание видимой цели и выбор оружия из настоящего инвентаря."""
+ import math
++import os
+ 
+ WEAPON_NAMES = {1:'melee',2:'pistol',3:'shotgun',4:'chaingun',5:'rocket_launcher',6:'plasma_rifle',7:'BFG',8:'super_shotgun',9:'chainsaw'}
+ 
+ WEAPON_SLOTS={**{i:i for i in range(1,8)},8:3,9:1}
+ AMMO_COST={1:0,2:1,3:1,4:1,5:1,6:1,7:40,8:2,9:0}
++# A rocket's 128-unit blast also hurts the player: 20 of 186 MAP03 deaths followed a rocket choice, 16 within 6 m.
++ROCKET_SAFE_METERS=4.0
++
++
++# Fire while the aim is inside the target's body: most monsters are 20 units in radius. A fixed 5 degree
++# gate held fire in 37 % of close-range ticks with the selected enemy 5-20 degrees off centre.
++ENEMY_RADIUS_UNITS=20
++# DOOM_FIRE_LEGACY=1 restores the fixed 5 degree gate and unrestricted rockets, for A/B runs.
++FIRE_LEGACY=os.environ.get('DOOM_FIRE_LEGACY')=='1'
++
++
++def fire_tolerance(distance):
++    """Largest aim error in degrees that still hits an enemy at this distance in metres."""
++    if FIRE_LEGACY:return 5.0
++    return max(5.0,0.8*math.degrees(math.atan2(ENEMY_RADIUS_UNITS,max(distance,0.1)*32)))
++
++
++def fire_reaches(slot, distance):
++    """Whether the weapon in this slot can hit an enemy at this distance without hurting the player."""
++    if AMMO_COST[slot]==0:return distance<=1.5
++    if slot==5 and not FIRE_LEGACY:return distance>ROCKET_SAFE_METERS
++    return True
+ 
+ 
+ def target_bearing(target, s):
+diff --git a/doomlib/executor.py b/doomlib/executor.py
+index 90a91be..8d83592 100644
+--- a/doomlib/executor.py
++++ b/doomlib/executor.py
+@@ -1,8 +1,14 @@
+ """Execute explicit model commands; no combat, item or weapon preference policy."""
+-import math
++import math,os
+ from doomlib.navigation import Navigator
+ from doomlib.decision_questions import NAVIGATION_ACTIONS
+-from doomlib.combat import target_bearing,WEAPON_SLOTS,AMMO_COST
++from doomlib.combat import target_bearing,WEAPON_SLOTS,AMMO_COST,fire_reaches,fire_tolerance
++
++# Diagnostic only, not a model result: DOOM_DIAG_AMBUSH_HOLD=1 holds navigation in place for 8 s
++# after an unmapped area opens within 30 m. It overrides model navigation and breaks authority.
++DIAG_AMBUSH_HOLD=os.environ.get('DOOM_DIAG_AMBUSH_HOLD')=='1'
++DIAG_HOLD_TICKS=280
++DIAG_HOLD_METERS=30
+ 
+ 
+ class Executor:
+@@ -31,20 +37,34 @@ class Executor:
+         self.last_selection=-1000
+         self.reachable_cache=None
+         self.look_goal_angle=None
++        self.progress=None
++        self.stall_expiry={}
++        self.diag_hold_until=-1
++        self.diag_hold_point=None
+ 
+     def observe(self,s,tick,sectors=None):
+         s['geometry_changes']=self.navigator.update_geometry(sectors) if sectors is not None else []
+         s['floor_changes']=self.navigator.update_floors(sectors) if sectors is not None else []
+         if s['floor_changes'] or s['geometry_changes']:self.reachable_cache=None
++        if DIAG_AMBUSH_HOLD and s['geometry_changes']:
++            cells=[c for i in s['geometry_changes'] for c in self.navigator.sector_cells.get(i,())]
++            if cells:
++                point=tuple(sum(self.navigator.point(c)[k] for c in cells)/len(cells) for k in (0,1))
++                if math.dist(point,(s['x'],s['y']))/32<DIAG_HOLD_METERS:
++                    self.diag_hold_until,self.diag_hold_point=tick+DIAG_HOLD_TICKS,point
+         self.navigator.observe(s,tick)
+         keys=(tuple(s.get('keys',())),tuple(s.get('closed_remote_doors',())))
+         # Normal doors are already traversable in the graph; opening one cannot repair a failed path.
+         if (self.failure_component is not None and self.navigator.nearest((s['x'],s['y'])) not in self.failure_component) or s.get('floor_changes') or s.get('geometry_changes') or keys!=self.previous_keys:
+-            self.failures.clear()
++            # Watchdog set-asides are time-limited and survive the area/geometry reset.
++            self.failures={key:value for key,value in self.failures.items() if key in self.stall_expiry}
+             self.command_failures.clear()
+             self.failure_origin=None
+             self.failure_component=None
+         self.previous_keys=keys
++        for key,expiry in list(self.stall_expiry.items()):
++            if tick>=expiry:
++                self.failures.pop(key,None);del self.stall_expiry[key]
+         # Keep an observed, model-selected door available while turning toward its approach.
+         selected=(self.directive or {}).get('target')
+         if (self.directive or {}).get('action')=='open_door' and selected and selected['id'] in s.get('closed_doors',()):
+@@ -146,12 +166,13 @@ class Executor:
+                 a[4]=max(-self.attack_turn_rate,min(self.attack_turn_rate,b))
+                 melee=AMMO_COST[s['weapon']]==0
+                 usable=s['ammo']>=AMMO_COST[s['weapon']]
+-                a[5]=float(current.get('visible',True) and abs(b)<5 and usable and (not melee or current['distance']<=1.5))
++                a[5]=float(current.get('visible',True) and abs(b)<fire_tolerance(current['distance']) and usable and fire_reaches(s['weapon'],current['distance']))
+                 refs=['aim_selected_enemy']
+                 if melee and current['distance']>1.4 and not d.get('movement'):
+                     move,motor_refs=self.navigator.steer(s,tick,(current['x'],current['y']))
+                     if 'navigation_exhausted' not in motor_refs:
+-                        a[:5]=move[:5]
++                        # Approach with forward and turn only; backing up and strafing are model movements.
++                        a[0],a[4]=move[0],move[4]
+                         a[5]=float(a[5] and abs(move[4]-b)<5)
+                         refs+=motor_refs+['approach_selected_enemy']
+                     elif melee:
+@@ -199,7 +220,10 @@ class Executor:
+                 elif kind=='use_switch' and current.get('phase')=='board' and math.dist((s['x'],s['y']),current['board'])<96:
+                     point=dict(x=current['board'][0],y=current['board'][1]);b=target_bearing(point,s)
+                     a[:7]=[float(abs(b)<20),0,0,0,max(-6,min(6,b)),0,0];refs=['board_selected_lift']
+-                elif kind=='use_switch' and current['distance']<2:
++                elif kind=='use_switch' and current['distance']<2 and (
++                        (s['x']-current['x'])*(current['approach'][0]-current['x'])+(s['y']-current['y'])*(current['approach'][1]-current['y'])>0):
++                    # USE switch lines respond only from the front side. From behind keep the
++                    # navigator's result, so an unreachable front side reports blocked.
+                     b=target_bearing(current,s)
+                     a[:7]=[float(abs(b)<20 and current['distance']>1.6),0,0,0,max(-6,min(6,b)),0,float(abs(b)<10 and tick%12==0)]
+                     refs=['use_selected_switch']
+@@ -222,9 +246,13 @@ class Executor:
+                     if target:
+                         self.failures[str(target['id'])]='Unreachable from the current area'
+                         if self.failure_origin is None:self.failure_origin=(s['x'],s['y'])
+-                elif target:self.failures.pop(str(target['id']),None)
++                elif target and str(target['id']) not in self.stall_expiry:self.failures.pop(str(target['id']),None)
+         elif kind=='retreat':a[1]=1
+         else:status,detail='waiting','Model chose wait' if d['decision_id'] is not None else 'No accepted model command'
++        if DIAG_AMBUSH_HOLD and kind in NAVIGATION_ACTIONS and tick<self.diag_hold_until and status=='executing':
++            b=target_bearing(dict(x=self.diag_hold_point[0],y=self.diag_hold_point[1]),s)
++            a[:7]=[0,0,0,0,max(-9,min(9,b)),0,0]
++            refs=['diag_ambush_hold'];detail=kind+' (diagnostic hold)'
+         combat_target=d.get('combat_target') if kind in NAVIGATION_ACTIONS else None
+         combat_enemy=next((e for e in s['enemies'] if combat_target and e['id']==combat_target['id']),None)
+         if combat_enemy:
+@@ -249,9 +277,8 @@ class Executor:
+                 combat_enemy=None
+             if combat_enemy:
+                 a[4]=turn
+-                melee=AMMO_COST[s['weapon']]==0
+                 usable=s['ammo']>=AMMO_COST[s['weapon']]
+-                a[5]=float(combat_enemy.get('visible',True) and abs(b)<5 and usable and (not melee or combat_enemy['distance']<=1.5))
++                a[5]=float(combat_enemy.get('visible',True) and abs(b)<fire_tolerance(combat_enemy['distance']) and usable and fire_reaches(s['weapon'],combat_enemy['distance']))
+                 refs.append('aim_secondary_model_enemy')
+         fighting=kind=='attack' or combat_enemy is not None
+         # Collision recovery changes motor commands, never the requested objective.
+@@ -284,6 +311,22 @@ class Executor:
+             refs.append('select_model_weapon')
+         if self.mission and kind=='use_switch' and target and a[6] and target.get('kind')=='door':
+             self.mission.note_switch_use(target['id'],s.get('engine_tic',tick))
++        # No-progress watchdog: a calm navigation command that leaves the player within 32 units
++        # for 10 s (lift boarding and riding excepted) is an executor failure. It reports blocked
++        # and sets the target aside for 30 s, as an unreachable target is set aside.
++        key=(kind,target['id'] if target else None)
++        calm=not any(e.get('visible',True) for e in s.get('enemies',()))
++        lift_wait=kind=='use_switch' and current is not None and current.get('phase') in ('board','ride')
++        if (status!='executing' or kind not in ('pickup','open_door','use_switch','exit') or not calm or lift_wait
++                or self.progress is None or self.progress[0]!=key or math.dist(xy,self.progress[1])>32):
++            self.progress=(key,xy,tick)
++        elif tick-self.progress[2]>=350:
++            a[:7]=[0.]*7
++            status,detail='blocked','No progress toward the selected target'
++            if target:
++                self.failures[str(target['id'])]='No progress toward it from here'
++                self.stall_expiry[str(target['id'])]=tick+1050
++            self.progress=(key,xy,tick)
+         if target:detail+=f" ({target.get('name',kind)} #{target['id']})"
+         self.execution={'status':status,'detail':detail,'decision_id':d['decision_id'],'command':d['command'],'action':kind,
+                         'target_id':target['id'] if target else None,'weapon':selection,'movement':d.get('movement'),
+diff --git a/doomlib/mission.py b/doomlib/mission.py
+index 3c4248b..1b8a95c 100644
+--- a/doomlib/mission.py
++++ b/doomlib/mission.py
+@@ -34,18 +34,20 @@ def map_data(wad, name, skill=3):
+             a,b=vertices[start],vertices[end]
+             doors.append({'line':index,'sector':sides[back][-1],'key':locks.get(special),
+                           'a':a,'b':b,'center':((a[0]+b[0])/2,(a[1]+b[1])/2)})
+-        if special in (61,62,71,103,112,99,133,134,135,136,137):
++        # Floor-lowering switches: S1 71/23/102, SR 70/60/45 (turbo, lowest, highest neighbour).
++        floor=special in (71,23,102,70,60,45)
++        if special in (61,62,103,112,99,133,134,135,136,137) or floor:
+             a,b=vertices[start],vertices[end];length=math.dist(a,b)
+             center=((a[0]+b[0])/2,(a[1]+b[1])/2)
+             normal=((b[1]-a[1])/length,-(b[0]-a[0])/length)
+             targets=[i for i,sector in enumerate(sectors) if sector[-1]==tag]
+-            switches.append({'id':index,'kind':'lift' if special==62 else ('floor' if special==71 else 'door'),'name':'Lift' if special==62 else ('Floor switch' if special==71 else 'Door switch'),'x':center[0],'y':center[1],
++            switches.append({'id':index,'kind':'lift' if special==62 else ('floor' if floor else 'door'),'name':'Lift' if special==62 else ('Floor switch' if floor else 'Door switch'),'x':center[0],'y':center[1],
+                              'board':(center[0]-normal[0]*32,center[1]-normal[1]*32),
+                              'upper_floor':max(sectors[i][0] for i in targets),
+                              'approach':(center[0]+normal[0]*40,center[1]+normal[1]*40),
+                              'sectors':targets,'key':{99:'blue',133:'blue',134:'red',135:'red',136:'yellow',137:'yellow'}.get(special)})
+             if special==61:switches[-1]['repeatable']=True
+-            if special==71:switches[-1]['initial_floors']={i:sectors[i][0] for i in targets}
++            if floor:switches[-1]['initial_floors']={i:sectors[i][0] for i in targets}
+         if special in (39,97):
+             from shapely.geometry import LineString,Point
+             from shapely.ops import polygonize
+diff --git a/doomlib/policy.py b/doomlib/policy.py
+index f6225a1..c7afdd5 100644
+--- a/doomlib/policy.py
++++ b/doomlib/policy.py
+@@ -1,11 +1,13 @@
+ """Observation-to-question formatting; only model responses select commands."""
+-import math
+-from doomlib.combat import WEAPON_NAMES,AMMO_COST
++import math,os
++from doomlib.combat import WEAPON_NAMES,AMMO_COST,fire_reaches
+ 
+ ACTIONS={k:k for k in ('attack','pickup','open_door','use_switch','exit','retreat','explore','wait')}
+ WEAPON_DESCRIPTIONS={1:'Fists: melee, no ammunition needed.',2:'Pistol: use only when stronger guns have no ammo.',3:'Shotgun: prefer this powerful gun to the pistol when shells are available.',
+                      4:'Chaingun: rapid bullet fire.',5:'Rocket launcher: powerful, dangerous at close range.',
+                      6:'Plasma rifle: powerful rapid fire.',7:'BFG: powerful, consumes 40 cells per shot.'}
++# DOOM_WEAPON_TEXT_LEGACY=1 restores raw 'Ammo: N' in weapon options, for A/B runs.
++WEAPON_TEXT_LEGACY=os.environ.get('DOOM_WEAPON_TEXT_LEGACY')=='1'
+ 
+ 
+ def request(s, memory, mission):
+@@ -71,9 +73,11 @@ def request(s, memory, mission):
+     for key,slot in weapons.items():
+         ammo=s['inventory'][str(slot)]['ammo']
+         loaded=ammo>=AMMO_COST[slot]
+-        reaches=nearest is not None and (AMMO_COST[slot]>0 or nearest<=1.5)
++        reaches=nearest is not None and fire_reaches(slot,nearest)
+         kind='Melee only, range 1.5m' if AMMO_COST[slot]==0 else ('Super shotgun: stronger than the shotgun, uses two shells' if slot==8 else 'Powerful ranged gun' if slot in (3,4,5,6,7) else 'Basic ranged gun')
+-        weapon_options[key]=f"{kind}. Loaded: {'yes' if loaded else 'no'}. Can hit visible enemies from here: {'yes' if loaded and reaches else 'no'}. Ammo: {ammo}."
++        # Shots, not raw ammo: two rockets and fifty shells otherwise read alike to the weapon head.
++        supply=f"Ammo: {ammo}." if WEAPON_TEXT_LEGACY else ('No ammunition needed.' if AMMO_COST[slot]==0 else f"Shots left: {ammo//AMMO_COST[slot]}.")
++        weapon_options[key]=f"{kind}. Loaded: {'yes' if loaded else 'no'}. Can hit visible enemies from here: {'yes' if loaded and reaches else 'no'}. {supply}"
+     weapon_options['keep']='Keep the current weapon.'
+     q={'command':{'type':'choice','instructions':'Finish the level alive. Fight visible threats, get needed supplies, open blocking doors, activate switches to unlock passages, reach exit. Avoid unreachable targets and unnecessary detours.','criteria':criteria},
+        'weapon':{'type':'choice','instructions':'Choose an effective weapon. Use a loaded gun for ranged enemies. Prefer shotgun to pistol when both are loaded. Use melee when there is no usable gun.','criteria':weapon_options}}
+diff --git a/tests/test_floor_switches.py b/tests/test_floor_switches.py
+new file mode 100644
+index 0000000..a7a5397
+--- /dev/null
++++ b/tests/test_floor_switches.py
+@@ -0,0 +1,23 @@
++import unittest
++from pathlib import Path
++import vizdoom
++from doomlib.mission import map_data
++
++WAD = Path(vizdoom.__file__).parent / 'freedoom2.wad'
++
++
++class FloorSwitchTest(unittest.TestCase):
++    def test_lower_to_highest_neighbour_switch_is_a_floor_switch(self):
++        # MAP04 line 883 (S1 lower floor to highest neighbour) opens the way to the red key.
++        switch = next(s for s in map_data(WAD, 'MAP04')['switches'] if s['id'] == 883)
++        self.assertEqual(switch['kind'], 'floor')
++        self.assertEqual(switch['initial_floors'], {54: 8})
++
++    def test_known_maps_keep_their_switches(self):
++        kinds = {m: [(s['id'], s['kind']) for s in map_data(WAD, m)['switches']] for m in ('MAP01', 'MAP03')}
++        self.assertEqual(kinds['MAP01'], [(839, 'door')])
++        self.assertEqual([s for s in kinds['MAP03'] if s[1] == 'floor'], [(2839, 'floor')])
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tests/test_rocket_safety.py b/tests/test_rocket_safety.py
+new file mode 100644
+index 0000000..f0d5983
+--- /dev/null
++++ b/tests/test_rocket_safety.py
+@@ -0,0 +1,32 @@
++import unittest
++
++from doomlib.combat import ROCKET_SAFE_METERS, fire_reaches, fire_tolerance
++from doomlib.executor import Executor
++
++
++class RocketSafetyTest(unittest.TestCase):
++    def test_rocket_launcher_does_not_reach_inside_its_blast_radius(self):
++        self.assertFalse(fire_reaches(5, ROCKET_SAFE_METERS - 0.5))
++        self.assertTrue(fire_reaches(5, ROCKET_SAFE_METERS + 0.5))
++
++    def test_melee_and_guns_keep_their_ranges(self):
++        self.assertTrue(fire_reaches(1, 1.4))
++        self.assertFalse(fire_reaches(9, 2.0))
++        self.assertTrue(fire_reaches(4, 1.0))
++
++    def test_close_enemies_are_fired_at_when_the_aim_is_inside_their_body(self):
++        self.assertGreater(fire_tolerance(1.6), 15)
++        self.assertEqual(fire_tolerance(10), 5.0)
++        for distance, fires in ((1.6, 1), (10, 0)):
++            e = Executor()
++            s = dict(x=0, y=0, angle=0, hp=100, weapon=3, ammo=10, walls=dict(left=10, right=10),
++                     enemies=[dict(id=1, bearing=8, aim_bearing=8, distance=distance, visible=True)],
++                     inventory={'3': {'owned': 1, 'ammo': 10}})
++            e.accept(dict(action='attack', target={'id': 1, 'name': 'Enemy'}, weapon=3, decision_id=1,
++                          command='attack', expires_tick=70), 0)
++            buttons, _ = e.act(s, 0)
++            self.assertEqual(buttons[5], fires)
++
++
++if __name__ == '__main__':
++    unittest.main()
+diff --git a/tests/test_weapon_text.py b/tests/test_weapon_text.py
+new file mode 100644
+index 0000000..354ed5c
+--- /dev/null
++++ b/tests/test_weapon_text.py
+@@ -0,0 +1,17 @@
++import unittest
++
++from doomlib.policy import request
++
++
++class WeaponTextTest(unittest.TestCase):
++    def test_weapon_options_state_shots_left_not_raw_ammo(self):
++        inventory = {str(k): dict(owned=int(k in (1, 3, 4, 5, 9)), ammo={3: 50, 5: 2}.get(k, 0))
++                     for k in range(1, 10)}
++        state = dict(hp=50, armor=0, inventory=inventory, door=None, keys=[], walls=dict(left=3, right=3), execution={},
++                     enemies=[dict(id=1, name='DoomImp', distance=8.0, bearing=0, visible=True, x=0, y=0, z=0)])
++        criteria = request(state, {}, None)['questions']['weapon']['criteria']
++        self.assertTrue(criteria['shotgun'].endswith('Shots left: 50.'))
++        self.assertTrue(criteria['rocket_launcher'].endswith('Shots left: 2.'))
++        self.assertIn('Loaded: no', criteria['chaingun'])
++        self.assertTrue(criteria['chainsaw'].endswith('No ammunition needed.'))
++        self.assertNotIn('Ammo:', ' '.join(criteria.values()))

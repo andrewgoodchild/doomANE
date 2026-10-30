@@ -1,0 +1,31 @@
+doomANE
+Copyright 2026 Andrew Goodchild
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+doomANE builds on, and patches, the following projects. None of their code or model weights is
+included in this repository; scripts/setup.sh downloads them, and each keeps its own licence.
+
+- doomLaya v0.3.1 (code and fine-tuned Laya checkpoints), Apache License 2.0:
+  https://github.com/azalio/doomLaya , https://huggingface.co/azalio/laya-doom-map03
+  doom/patches/doomLaya-dev.patch is a derivative of doomLaya's source.
+- Laya, Convai Innovations, Apache License 2.0: https://github.com/NandhaKishorM/laya
+- ModernBERT-large, Answer.AI / LightOn, Apache License 2.0:
+  https://huggingface.co/answerdotai/ModernBERT-large
+- ViZDoom (MIT): https://github.com/Farama-Foundation/ViZDoom
+- Freedoom (BSD-3-Clause): https://freedoom.github.io . The animation in assets/hero-map03.gif shows
+  Freedoom graphics rendered by ViZDoom; Freedoom's copyright notice and licence are in
+  LICENSES/Freedoom.txt.
+- Obsidian level maker (GPL-2.0-or-later): https://github.com/obsidian-level-maker/Obsidian .
+  Only a patch (doom/patches/obsidian-macos-arm64.patch) is included. Its changes to Obsidian's own
+  sources (source_files/obsidian_main/) are under GPL-2.0-or-later; its changes to the bundled LuaJIT
+  (source_files/lua/) are under LuaJIT's MIT licence. The patch is not covered by this repository's
+  Apache licence.
+
+Two small numeric residuals here are modified derivatives of doomLaya v0.3.1's Apache-2.0 residuals
+(not of the Laya encoder, whose weights are not included):
+- results/doom_heads/laya-combat-movement-v1/: retrained from laya-v031-movement-numeric-v1 on game
+  outcomes only (no hosted-model outputs).
+- results/doom_heads/command-memory-v1/: retrained from laya-v031-command-key-retained-v1 with memory
+  inputs, on our recorded runs and a hand-written repair label (see docs/LAB_NOTEBOOK.md).
+Neither is an official Laya, doomLaya or Jev release.

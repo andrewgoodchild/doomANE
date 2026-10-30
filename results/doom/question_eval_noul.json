@@ -1,0 +1,3653 @@
+{
+  "progress": {
+    "question": {
+      "type": "noul",
+      "instructions": "The player is making progress toward the current command's target."
+    },
+    "available": {
+      "yes": 4025,
+      "no": 3577
+    },
+    "asked": 200,
+    "accuracy": 0.445,
+    "auroc": 0.36805,
+    "mean_yes_when_yes": 0.762,
+    "mean_yes_when_no": 0.915,
+    "examples": [
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 22892,
+        "label": true,
+        "yes": 0.886
+      },
+      {
+        "run": "runs/20261019_113155_954607_repeat-resume-switchfix-map01-seed54",
+        "tick": 1044,
+        "label": true,
+        "yes": 0.0362
+      },
+      {
+        "run": "runs/20261019_081431_079917_repeat-commit-map03-seed2",
+        "tick": 9182,
+        "label": true,
+        "yes": 0.6067
+      },
+      {
+        "run": "runs/20261019_084507_229562_repeat-sample-map03-seed54",
+        "tick": 6764,
+        "label": true,
+        "yes": 0.997
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 33078,
+        "label": true,
+        "yes": 0.3035
+      },
+      {
+        "run": "runs/20261019_113645_811366_repeat-resume-switchfix-map01-seed2",
+        "tick": 1901,
+        "label": true,
+        "yes": 0.9998
+      },
+      {
+        "run": "runs/20261019_071841_195066_repeat-fast-map03-seed2",
+        "tick": 11413,
+        "label": true,
+        "yes": 0.9977
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 12997,
+        "label": true,
+        "yes": 0.0052
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 8376,
+        "label": true,
+        "yes": 0.9869
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 39224,
+        "label": true,
+        "yes": 0.0183
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 41320,
+        "label": true,
+        "yes": 0.9822
+      },
+      {
+        "run": "runs/20261019_132808_272412_repeat-fast-switchfix-map03-seed1",
+        "tick": 11540,
+        "label": true,
+        "yes": 0.7743
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 3058,
+        "label": true,
+        "yes": 0.9942
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 27298,
+        "label": true,
+        "yes": 0.8471
+      },
+      {
+        "run": "runs/20261019_145618_914990_repeat-fast-switchfix-map02-seed1",
+        "tick": 12250,
+        "label": true,
+        "yes": 0.1126
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 30982,
+        "label": true,
+        "yes": 0.9813
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 27817,
+        "label": true,
+        "yes": 0.1243
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 11562,
+        "label": true,
+        "yes": 0.0401
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 19808,
+        "label": true,
+        "yes": 0.997
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 29762,
+        "label": true,
+        "yes": 0.9868
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 33008,
+        "label": true,
+        "yes": 0.7873
+      },
+      {
+        "run": "runs/20261019_161553_586506_repeat-resume2-exec2-map02-seed1",
+        "tick": 13744,
+        "label": true,
+        "yes": 0.3623
+      },
+      {
+        "run": "runs/20261019_150217_752760_repeat-fast-switchfix-map02-seed2",
+        "tick": 25829,
+        "label": true,
+        "yes": 0.8617
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 26798,
+        "label": true,
+        "yes": 0.8263
+      },
+      {
+        "run": "runs/20261019_072639_798593_repeat-fast-map03-seed3",
+        "tick": 2839,
+        "label": true,
+        "yes": 0.9163
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 13674,
+        "label": true,
+        "yes": 0.9185
+      },
+      {
+        "run": "runs/20261019_163528_921396_repeat-resume2-exec2-map02-seed3",
+        "tick": 8776,
+        "label": true,
+        "yes": 0.1658
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 39396,
+        "label": true,
+        "yes": 0.7873
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 17069,
+        "label": true,
+        "yes": 0.9787
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 25788,
+        "label": true,
+        "yes": 0.994
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 54210,
+        "label": true,
+        "yes": 0.002
+      },
+      {
+        "run": "runs/20261019_102001_910144_repeat-memory-map03-seed3",
+        "tick": 3020,
+        "label": true,
+        "yes": 0.7104
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 16093,
+        "label": true,
+        "yes": 0.9938
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 26211,
+        "label": true,
+        "yes": 0.9996
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 24909,
+        "label": true,
+        "yes": 0.9611
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 29175,
+        "label": true,
+        "yes": 0.0189
+      },
+      {
+        "run": "runs/20261019_160127_060633_repeat-resume2-exec2-map03-seed3",
+        "tick": 6917,
+        "label": true,
+        "yes": 0.2454
+      },
+      {
+        "run": "runs/20261019_113155_954607_repeat-resume-switchfix-map01-seed54",
+        "tick": 3612,
+        "label": true,
+        "yes": 0.9993
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 13926,
+        "label": true,
+        "yes": 0.9705
+      },
+      {
+        "run": "runs/20261019_150217_752760_repeat-fast-switchfix-map02-seed2",
+        "tick": 7359,
+        "label": true,
+        "yes": 0.3412
+      },
+      {
+        "run": "runs/20261019_091801_487569_repeat-sample-map03-seed3",
+        "tick": 9141,
+        "label": true,
+        "yes": 0.9995
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 16338,
+        "label": true,
+        "yes": 0.9979
+      },
+      {
+        "run": "runs/20261019_082255_700371_repeat-commit-map03-seed3",
+        "tick": 9829,
+        "label": true,
+        "yes": 0.5972
+      },
+      {
+        "run": "runs/20261019_074846_297307_repeat-commit-map03-seed54",
+        "tick": 10275,
+        "label": true,
+        "yes": 0.9954
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 29518,
+        "label": true,
+        "yes": 0.9499
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 16210,
+        "label": true,
+        "yes": 0.9929
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 18156,
+        "label": true,
+        "yes": 0.5493
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 26123,
+        "label": true,
+        "yes": 0.9725
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 38390,
+        "label": true,
+        "yes": 0.7558
+      },
+      {
+        "run": "runs/20261019_160906_857222_repeat-resume2-exec2-map02-seed54",
+        "tick": 12241,
+        "label": true,
+        "yes": 0.9853
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 11964,
+        "label": true,
+        "yes": 0.9676
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 30820,
+        "label": true,
+        "yes": 0.9715
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 9680,
+        "label": true,
+        "yes": 0.9908
+      },
+      {
+        "run": "runs/20261019_113155_954607_repeat-resume-switchfix-map01-seed54",
+        "tick": 2334,
+        "label": true,
+        "yes": 0.9963
+      },
+      {
+        "run": "runs/20261019_190225_547361_repeat-fast-exec2-map01-seed1",
+        "tick": 2916,
+        "label": true,
+        "yes": 0.9952
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 46938,
+        "label": true,
+        "yes": 0.7851
+      },
+      {
+        "run": "runs/20261019_072639_798593_repeat-fast-map03-seed3",
+        "tick": 15419,
+        "label": true,
+        "yes": 0.976
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 15480,
+        "label": true,
+        "yes": 0.9042
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 2739,
+        "label": true,
+        "yes": 0.7814
+      },
+      {
+        "run": "runs/20261019_072639_798593_repeat-fast-map03-seed3",
+        "tick": 2875,
+        "label": true,
+        "yes": 0.5037
+      },
+      {
+        "run": "runs/20261019_081431_079917_repeat-commit-map03-seed2",
+        "tick": 12821,
+        "label": true,
+        "yes": 0.9934
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 21038,
+        "label": true,
+        "yes": 0.9708
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 25602,
+        "label": true,
+        "yes": 0.812
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 41651,
+        "label": true,
+        "yes": 0.8347
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 20069,
+        "label": true,
+        "yes": 0.5054
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 9677,
+        "label": true,
+        "yes": 0.9103
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 26932,
+        "label": true,
+        "yes": 0.0313
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 2793,
+        "label": true,
+        "yes": 0.9999
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 15390,
+        "label": true,
+        "yes": 0.5368
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 32666,
+        "label": true,
+        "yes": 0.2402
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 20177,
+        "label": true,
+        "yes": 0.001
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 24789,
+        "label": true,
+        "yes": 0.9252
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 6672,
+        "label": true,
+        "yes": 0.8707
+      },
+      {
+        "run": "runs/20261019_072639_798593_repeat-fast-map03-seed3",
+        "tick": 4477,
+        "label": true,
+        "yes": 0.992
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 34412,
+        "label": true,
+        "yes": 0.8745
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 8033,
+        "label": true,
+        "yes": 0.6843
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 34735,
+        "label": true,
+        "yes": 0.8417
+      },
+      {
+        "run": "runs/20261019_093945_985392_repeat-memory-map03-seed1",
+        "tick": 31483,
+        "label": true,
+        "yes": 0.7465
+      },
+      {
+        "run": "runs/20261019_190638_727484_repeat-fast-exec2-map01-seed3",
+        "tick": 3305,
+        "label": true,
+        "yes": 0.9927
+      },
+      {
+        "run": "runs/20261019_103356_438531_repeat-resume-switchfix-map03-seed54",
+        "tick": 3390,
+        "label": true,
+        "yes": 0.5871
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 30900,
+        "label": true,
+        "yes": 0.974
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 22318,
+        "label": true,
+        "yes": 0.9985
+      },
+      {
+        "run": "runs/20261019_191257_498337_repeat-resume3-exec3-map01-seed54",
+        "tick": 5630,
+        "label": true,
+        "yes": 0.9848
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 32293,
+        "label": true,
+        "yes": 0.9524
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 22012,
+        "label": true,
+        "yes": 0.78
+      },
+      {
+        "run": "runs/20261019_113645_811366_repeat-resume-switchfix-map01-seed2",
+        "tick": 5699,
+        "label": true,
+        "yes": 0.9999
+      },
+      {
+        "run": "runs/20261019_123554_676859_repeat-resume-switchfix-map02-seed3",
+        "tick": 2589,
+        "label": true,
+        "yes": 0.8125
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 27908,
+        "label": true,
+        "yes": 0.3341
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 28063,
+        "label": true,
+        "yes": 0.8897
+      },
+      {
+        "run": "runs/20261019_173249_002972_repeat-fast-exec2-map03-seed2",
+        "tick": 10969,
+        "label": true,
+        "yes": 0.8188
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 28308,
+        "label": true,
+        "yes": 0.932
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 14734,
+        "label": true,
+        "yes": 0.9123
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 8699,
+        "label": true,
+        "yes": 0.9998
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 9032,
+        "label": true,
+        "yes": 0.9871
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 2824,
+        "label": true,
+        "yes": 0.998
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 11764,
+        "label": true,
+        "yes": 0.6233
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 30238,
+        "label": true,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 16878,
+        "label": true,
+        "yes": 0.9966
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 37107,
+        "label": true,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 39134,
+        "label": true,
+        "yes": 0.6646
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 40845,
+        "label": false,
+        "yes": 0.9916
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 20938,
+        "label": false,
+        "yes": 0.9921
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 40377,
+        "label": false,
+        "yes": 0.9702
+      },
+      {
+        "run": "runs/20261019_141910_126673_repeat-fast-switchfix-map01-seed1",
+        "tick": 2119,
+        "label": false,
+        "yes": 0.9985
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 36563,
+        "label": false,
+        "yes": 0.2846
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 31109,
+        "label": false,
+        "yes": 0.9575
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 10103,
+        "label": false,
+        "yes": 0.9052
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 33737,
+        "label": false,
+        "yes": 0.9721
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 18779,
+        "label": false,
+        "yes": 0.9609
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 25799,
+        "label": false,
+        "yes": 0.9988
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 23764,
+        "label": false,
+        "yes": 0.8959
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 24556,
+        "label": false,
+        "yes": 0.9738
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 32530,
+        "label": false,
+        "yes": 0.9817
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 16709,
+        "label": false,
+        "yes": 0.9842
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 13181,
+        "label": false,
+        "yes": 0.8651
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 33718,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 13793,
+        "label": false,
+        "yes": 0.8767
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 6557,
+        "label": false,
+        "yes": 0.8193
+      },
+      {
+        "run": "runs/20261019_165001_396282_repeat-resume2-exec2-map01-seed3",
+        "tick": 3013,
+        "label": false,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 22630,
+        "label": false,
+        "yes": 0.9998
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 18185,
+        "label": false,
+        "yes": 0.9278
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 13667,
+        "label": false,
+        "yes": 0.8709
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 20236,
+        "label": false,
+        "yes": 0.9385
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 40846,
+        "label": false,
+        "yes": 0.9773
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 26627,
+        "label": false,
+        "yes": 0.9901
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 6935,
+        "label": false,
+        "yes": 0.9543
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 22594,
+        "label": false,
+        "yes": 0.996
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 20399,
+        "label": false,
+        "yes": 0.9713
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 41367,
+        "label": false,
+        "yes": 0.9621
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 39623,
+        "label": false,
+        "yes": 0.6107
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 31828,
+        "label": false,
+        "yes": 0.9987
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 25942,
+        "label": false,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 23494,
+        "label": false,
+        "yes": 0.9973
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 24988,
+        "label": false,
+        "yes": 0.9383
+      },
+      {
+        "run": "runs/20261019_165001_396282_repeat-resume2-exec2-map01-seed3",
+        "tick": 2905,
+        "label": false,
+        "yes": 0.9925
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 7403,
+        "label": false,
+        "yes": 0.9532
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 23261,
+        "label": false,
+        "yes": 0.9547
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 33268,
+        "label": false,
+        "yes": 0.9589
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 37481,
+        "label": false,
+        "yes": 0.2814
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 27202,
+        "label": false,
+        "yes": 0.9642
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 20777,
+        "label": false,
+        "yes": 0.9816
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 19966,
+        "label": false,
+        "yes": 0.9582
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 40108,
+        "label": false,
+        "yes": 0.8921
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 28282,
+        "label": false,
+        "yes": 0.989
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 22631,
+        "label": false,
+        "yes": 0.9516
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 33700,
+        "label": false,
+        "yes": 0.8836
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 36670,
+        "label": false,
+        "yes": 0.9996
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 19913,
+        "label": false,
+        "yes": 0.9886
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 32584,
+        "label": false,
+        "yes": 0.9924
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 40774,
+        "label": false,
+        "yes": 0.9977
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 28373,
+        "label": false,
+        "yes": 0.9799
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 29669,
+        "label": false,
+        "yes": 0.9861
+      },
+      {
+        "run": "runs/20261019_165001_396282_repeat-resume2-exec2-map01-seed3",
+        "tick": 2185,
+        "label": false,
+        "yes": 0.9993
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 37642,
+        "label": false,
+        "yes": 0.7347
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 9473,
+        "label": false,
+        "yes": 0.9448
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 25024,
+        "label": false,
+        "yes": 0.9739
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 36959,
+        "label": false,
+        "yes": 0.8809
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 39657,
+        "label": false,
+        "yes": 0.9833
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 20272,
+        "label": false,
+        "yes": 0.9447
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 13217,
+        "label": false,
+        "yes": 0.9345
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 32368,
+        "label": false,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 41062,
+        "label": false,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 32837,
+        "label": false,
+        "yes": 0.4191
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 7655,
+        "label": false,
+        "yes": 0.9353
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 40395,
+        "label": false,
+        "yes": 0.9702
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 30623,
+        "label": false,
+        "yes": 0.9183
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 31810,
+        "label": false,
+        "yes": 0.999
+      },
+      {
+        "run": "runs/20261019_165001_396282_repeat-resume2-exec2-map01-seed3",
+        "tick": 2581,
+        "label": false,
+        "yes": 0.9744
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 14477,
+        "label": false,
+        "yes": 0.9957
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 30641,
+        "label": false,
+        "yes": 0.9183
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 19408,
+        "label": false,
+        "yes": 0.99
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 25132,
+        "label": false,
+        "yes": 0.9971
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 37318,
+        "label": false,
+        "yes": 0.999
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 30478,
+        "label": false,
+        "yes": 0.9996
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 7979,
+        "label": false,
+        "yes": 0.8867
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 37967,
+        "label": false,
+        "yes": 0.9375
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 8483,
+        "label": false,
+        "yes": 0.9564
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 31504,
+        "label": false,
+        "yes": 0.9984
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 28337,
+        "label": false,
+        "yes": 0.9895
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 29633,
+        "label": false,
+        "yes": 0.4218
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 20201,
+        "label": false,
+        "yes": 0.997
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 8033,
+        "label": false,
+        "yes": 0.6878
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 38128,
+        "label": false,
+        "yes": 0.9973
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 41567,
+        "label": false,
+        "yes": 0.84
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 40415,
+        "label": false,
+        "yes": 0.9384
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 26771,
+        "label": false,
+        "yes": 0.3004
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 38075,
+        "label": false,
+        "yes": 0.9509
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 9815,
+        "label": false,
+        "yes": 0.9578
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 8627,
+        "label": false,
+        "yes": 0.9768
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 23729,
+        "label": false,
+        "yes": 0.966
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 7691,
+        "label": false,
+        "yes": 0.9471
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 41764,
+        "label": false,
+        "yes": 0.9925
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 8681,
+        "label": false,
+        "yes": 0.9733
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 40018,
+        "label": false,
+        "yes": 0.9991
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 23567,
+        "label": false,
+        "yes": 0.9874
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 41621,
+        "label": false,
+        "yes": 0.2553
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 26392,
+        "label": false,
+        "yes": 0.9951
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 15935,
+        "label": false,
+        "yes": 0.9763
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 21136,
+        "label": false,
+        "yes": 0.8253
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 35068,
+        "label": false,
+        "yes": 0.9994
+      }
+    ]
+  },
+  "retreat": {
+    "question": {
+      "type": "noul",
+      "instructions": "Pull back now to heal or take cover instead of continuing the fight."
+    },
+    "available": {
+      "yes": 843,
+      "no": 18342
+    },
+    "asked": 200,
+    "accuracy": 0.485,
+    "auroc": 0.48425,
+    "mean_yes_when_yes": 0.689,
+    "mean_yes_when_no": 0.699,
+    "examples": [
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 33052,
+        "label": true,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 4847,
+        "label": true,
+        "yes": 0.8883
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 2460,
+        "label": true,
+        "yes": 0.5271
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 23820,
+        "label": true,
+        "yes": 0.7714
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 15162,
+        "label": true,
+        "yes": 0.0536
+      },
+      {
+        "run": "runs/20261019_071841_195066_repeat-fast-map03-seed2",
+        "tick": 2123,
+        "label": true,
+        "yes": 0.8644
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 21894,
+        "label": true,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 24754,
+        "label": true,
+        "yes": 0.967
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 4775,
+        "label": true,
+        "yes": 0.9351
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 40900,
+        "label": true,
+        "yes": 0.9855
+      },
+      {
+        "run": "runs/20261019_165536_385865_repeat-fast-exec2-map03-seed54",
+        "tick": 20633,
+        "label": true,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 2262,
+        "label": true,
+        "yes": 0.9998
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 36812,
+        "label": true,
+        "yes": 0.9154
+      },
+      {
+        "run": "runs/20261019_154908_306956_repeat-resume2-exec2-map03-seed1",
+        "tick": 1758,
+        "label": true,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 10920,
+        "label": true,
+        "yes": 0.9582
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 5400,
+        "label": true,
+        "yes": 0.9982
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 10542,
+        "label": true,
+        "yes": 0.9462
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 16970,
+        "label": true,
+        "yes": 0.905
+      },
+      {
+        "run": "runs/20261019_084507_229562_repeat-sample-map03-seed54",
+        "tick": 1974,
+        "label": true,
+        "yes": 0.0104
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 11882,
+        "label": true,
+        "yes": 0.9101
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 11463,
+        "label": true,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 23992,
+        "label": true,
+        "yes": 0.8765
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 5103,
+        "label": true,
+        "yes": 0.9664
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 2172,
+        "label": true,
+        "yes": 0.0353
+      },
+      {
+        "run": "runs/20261019_165536_385865_repeat-fast-exec2-map03-seed54",
+        "tick": 20705,
+        "label": true,
+        "yes": 0.9829
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 10408,
+        "label": true,
+        "yes": 0.8318
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 12593,
+        "label": true,
+        "yes": 0.2986
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 13228,
+        "label": true,
+        "yes": 0.9366
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 10096,
+        "label": true,
+        "yes": 0.935
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 22108,
+        "label": true,
+        "yes": 0.0005
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 28230,
+        "label": true,
+        "yes": 0.9586
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 28302,
+        "label": true,
+        "yes": 0.0
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 11936,
+        "label": true,
+        "yes": 0.5818
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 18505,
+        "label": true,
+        "yes": 0.8213
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 28926,
+        "label": true,
+        "yes": 0.3851
+      },
+      {
+        "run": "runs/20261019_082255_700371_repeat-commit-map03-seed3",
+        "tick": 2416,
+        "label": true,
+        "yes": 0.6487
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 10872,
+        "label": true,
+        "yes": 0.4952
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 12575,
+        "label": true,
+        "yes": 0.9937
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 17014,
+        "label": true,
+        "yes": 0.8598
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 7186,
+        "label": true,
+        "yes": 0.6963
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 21575,
+        "label": true,
+        "yes": 0.0876
+      },
+      {
+        "run": "runs/20261019_085137_947151_repeat-sample-map03-seed1",
+        "tick": 1847,
+        "label": true,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 35834,
+        "label": true,
+        "yes": 0.9958
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 18187,
+        "label": true,
+        "yes": 0.0176
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 33489,
+        "label": true,
+        "yes": 0.9968
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 35870,
+        "label": true,
+        "yes": 0.9993
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 28980,
+        "label": true,
+        "yes": 0.998
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 24010,
+        "label": true,
+        "yes": 0.7766
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 5139,
+        "label": true,
+        "yes": 0.9955
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 26657,
+        "label": true,
+        "yes": 0.9949
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 11914,
+        "label": true,
+        "yes": 0.9834
+      },
+      {
+        "run": "runs/20261019_072639_798593_repeat-fast-map03-seed3",
+        "tick": 12332,
+        "label": true,
+        "yes": 0.7023
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 18693,
+        "label": true,
+        "yes": 0.5097
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 21057,
+        "label": true,
+        "yes": 0.9885
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 16651,
+        "label": true,
+        "yes": 0.6267
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 20746,
+        "label": true,
+        "yes": 0.6197
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 18433,
+        "label": true,
+        "yes": 0.9958
+      },
+      {
+        "run": "runs/20261019_173249_002972_repeat-fast-exec2-map03-seed2",
+        "tick": 7184,
+        "label": true,
+        "yes": 0.1828
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 21093,
+        "label": true,
+        "yes": 0.9956
+      },
+      {
+        "run": "runs/20261019_173249_002972_repeat-fast-exec2-map03-seed2",
+        "tick": 12843,
+        "label": true,
+        "yes": 0.0888
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 12239,
+        "label": true,
+        "yes": 0.018
+      },
+      {
+        "run": "runs/20261019_071841_195066_repeat-fast-map03-seed2",
+        "tick": 2105,
+        "label": true,
+        "yes": 0.9942
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 13896,
+        "label": true,
+        "yes": 0.7683
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 28279,
+        "label": true,
+        "yes": 0.342
+      },
+      {
+        "run": "runs/20261019_093945_985392_repeat-memory-map03-seed1",
+        "tick": 31681,
+        "label": true,
+        "yes": 0.9751
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 34492,
+        "label": true,
+        "yes": 0.3264
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 9135,
+        "label": true,
+        "yes": 0.9866
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 12311,
+        "label": true,
+        "yes": 0.9939
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 4897,
+        "label": true,
+        "yes": 0.2102
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 21039,
+        "label": true,
+        "yes": 0.5636
+      },
+      {
+        "run": "runs/20261019_184118_520444_repeat-fast-exec2-map02-seed2",
+        "tick": 11167,
+        "label": true,
+        "yes": 0.7294
+      },
+      {
+        "run": "runs/20261019_071841_195066_repeat-fast-map03-seed2",
+        "tick": 2165,
+        "label": true,
+        "yes": 0.9035
+      },
+      {
+        "run": "runs/20261019_165536_385865_repeat-fast-exec2-map03-seed54",
+        "tick": 6886,
+        "label": true,
+        "yes": 0.0525
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 22469,
+        "label": true,
+        "yes": 0.4559
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 16597,
+        "label": true,
+        "yes": 0.0006
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 12280,
+        "label": true,
+        "yes": 0.9548
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 30903,
+        "label": true,
+        "yes": 0.3186
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 10830,
+        "label": true,
+        "yes": 0.7747
+      },
+      {
+        "run": "runs/20261019_091801_487569_repeat-sample-map03-seed3",
+        "tick": 5689,
+        "label": true,
+        "yes": 0.1427
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 11900,
+        "label": true,
+        "yes": 0.9025
+      },
+      {
+        "run": "runs/20261019_165536_385865_repeat-fast-exec2-map03-seed54",
+        "tick": 21183,
+        "label": true,
+        "yes": 0.9995
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 26621,
+        "label": true,
+        "yes": 0.9649
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 18621,
+        "label": true,
+        "yes": 0.3755
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 3774,
+        "label": true,
+        "yes": 0.8973
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 9117,
+        "label": true,
+        "yes": 0.9999
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 9063,
+        "label": true,
+        "yes": 0.986
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 21750,
+        "label": true,
+        "yes": 0.1762
+      },
+      {
+        "run": "runs/20261019_154908_306956_repeat-resume2-exec2-map03-seed1",
+        "tick": 1686,
+        "label": true,
+        "yes": 0.9397
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 19261,
+        "label": true,
+        "yes": 0.158
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 12190,
+        "label": true,
+        "yes": 0.9999
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 32355,
+        "label": true,
+        "yes": 0.0072
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 22036,
+        "label": true,
+        "yes": 0.8525
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 21804,
+        "label": true,
+        "yes": 0.9949
+      },
+      {
+        "run": "runs/20261019_165536_385865_repeat-fast-exec2-map03-seed54",
+        "tick": 13591,
+        "label": true,
+        "yes": 0.102
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 12220,
+        "label": true,
+        "yes": 0.9522
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 5095,
+        "label": true,
+        "yes": 0.4537
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 10426,
+        "label": true,
+        "yes": 0.0973
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 34528,
+        "label": true,
+        "yes": 0.1136
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 29016,
+        "label": true,
+        "yes": 0.9949
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 28467,
+        "label": true,
+        "yes": 0.9521
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 8001,
+        "label": false,
+        "yes": 0.9461
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 25842,
+        "label": false,
+        "yes": 0.7902
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 4310,
+        "label": false,
+        "yes": 0.9983
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 26319,
+        "label": false,
+        "yes": 0.9956
+      },
+      {
+        "run": "runs/20261019_175809_291103_repeat-fast-exec2-map02-seed54",
+        "tick": 17374,
+        "label": false,
+        "yes": 0.9998
+      },
+      {
+        "run": "runs/20261019_175809_291103_repeat-fast-exec2-map02-seed54",
+        "tick": 16150,
+        "label": false,
+        "yes": 0.9999
+      },
+      {
+        "run": "runs/20261019_150217_752760_repeat-fast-switchfix-map02-seed2",
+        "tick": 13123,
+        "label": false,
+        "yes": 0.7724
+      },
+      {
+        "run": "runs/20261019_072639_798593_repeat-fast-map03-seed3",
+        "tick": 2983,
+        "label": false,
+        "yes": 0.9991
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 1884,
+        "label": false,
+        "yes": 0.7023
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 10927,
+        "label": false,
+        "yes": 0.8049
+      },
+      {
+        "run": "runs/20261019_154908_306956_repeat-resume2-exec2-map03-seed1",
+        "tick": 8635,
+        "label": false,
+        "yes": 0.0536
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 3923,
+        "label": false,
+        "yes": 0.9999
+      },
+      {
+        "run": "runs/20261019_194521_182875_repeat-resume3-exec3-map02-seed2",
+        "tick": 8505,
+        "label": false,
+        "yes": 0.6035
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 558,
+        "label": false,
+        "yes": 0.5831
+      },
+      {
+        "run": "runs/20261019_151520_265651_repeat-fast-switchfix-map02-seed3",
+        "tick": 2461,
+        "label": false,
+        "yes": 0.9999
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 10462,
+        "label": false,
+        "yes": 0.9955
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 12279,
+        "label": false,
+        "yes": 0.2981
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 24642,
+        "label": false,
+        "yes": 0.0175
+      },
+      {
+        "run": "runs/20261019_113937_932941_repeat-resume-switchfix-map01-seed3",
+        "tick": 144,
+        "label": false,
+        "yes": 0.7092
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 12376,
+        "label": false,
+        "yes": 0.969
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 803,
+        "label": false,
+        "yes": 0.0828
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 5638,
+        "label": false,
+        "yes": 0.9764
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 516,
+        "label": false,
+        "yes": 0.9577
+      },
+      {
+        "run": "runs/20261019_185946_042551_repeat-fast-exec2-map01-seed54",
+        "tick": 900,
+        "label": false,
+        "yes": 0.8274
+      },
+      {
+        "run": "runs/20261019_123554_676859_repeat-resume-switchfix-map02-seed3",
+        "tick": 2301,
+        "label": false,
+        "yes": 0.9906
+      },
+      {
+        "run": "runs/20261019_173249_002972_repeat-fast-exec2-map03-seed2",
+        "tick": 18663,
+        "label": false,
+        "yes": 0.8205
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 18527,
+        "label": false,
+        "yes": 0.8861
+      },
+      {
+        "run": "runs/20261019_154908_306956_repeat-resume2-exec2-map03-seed1",
+        "tick": 3261,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_160906_857222_repeat-resume2-exec2-map02-seed54",
+        "tick": 6665,
+        "label": false,
+        "yes": 0.9965
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 30686,
+        "label": false,
+        "yes": 0.3452
+      },
+      {
+        "run": "runs/20261019_165001_396282_repeat-resume2-exec2-map01-seed3",
+        "tick": 522,
+        "label": false,
+        "yes": 0.9947
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 7758,
+        "label": false,
+        "yes": 0.9246
+      },
+      {
+        "run": "runs/20261019_093945_985392_repeat-memory-map03-seed1",
+        "tick": 33202,
+        "label": false,
+        "yes": 0.0154
+      },
+      {
+        "run": "runs/20261019_165536_385865_repeat-fast-exec2-map03-seed54",
+        "tick": 462,
+        "label": false,
+        "yes": 0.1815
+      },
+      {
+        "run": "runs/20261019_103930_289644_repeat-resume-switchfix-map03-seed1",
+        "tick": 9132,
+        "label": false,
+        "yes": 0.9423
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 21442,
+        "label": false,
+        "yes": 0.4998
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 1290,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 8874,
+        "label": false,
+        "yes": 0.9827
+      },
+      {
+        "run": "runs/20261019_074846_297307_repeat-commit-map03-seed54",
+        "tick": 7302,
+        "label": false,
+        "yes": 0.3685
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 6143,
+        "label": false,
+        "yes": 0.1274
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 14930,
+        "label": false,
+        "yes": 0.0075
+      },
+      {
+        "run": "runs/20261019_122944_902304_repeat-resume-switchfix-map02-seed2",
+        "tick": 6046,
+        "label": false,
+        "yes": 0.0006
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 6283,
+        "label": false,
+        "yes": 0.8903
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 12741,
+        "label": false,
+        "yes": 0.0206
+      },
+      {
+        "run": "runs/20261019_160906_857222_repeat-resume2-exec2-map02-seed54",
+        "tick": 3872,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_145618_914990_repeat-fast-switchfix-map02-seed1",
+        "tick": 5925,
+        "label": false,
+        "yes": 0.0625
+      },
+      {
+        "run": "runs/20261019_150217_752760_repeat-fast-switchfix-map02-seed2",
+        "tick": 6112,
+        "label": false,
+        "yes": 0.798
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 16762,
+        "label": false,
+        "yes": 0.992
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 22670,
+        "label": false,
+        "yes": 0.0716
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 192,
+        "label": false,
+        "yes": 0.7246
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 4538,
+        "label": false,
+        "yes": 0.5066
+      },
+      {
+        "run": "runs/20261019_184118_520444_repeat-fast-exec2-map02-seed2",
+        "tick": 4787,
+        "label": false,
+        "yes": 0.9779
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 32365,
+        "label": false,
+        "yes": 0.9985
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 2034,
+        "label": false,
+        "yes": 0.7017
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 16986,
+        "label": false,
+        "yes": 0.6221
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 126,
+        "label": false,
+        "yes": 0.5595
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 25777,
+        "label": false,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_160906_857222_repeat-resume2-exec2-map02-seed54",
+        "tick": 10415,
+        "label": false,
+        "yes": 0.997
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 37537,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_155540_036157_repeat-resume2-exec2-map03-seed2",
+        "tick": 335,
+        "label": false,
+        "yes": 0.9399
+      },
+      {
+        "run": "runs/20261019_184118_520444_repeat-fast-exec2-map02-seed2",
+        "tick": 8856,
+        "label": false,
+        "yes": 0.6038
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 26821,
+        "label": false,
+        "yes": 0.0329
+      },
+      {
+        "run": "runs/20261019_175809_291103_repeat-fast-exec2-map02-seed54",
+        "tick": 3587,
+        "label": false,
+        "yes": 0.0639
+      },
+      {
+        "run": "runs/20261019_185128_081300_repeat-fast-exec2-map02-seed3",
+        "tick": 4489,
+        "label": false,
+        "yes": 0.3652
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 10613,
+        "label": false,
+        "yes": 0.9898
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 19457,
+        "label": false,
+        "yes": 0.9776
+      },
+      {
+        "run": "runs/20261019_102001_910144_repeat-memory-map03-seed3",
+        "tick": 4154,
+        "label": false,
+        "yes": 0.0984
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 8345,
+        "label": false,
+        "yes": 0.8548
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 27343,
+        "label": false,
+        "yes": 0.0771
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 750,
+        "label": false,
+        "yes": 0.0075
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 1272,
+        "label": false,
+        "yes": 0.9496
+      },
+      {
+        "run": "runs/20261019_103356_438531_repeat-resume-switchfix-map03-seed54",
+        "tick": 4848,
+        "label": false,
+        "yes": 0.9969
+      },
+      {
+        "run": "runs/20261019_194521_182875_repeat-resume3-exec3-map02-seed2",
+        "tick": 5904,
+        "label": false,
+        "yes": 0.0002
+      },
+      {
+        "run": "runs/20261019_161553_586506_repeat-resume2-exec2-map02-seed1",
+        "tick": 3772,
+        "label": false,
+        "yes": 0.9972
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 16250,
+        "label": false,
+        "yes": 0.9975
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 1521,
+        "label": false,
+        "yes": 0.9987
+      },
+      {
+        "run": "runs/20261019_161553_586506_repeat-resume2-exec2-map02-seed1",
+        "tick": 3754,
+        "label": false,
+        "yes": 0.9858
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 20851,
+        "label": false,
+        "yes": 0.8748
+      },
+      {
+        "run": "runs/20261019_130800_281973_repeat-fast-switchfix-map03-seed54",
+        "tick": 9074,
+        "label": false,
+        "yes": 0.6293
+      },
+      {
+        "run": "runs/20261019_102001_910144_repeat-memory-map03-seed3",
+        "tick": 9426,
+        "label": false,
+        "yes": 0.0959
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 6336,
+        "label": false,
+        "yes": 0.8224
+      },
+      {
+        "run": "runs/20261019_084507_229562_repeat-sample-map03-seed54",
+        "tick": 2546,
+        "label": false,
+        "yes": 0.9344
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 281,
+        "label": false,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_160127_060633_repeat-resume2-exec2-map03-seed3",
+        "tick": 3673,
+        "label": false,
+        "yes": 0.9126
+      },
+      {
+        "run": "runs/20261019_185128_081300_repeat-fast-exec2-map02-seed3",
+        "tick": 10486,
+        "label": false,
+        "yes": 0.0143
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 768,
+        "label": false,
+        "yes": 0.9987
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 19447,
+        "label": false,
+        "yes": 0.9995
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 20021,
+        "label": false,
+        "yes": 0.0296
+      },
+      {
+        "run": "runs/20261019_162320_290001_repeat-resume2-exec2-map02-seed2",
+        "tick": 1863,
+        "label": false,
+        "yes": 0.7309
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 22730,
+        "label": false,
+        "yes": 0.9076
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 4374,
+        "label": false,
+        "yes": 0.4405
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 37813,
+        "label": false,
+        "yes": 0.9316
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 8745,
+        "label": false,
+        "yes": 0.9131
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 2045,
+        "label": false,
+        "yes": 0.9975
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 23990,
+        "label": false,
+        "yes": 0.7673
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 20695,
+        "label": false,
+        "yes": 0.9506
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 588,
+        "label": false,
+        "yes": 0.9319
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 1926,
+        "label": false,
+        "yes": 0.9552
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 21387,
+        "label": false,
+        "yes": 0.9919
+      },
+      {
+        "run": "runs/20261019_173249_002972_repeat-fast-exec2-map03-seed2",
+        "tick": 19293,
+        "label": false,
+        "yes": 0.9999
+      }
+    ]
+  },
+  "keep": {
+    "question": {
+      "type": "noul",
+      "instructions": "Keep going with the current command instead of switching to the new one."
+    },
+    "available": {
+      "yes": 1401,
+      "no": 169
+    },
+    "asked": 200,
+    "accuracy": 0.485,
+    "auroc": 0.4251,
+    "mean_yes_when_yes": 0.776,
+    "mean_yes_when_no": 0.81,
+    "examples": [
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 29569,
+        "label": true,
+        "yes": 0.9263
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 47893,
+        "label": true,
+        "yes": 0.1447
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 51061,
+        "label": true,
+        "yes": 0.5338
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 30064,
+        "label": true,
+        "yes": 0.9928
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 5665,
+        "label": true,
+        "yes": 0.9664
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 56479,
+        "label": true,
+        "yes": 0.0209
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 60457,
+        "label": true,
+        "yes": 0.9172
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 9355,
+        "label": true,
+        "yes": 0.9974
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 36868,
+        "label": true,
+        "yes": 0.9134
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 18625,
+        "label": true,
+        "yes": 0.9926
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 13315,
+        "label": true,
+        "yes": 0.9902
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 39586,
+        "label": true,
+        "yes": 0.992
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 28615,
+        "label": true,
+        "yes": 0.0608
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 19975,
+        "label": true,
+        "yes": 0.995
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 22711,
+        "label": true,
+        "yes": 0.9847
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 34726,
+        "label": true,
+        "yes": 0.9189
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 62653,
+        "label": true,
+        "yes": 0.8067
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 18139,
+        "label": true,
+        "yes": 0.6011
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 48072,
+        "label": true,
+        "yes": 0.9845
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 34051,
+        "label": true,
+        "yes": 0.112
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 55687,
+        "label": true,
+        "yes": 0.8451
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 54301,
+        "label": true,
+        "yes": 0.9874
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 7825,
+        "label": true,
+        "yes": 0.9916
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 24223,
+        "label": true,
+        "yes": 0.9586
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 37588,
+        "label": true,
+        "yes": 0.8829
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 26023,
+        "label": true,
+        "yes": 0.9756
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 47209,
+        "label": true,
+        "yes": 0.5668
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 33997,
+        "label": true,
+        "yes": 0.9623
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 62509,
+        "label": true,
+        "yes": 0.451
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 44743,
+        "label": true,
+        "yes": 0.6814
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 51115,
+        "label": true,
+        "yes": 0.9964
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 39739,
+        "label": true,
+        "yes": 0.9982
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 40387,
+        "label": true,
+        "yes": 0.947
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 37435,
+        "label": true,
+        "yes": 0.3039
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 28723,
+        "label": true,
+        "yes": 0.5359
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 9409,
+        "label": true,
+        "yes": 0.8954
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 38992,
+        "label": true,
+        "yes": 0.9586
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 16213,
+        "label": true,
+        "yes": 0.7152
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 55633,
+        "label": true,
+        "yes": 0.9329
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 35428,
+        "label": true,
+        "yes": 0.9325
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 33592,
+        "label": true,
+        "yes": 0.8616
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 25645,
+        "label": true,
+        "yes": 0.9707
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 28606,
+        "label": true,
+        "yes": 0.971
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 54949,
+        "label": true,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 30838,
+        "label": true,
+        "yes": 0.911
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 37822,
+        "label": true,
+        "yes": 0.7447
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 36274,
+        "label": true,
+        "yes": 0.9599
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 28852,
+        "label": true,
+        "yes": 0.9569
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 31324,
+        "label": true,
+        "yes": 0.9654
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 44491,
+        "label": true,
+        "yes": 0.4219
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 41882,
+        "label": true,
+        "yes": 0.9952
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 59215,
+        "label": true,
+        "yes": 0.0798
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 39487,
+        "label": true,
+        "yes": 0.9987
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 30775,
+        "label": true,
+        "yes": 0.2172
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 42133,
+        "label": true,
+        "yes": 0.9332
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 31702,
+        "label": true,
+        "yes": 0.7304
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 17545,
+        "label": true,
+        "yes": 0.2781
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 37084,
+        "label": true,
+        "yes": 0.7833
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 29461,
+        "label": true,
+        "yes": 0.9912
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 8203,
+        "label": true,
+        "yes": 0.9574
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 59107,
+        "label": true,
+        "yes": 0.8182
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 19327,
+        "label": true,
+        "yes": 0.9984
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 52447,
+        "label": true,
+        "yes": 0.9158
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 36598,
+        "label": true,
+        "yes": 0.8359
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 53707,
+        "label": true,
+        "yes": 0.8081
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 34258,
+        "label": true,
+        "yes": 0.99
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 33394,
+        "label": true,
+        "yes": 0.9539
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 34384,
+        "label": true,
+        "yes": 0.7936
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 33781,
+        "label": true,
+        "yes": 0.9265
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 36814,
+        "label": true,
+        "yes": 0.803
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 40639,
+        "label": true,
+        "yes": 0.147
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 34546,
+        "label": true,
+        "yes": 0.9938
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 30982,
+        "label": true,
+        "yes": 0.8682
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 54517,
+        "label": true,
+        "yes": 0.4627
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 58639,
+        "label": true,
+        "yes": 0.089
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 36193,
+        "label": true,
+        "yes": 0.977
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 8869,
+        "label": true,
+        "yes": 0.9929
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 58332,
+        "label": true,
+        "yes": 0.1771
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 13531,
+        "label": true,
+        "yes": 0.9322
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 39379,
+        "label": true,
+        "yes": 0.2205
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 28978,
+        "label": true,
+        "yes": 0.2921
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 48559,
+        "label": true,
+        "yes": 0.667
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 33250,
+        "label": true,
+        "yes": 0.929
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 32413,
+        "label": true,
+        "yes": 0.9673
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 32422,
+        "label": true,
+        "yes": 0.9857
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 51313,
+        "label": true,
+        "yes": 0.2024
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 58585,
+        "label": true,
+        "yes": 0.9866
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 29209,
+        "label": true,
+        "yes": 0.9998
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 17113,
+        "label": true,
+        "yes": 0.0745
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 50377,
+        "label": true,
+        "yes": 0.5098
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 23737,
+        "label": true,
+        "yes": 0.9726
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 27823,
+        "label": true,
+        "yes": 0.4701
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 40135,
+        "label": true,
+        "yes": 0.947
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 40810,
+        "label": true,
+        "yes": 0.971
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 39784,
+        "label": true,
+        "yes": 0.9642
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 60349,
+        "label": true,
+        "yes": 0.9879
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 26878,
+        "label": true,
+        "yes": 0.8742
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 27751,
+        "label": true,
+        "yes": 0.9838
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 55057,
+        "label": true,
+        "yes": 0.9958
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 28048,
+        "label": true,
+        "yes": 0.9808
+      },
+      {
+        "run": "runs/20261019_164201_371382_repeat-resume2-exec2-map01-seed54",
+        "tick": 3092,
+        "label": false,
+        "yes": 0.9994
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 16570,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_191257_498337_repeat-resume3-exec3-map01-seed54",
+        "tick": 2786,
+        "label": false,
+        "yes": 0.9816
+      },
+      {
+        "run": "runs/20261019_145618_914990_repeat-fast-switchfix-map02-seed1",
+        "tick": 7103,
+        "label": false,
+        "yes": 0.0002
+      },
+      {
+        "run": "runs/20261019_095954_072554_repeat-memory-map03-seed2",
+        "tick": 5547,
+        "label": false,
+        "yes": 0.1299
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 14192,
+        "label": false,
+        "yes": 0.9992
+      },
+      {
+        "run": "runs/20261019_185946_042551_repeat-fast-exec2-map01-seed54",
+        "tick": 3253,
+        "label": false,
+        "yes": 0.0511
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 9767,
+        "label": false,
+        "yes": 0.99
+      },
+      {
+        "run": "runs/20261019_152859_765203_repeat-resume2-exec2-map03-seed54",
+        "tick": 15361,
+        "label": false,
+        "yes": 0.994
+      },
+      {
+        "run": "runs/20261019_161553_586506_repeat-resume2-exec2-map02-seed1",
+        "tick": 15507,
+        "label": false,
+        "yes": 0.9213
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 38761,
+        "label": false,
+        "yes": 0.0053
+      },
+      {
+        "run": "runs/20261019_141910_126673_repeat-fast-switchfix-map01-seed1",
+        "tick": 2389,
+        "label": false,
+        "yes": 0.6701
+      },
+      {
+        "run": "runs/20261019_185128_081300_repeat-fast-exec2-map02-seed3",
+        "tick": 16465,
+        "label": false,
+        "yes": 0.3605
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 4943,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_150217_752760_repeat-fast-switchfix-map02-seed2",
+        "tick": 9135,
+        "label": false,
+        "yes": 0.7972
+      },
+      {
+        "run": "runs/20261019_093945_985392_repeat-memory-map03-seed1",
+        "tick": 39159,
+        "label": false,
+        "yes": 0.1637
+      },
+      {
+        "run": "runs/20261019_150217_752760_repeat-fast-switchfix-map02-seed2",
+        "tick": 26503,
+        "label": false,
+        "yes": 0.1794
+      },
+      {
+        "run": "runs/20261019_175256_796599_repeat-fast-exec2-map03-seed3",
+        "tick": 2939,
+        "label": false,
+        "yes": 0.9595
+      },
+      {
+        "run": "runs/20261019_091801_487569_repeat-sample-map03-seed3",
+        "tick": 15091,
+        "label": false,
+        "yes": 0.9262
+      },
+      {
+        "run": "runs/20261019_150217_752760_repeat-fast-switchfix-map02-seed2",
+        "tick": 26405,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_165536_385865_repeat-fast-exec2-map03-seed54",
+        "tick": 18955,
+        "label": false,
+        "yes": 0.9887
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 19025,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_151520_265651_repeat-fast-switchfix-map02-seed3",
+        "tick": 9369,
+        "label": false,
+        "yes": 0.9982
+      },
+      {
+        "run": "runs/20261019_142610_050296_repeat-fast-switchfix-map02-seed54",
+        "tick": 2320,
+        "label": false,
+        "yes": 0.4757
+      },
+      {
+        "run": "runs/20261019_072639_798593_repeat-fast-map03-seed3",
+        "tick": 28594,
+        "label": false,
+        "yes": 0.9988
+      },
+      {
+        "run": "runs/20261019_163528_921396_repeat-resume2-exec2-map02-seed3",
+        "tick": 12826,
+        "label": false,
+        "yes": 0.5633
+      },
+      {
+        "run": "runs/20261019_093945_985392_repeat-memory-map03-seed1",
+        "tick": 8670,
+        "label": false,
+        "yes": 0.9885
+      },
+      {
+        "run": "runs/20261019_111845_378947_repeat-resume-switchfix-map03-seed3",
+        "tick": 22491,
+        "label": false,
+        "yes": 0.9033
+      },
+      {
+        "run": "runs/20261019_162320_290001_repeat-resume2-exec2-map02-seed2",
+        "tick": 23469,
+        "label": false,
+        "yes": 0.8813
+      },
+      {
+        "run": "runs/20261019_145618_914990_repeat-fast-switchfix-map02-seed1",
+        "tick": 11620,
+        "label": false,
+        "yes": 0.107
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 10020,
+        "label": false,
+        "yes": 0.0402
+      },
+      {
+        "run": "runs/20261019_075422_819587_repeat-commit-map03-seed1",
+        "tick": 38851,
+        "label": false,
+        "yes": 0.9325
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 10376,
+        "label": false,
+        "yes": 0.9919
+      },
+      {
+        "run": "runs/20261019_160127_060633_repeat-resume2-exec2-map03-seed3",
+        "tick": 12811,
+        "label": false,
+        "yes": 0.8167
+      },
+      {
+        "run": "runs/20261019_072639_798593_repeat-fast-map03-seed3",
+        "tick": 31916,
+        "label": false,
+        "yes": 1.0
+      },
+      {
+        "run": "runs/20261019_151520_265651_repeat-fast-switchfix-map02-seed3",
+        "tick": 13101,
+        "label": false,
+        "yes": 0.4974
+      },
+      {
+        "run": "runs/20261019_191257_498337_repeat-resume3-exec3-map01-seed54",
+        "tick": 3902,
+        "label": false,
+        "yes": 0.9646
+      },
+      {
+        "run": "runs/20261019_155540_036157_repeat-resume2-exec2-map03-seed2",
+        "tick": 7918,
+        "label": false,
+        "yes": 0.6584
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 14786,
+        "label": false,
+        "yes": 0.9905
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 13886,
+        "label": false,
+        "yes": 0.9708
+      },
+      {
+        "run": "runs/20261019_173249_002972_repeat-fast-exec2-map03-seed2",
+        "tick": 6842,
+        "label": false,
+        "yes": 0.8449
+      },
+      {
+        "run": "runs/20261019_195152_651454_repeat-resume3-exec3-map02-seed3",
+        "tick": 5069,
+        "label": false,
+        "yes": 0.9763
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 20086,
+        "label": false,
+        "yes": 0.9877
+      },
+      {
+        "run": "runs/20261019_065832_448037_repeat-fast-map03-seed1",
+        "tick": 35978,
+        "label": false,
+        "yes": 0.8766
+      },
+      {
+        "run": "runs/20261019_194521_182875_repeat-resume3-exec3-map02-seed2",
+        "tick": 6120,
+        "label": false,
+        "yes": 0.9437
+      },
+      {
+        "run": "runs/20261019_164659_922807_repeat-resume2-exec2-map01-seed2",
+        "tick": 4102,
+        "label": false,
+        "yes": 0.962
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 28420,
+        "label": false,
+        "yes": 0.9794
+      },
+      {
+        "run": "runs/20261019_162320_290001_repeat-resume2-exec2-map02-seed2",
+        "tick": 16370,
+        "label": false,
+        "yes": 0.747
+      },
+      {
+        "run": "runs/20261019_165001_396282_repeat-resume2-exec2-map01-seed3",
+        "tick": 4777,
+        "label": false,
+        "yes": 0.0568
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 9353,
+        "label": false,
+        "yes": 0.9763
+      },
+      {
+        "run": "runs/20261019_175256_796599_repeat-fast-exec2-map03-seed3",
+        "tick": 3515,
+        "label": false,
+        "yes": 0.9882
+      },
+      {
+        "run": "runs/20261019_165536_385865_repeat-fast-exec2-map03-seed54",
+        "tick": 701,
+        "label": false,
+        "yes": 0.9474
+      },
+      {
+        "run": "runs/20261019_162320_290001_repeat-resume2-exec2-map02-seed2",
+        "tick": 24459,
+        "label": false,
+        "yes": 0.9766
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 3707,
+        "label": false,
+        "yes": 0.9937
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 25592,
+        "label": false,
+        "yes": 0.9587
+      },
+      {
+        "run": "runs/20261019_133617_590802_repeat-fast-switchfix-map03-seed2",
+        "tick": 38036,
+        "label": false,
+        "yes": 0.6972
+      },
+      {
+        "run": "runs/20261019_155540_036157_repeat-resume2-exec2-map03-seed2",
+        "tick": 10111,
+        "label": false,
+        "yes": 0.9679
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 24330,
+        "label": false,
+        "yes": 0.9829
+      },
+      {
+        "run": "runs/20261019_081431_079917_repeat-commit-map03-seed2",
+        "tick": 155,
+        "label": false,
+        "yes": 0.999
+      },
+      {
+        "run": "runs/20261019_113446_649389_repeat-resume-switchfix-map01-seed1",
+        "tick": 1973,
+        "label": false,
+        "yes": 0.9782
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 10327,
+        "label": false,
+        "yes": 0.7911
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 36192,
+        "label": false,
+        "yes": 0.993
+      },
+      {
+        "run": "runs/20261019_171544_777453_repeat-fast-exec2-map03-seed1",
+        "tick": 34899,
+        "label": false,
+        "yes": 0.9838
+      },
+      {
+        "run": "runs/20261019_071841_195066_repeat-fast-map03-seed2",
+        "tick": 16380,
+        "label": false,
+        "yes": 0.9764
+      },
+      {
+        "run": "runs/20261019_093945_985392_repeat-memory-map03-seed1",
+        "tick": 37327,
+        "label": false,
+        "yes": 0.9974
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 31534,
+        "label": false,
+        "yes": 0.9326
+      },
+      {
+        "run": "runs/20261019_160906_857222_repeat-resume2-exec2-map02-seed54",
+        "tick": 13219,
+        "label": false,
+        "yes": 0.9648
+      },
+      {
+        "run": "runs/20261019_160906_857222_repeat-resume2-exec2-map02-seed54",
+        "tick": 13213,
+        "label": false,
+        "yes": 0.8234
+      },
+      {
+        "run": "runs/20261019_084507_229562_repeat-sample-map03-seed54",
+        "tick": 7920,
+        "label": false,
+        "yes": 0.9931
+      },
+      {
+        "run": "runs/20261019_192241_015017_repeat-resume3-exec3-map02-seed54",
+        "tick": 12967,
+        "label": false,
+        "yes": 0.7503
+      },
+      {
+        "run": "runs/20261019_093945_985392_repeat-memory-map03-seed1",
+        "tick": 36103,
+        "label": false,
+        "yes": 0.9997
+      },
+      {
+        "run": "runs/20261019_092817_321933_repeat-memory-map03-seed54",
+        "tick": 23677,
+        "label": false,
+        "yes": 0.9746
+      },
+      {
+        "run": "runs/20261019_114239_033958_repeat-resume-switchfix-map02-seed54",
+        "tick": 3742,
+        "label": false,
+        "yes": 0.5523
+      },
+      {
+        "run": "runs/20261019_175256_796599_repeat-fast-exec2-map03-seed3",
+        "tick": 5937,
+        "label": false,
+        "yes": 0.9854
+      },
+      {
+        "run": "runs/20261019_192241_015017_repeat-resume3-exec3-map02-seed54",
+        "tick": 4894,
+        "label": false,
+        "yes": 0.98
+      },
+      {
+        "run": "runs/20261019_093945_985392_repeat-memory-map03-seed1",
+        "tick": 27575,
+        "label": false,
+        "yes": 0.9838
+      },
+      {
+        "run": "runs/20261019_115936_918289_repeat-resume-switchfix-map02-seed1",
+        "tick": 4474,
+        "label": false,
+        "yes": 0.3578
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 10112,
+        "label": false,
+        "yes": 0.935
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 32728,
+        "label": false,
+        "yes": 0.2754
+      },
+      {
+        "run": "runs/20261019_200846_694926_repeat-resume3-exec3-map03-seed54",
+        "tick": 19431,
+        "label": false,
+        "yes": 0.9928
+      },
+      {
+        "run": "runs/20261019_190455_306401_repeat-fast-exec2-map01-seed2",
+        "tick": 1908,
+        "label": false,
+        "yes": 0.3302
+      },
+      {
+        "run": "runs/20261019_184118_520444_repeat-fast-exec2-map02-seed2",
+        "tick": 7236,
+        "label": false,
+        "yes": 0.5556
+      },
+      {
+        "run": "runs/20261019_191546_218806_repeat-resume3-exec3-map01-seed1",
+        "tick": 926,
+        "label": false,
+        "yes": 0.5002
+      },
+      {
+        "run": "runs/20261019_122944_902304_repeat-resume-switchfix-map02-seed2",
+        "tick": 3546,
+        "label": false,
+        "yes": 0.8941
+      },
+      {
+        "run": "runs/20261019_135625_549804_repeat-fast-switchfix-map03-seed3",
+        "tick": 13686,
+        "label": false,
+        "yes": 0.9958
+      },
+      {
+        "run": "runs/20261019_182818_359267_repeat-fast-exec2-map02-seed1",
+        "tick": 26320,
+        "label": false,
+        "yes": 0.993
+      },
+      {
+        "run": "runs/20261019_113645_811366_repeat-resume-switchfix-map01-seed2",
+        "tick": 947,
+        "label": false,
+        "yes": 0.4174
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 22590,
+        "label": false,
+        "yes": 0.9728
+      },
+      {
+        "run": "runs/20261019_184118_520444_repeat-fast-exec2-map02-seed2",
+        "tick": 19768,
+        "label": false,
+        "yes": 0.9994
+      },
+      {
+        "run": "runs/20261019_160127_060633_repeat-resume2-exec2-map03-seed3",
+        "tick": 11893,
+        "label": false,
+        "yes": 0.9993
+      },
+      {
+        "run": "runs/20261019_173249_002972_repeat-fast-exec2-map03-seed2",
+        "tick": 17010,
+        "label": false,
+        "yes": 0.9537
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 26371,
+        "label": false,
+        "yes": 0.9981
+      },
+      {
+        "run": "runs/20261019_085753_252313_repeat-sample-map03-seed2",
+        "tick": 31480,
+        "label": false,
+        "yes": 0.9623
+      },
+      {
+        "run": "runs/20261019_192025_980415_repeat-resume3-exec3-map01-seed3",
+        "tick": 1215,
+        "label": false,
+        "yes": 0.9961
+      },
+      {
+        "run": "runs/20261019_192916_696493_repeat-resume3-exec3-map02-seed1",
+        "tick": 8343,
+        "label": false,
+        "yes": 0.9829
+      },
+      {
+        "run": "runs/20261019_102001_910144_repeat-memory-map03-seed3",
+        "tick": 6135,
+        "label": false,
+        "yes": 0.9088
+      },
+      {
+        "run": "runs/20261019_105938_274747_repeat-resume-switchfix-map03-seed2",
+        "tick": 37413,
+        "label": false,
+        "yes": 0.9193
+      },
+      {
+        "run": "runs/20261019_071841_195066_repeat-fast-map03-seed2",
+        "tick": 15966,
+        "label": false,
+        "yes": 0.9595
+      },
+      {
+        "run": "runs/20261019_063824_400468_repeat-fast-map03-seed54",
+        "tick": 18860,
+        "label": false,
+        "yes": 0.9988
+      },
+      {
+        "run": "runs/20261019_150217_752760_repeat-fast-switchfix-map02-seed2",
+        "tick": 27221,
+        "label": false,
+        "yes": 0.712
+      }
+    ]
+  }
+}

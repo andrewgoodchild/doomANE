@@ -1,0 +1,81 @@
+{
+ "scenario": "health_gathering",
+ "policy": "random",
+ "episodes": 10,
+ "skip": 4,
+ "reward_mean": 485.6,
+ "reward_sd": 244.98,
+ "kills_mean": 0.0,
+ "survival_s_mean": 16.76,
+ "deaths": 10,
+ "decisions": 1464,
+ "agreement_with_rule": 0.3354,
+ "agreement_by_question": {
+  "steer": 0.3354
+ },
+ "latency_ms_p50": null,
+ "latency_ms_p95": null,
+ "episodes_detail": [
+  {
+   "reward": 284.0,
+   "tics": 385,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 668.0,
+   "tics": 769,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 284.0,
+   "tics": 385,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 284.0,
+   "tics": 385,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 284.0,
+   "tics": 385,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 476.0,
+   "tics": 577,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 1020.0,
+   "tics": 1121,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 380.0,
+   "tics": 481,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 380.0,
+   "tics": 481,
+   "kills": 0.0,
+   "dead": true
+  },
+  {
+   "reward": 796.0,
+   "tics": 897,
+   "kills": 0.0,
+   "dead": true
+  }
+ ],
+ "wall_s": 8.3
+}

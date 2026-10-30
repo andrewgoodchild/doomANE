@@ -1,0 +1,158 @@
+diff --git a/source_files/lua/src/CMakeLists.txt b/source_files/lua/src/CMakeLists.txt
+index 5979fe1..8166e52 100644
+--- a/source_files/lua/src/CMakeLists.txt
++++ b/source_files/lua/src/CMakeLists.txt
+@@ -292,6 +292,18 @@ else()
+   set(TARGET_OS_FLAGS ${TARGET_OS_FLAGS} -DLUAJIT_OS=LUAJIT_OS_OTHER)
+ endif()
+ 
++# Fixed first mmap address for the LuaJIT allocator, so that map generation
++# is reproducible from a seed (table iteration order depends on addresses).
++set(LUAJIT_FIXED_MMAP_HINT
++    "0x200000000000"
++    CACHE STRING "Fixed start address for LuaJIT mmap probing (empty = ASLR)"
++)
++if(LJ_64 AND LUAJIT_FIXED_MMAP_HINT)
++  set(LJ_DEFINITIONS ${LJ_DEFINITIONS}
++                     -DLUAJIT_FIXED_MMAP_HINT=${LUAJIT_FIXED_MMAP_HINT}
++  )
++endif()
++
+ if(LUAJIT_DISABLE_GC64)
+   set(LJ_DEFINITIONS ${LJ_DEFINITIONS} -DLUAJIT_DISABLE_GC64)
+   set(TARGET_ARCH ${TARGET_ARCH} -DLUAJIT_DISABLE_GC64)
+diff --git a/source_files/lua/src/lj_alloc.c b/source_files/lua/src/lj_alloc.c
+index 20e6049..b767d0d 100644
+--- a/source_files/lua/src/lj_alloc.c
++++ b/source_files/lua/src/lj_alloc.c
+@@ -233,7 +233,14 @@ static int CALL_MUNMAP(void *ptr, size_t size)
+ static void *mmap_probe(PRNGState *rs, size_t size)
+ {
+   /* Hint for next allocation. Doesn't need to be thread-safe. */
++#ifdef LUAJIT_FIXED_MMAP_HINT
++  /* Start at a fixed address so that GC object addresses (and hence the
++  ** iteration order of tables keyed by objects) do not depend on ASLR.
++  ** Obsidian needs this for reproducible maps from a seed. */
++  static uintptr_t hint_addr = (uintptr_t)LUAJIT_FIXED_MMAP_HINT;
++#else
+   static uintptr_t hint_addr = 0;
++#endif
+   int olderr = errno;
+   int retry;
+   for (retry = 0; retry < LJ_ALLOC_MMAP_PROBE_MAX; retry++) {
+diff --git a/source_files/lua/src/vm_arm64.dasc b/source_files/lua/src/vm_arm64.dasc
+index 3448d0d..075bad7 100644
+--- a/source_files/lua/src/vm_arm64.dasc
++++ b/source_files/lua/src/vm_arm64.dasc
+@@ -4147,7 +4147,8 @@ static void emit_asm_debug(BuildCtx *ctx)
+ 	"LEFDEY:\n\n", fcsize);
+     }
+ #endif
+-    fprintf(ctx->fp, ".subsections_via_symbols\n");
++    /* .subsections_via_symbols removed: the macOS linker otherwise reorders the
++       VM atoms and breaks the precomputed relative branches (crash in TSETB). */
+     }
+     break;
+ #endif
+diff --git a/source_files/obsidian_main/csg_bsp.cc b/source_files/obsidian_main/csg_bsp.cc
+index a0acf09..4bd356d 100644
+--- a/source_files/obsidian_main/csg_bsp.cc
++++ b/source_files/obsidian_main/csg_bsp.cc
+@@ -40,16 +40,23 @@ static bool csg_is_clip_hull;
+ 
+ static std::vector<region_c *> dead_regions;
+ 
++static unsigned long long partition_next_serial = 0;
++
+ class partition_c {
+    public:
+     double x1, y1;
+     double x2, y2;
+ 
++    // creation order, used instead of the pointer when sorting
++    unsigned long long serial;
++
+    public:
+     partition_c(double _x1, double _y1, double _x2, double _y2)
+-        : x1(_x1), y1(_y1), x2(_x2), y2(_y2) {}
++        : x1(_x1), y1(_y1), x2(_x2), y2(_y2), serial(partition_next_serial++) {}
+ 
+-    partition_c(const snag_c *S) : x1(S->x1), y1(S->y1), x2(S->x2), y2(S->y2) {}
++    partition_c(const snag_c *S)
++        : x1(S->x1), y1(S->y1), x2(S->x2), y2(S->y2),
++          serial(partition_next_serial++) {}
+ 
+     ~partition_c() {}
+ };
+@@ -535,8 +542,8 @@ struct csg_brush_ptr_Compare {
+             return A->t.z > B->t.z;
+         }
+ 
+-        // tie breaker
+-        return A < B;
++        // tie breaker (creation order, not heap address)
++        return A->serial < B->serial;
+     }
+ };
+ 
+@@ -1337,7 +1344,11 @@ static void ProcessOverlapList(std::vector<snag_c *> &overlap_list) {
+ 
+ struct snag_on_node_Compare {
+     inline bool operator()(const snag_c *A, const snag_c *B) const {
+-        return A->on_node < B->on_node;
++        // group by node in creation order (not heap address);
++        // snags without a node (if any) come first
++        unsigned long long a = A->on_node ? A->on_node->serial + 1 : 0;
++        unsigned long long b = B->on_node ? B->on_node->serial + 1 : 0;
++        return a < b;
+     }
+ };
+ 
+diff --git a/source_files/obsidian_main/csg_main.cc b/source_files/obsidian_main/csg_main.cc
+index 951ff10..bcb8e9e 100644
+--- a/source_files/obsidian_main/csg_main.cc
++++ b/source_files/obsidian_main/csg_main.cc
+@@ -168,6 +168,8 @@ double brush_plane_c::CalcZ(double ax, double ay) const {
+     return z;
+ }
+ 
++static unsigned long long csg_brush_next_serial = 0;
++
+ csg_brush_c::csg_brush_c()
+     : bkind(BKIND_Solid),
+       bflags(0),
+@@ -175,7 +177,8 @@ csg_brush_c::csg_brush_c()
+       verts(),
+       b(-EXTREME_H),
+       t(EXTREME_H),
+-      link_ent(NULL) {}
++      link_ent(NULL),
++      serial(csg_brush_next_serial++) {}
+ 
+ csg_brush_c::csg_brush_c(const csg_brush_c *other)
+     : bkind(other->bkind),
+@@ -184,7 +187,8 @@ csg_brush_c::csg_brush_c(const csg_brush_c *other)
+       verts(),
+       b(other->b),
+       t(other->t),
+-      link_ent(other->link_ent) {
++      link_ent(other->link_ent),
++      serial(csg_brush_next_serial++) {
+     // NOTE: verts and slopes not cloned
+ 
+     bflags &= ~BRU_IF_Quad;
+diff --git a/source_files/obsidian_main/csg_main.h b/source_files/obsidian_main/csg_main.h
+index 89f868d..aaff7b5 100644
+--- a/source_files/obsidian_main/csg_main.h
++++ b/source_files/obsidian_main/csg_main.h
+@@ -183,6 +183,10 @@ class csg_brush_c {
+     // only set when brush is part of a map-model (bmodel)
+     csg_entity_c *link_ent;
+ 
++    // creation order, used as a deterministic tie breaker in sorts
++    // (comparing pointers made the output depend on heap addresses)
++    unsigned long long serial;
++
+    public:
+     csg_brush_c();
+     ~csg_brush_c();

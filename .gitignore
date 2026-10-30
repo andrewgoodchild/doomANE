@@ -1,0 +1,20 @@
+# Third-party checkouts, builds, venvs and game recordings (scripts/setup.sh recreates them)
+ext/
+_vizdoom.ini
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.claude/
+
+# Core ML packages and compiled models (doom/export_doom_*.py and coreml_cache.py rebuild them)
+results/coreml/
+*.mlmodelc
+*.mlpackage
+
+# Logs and large weights
+results/logs/
+results/doom/video/
+results/doom_heads/*/model.safetensors
+results/doom_heads/*/encoder
+results/doom_heads/*/tokenizer

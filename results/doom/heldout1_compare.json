@@ -1,0 +1,461 @@
+[
+ {
+  "map": "MAP05",
+  "config": "planner",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 0,
+  "kills": 26,
+  "keys": [],
+  "doors": 6,
+  "cells": 102
+ },
+ {
+  "map": "MAP05",
+  "config": "planner",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 6,
+  "kills": 167,
+  "keys": [
+   "blue"
+  ],
+  "doors": 27,
+  "cells": 194
+ },
+ {
+  "map": "MAP05",
+  "config": "planner",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 7,
+  "kills": 149,
+  "keys": [
+   "blue",
+   "yellow"
+  ],
+  "doors": 20,
+  "cells": 241
+ },
+ {
+  "map": "MAP05",
+  "config": "v031",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 0,
+  "kills": 60,
+  "keys": [
+   "blue",
+   "yellow"
+  ],
+  "doors": 6,
+  "cells": 167
+ },
+ {
+  "map": "MAP05",
+  "config": "v031",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 0,
+  "kills": 38,
+  "keys": [
+   "blue"
+  ],
+  "doors": 7,
+  "cells": 124
+ },
+ {
+  "map": "MAP05",
+  "config": "v031",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 4,
+  "kills": 112,
+  "keys": [
+   "blue",
+   "yellow"
+  ],
+  "doors": 11,
+  "cells": 192
+ },
+ {
+  "map": "MAP07",
+  "config": "planner",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 17,
+  "kills": 246,
+  "keys": [
+   "red"
+  ],
+  "doors": 58,
+  "cells": 198
+ },
+ {
+  "map": "MAP07",
+  "config": "planner",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 23,
+  "kills": 288,
+  "keys": [
+   "red"
+  ],
+  "doors": 60,
+  "cells": 113
+ },
+ {
+  "map": "MAP07",
+  "config": "planner",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 20,
+  "kills": 275,
+  "keys": [
+   "red"
+  ],
+  "doors": 55,
+  "cells": 136
+ },
+ {
+  "map": "MAP07",
+  "config": "v031",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 14,
+  "kills": 252,
+  "keys": [],
+  "doors": 61,
+  "cells": 164
+ },
+ {
+  "map": "MAP07",
+  "config": "v031",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 17,
+  "kills": 249,
+  "keys": [
+   "red"
+  ],
+  "doors": 52,
+  "cells": 119
+ },
+ {
+  "map": "MAP07",
+  "config": "v031",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 21,
+  "kills": 289,
+  "keys": [
+   "red"
+  ],
+  "doors": 66,
+  "cells": 132
+ },
+ {
+  "map": "MAP09",
+  "config": "planner",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 5,
+  "kills": 134,
+  "keys": [
+   "blue"
+  ],
+  "doors": 88,
+  "cells": 131
+ },
+ {
+  "map": "MAP09",
+  "config": "planner",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 0,
+  "kills": 16,
+  "keys": [],
+  "doors": 7,
+  "cells": 42
+ },
+ {
+  "map": "MAP09",
+  "config": "planner",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 1,
+  "kills": 40,
+  "keys": [
+   "blue"
+  ],
+  "doors": 23,
+  "cells": 135
+ },
+ {
+  "map": "MAP09",
+  "config": "v031",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 0,
+  "kills": 28,
+  "keys": [],
+  "doors": 26,
+  "cells": 114
+ },
+ {
+  "map": "MAP09",
+  "config": "v031",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 1,
+  "kills": 34,
+  "keys": [],
+  "doors": 22,
+  "cells": 100
+ },
+ {
+  "map": "MAP09",
+  "config": "v031",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 0,
+  "kills": 28,
+  "keys": [],
+  "doors": 20,
+  "cells": 90
+ },
+ {
+  "map": "MAP11",
+  "config": "planner",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 27,
+  "kills": 252,
+  "keys": [],
+  "doors": 20,
+  "cells": 166
+ },
+ {
+  "map": "MAP11",
+  "config": "planner",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 20,
+  "kills": 210,
+  "keys": [],
+  "doors": 20,
+  "cells": 154
+ },
+ {
+  "map": "MAP11",
+  "config": "planner",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 33,
+  "kills": 275,
+  "keys": [],
+  "doors": 22,
+  "cells": 167
+ },
+ {
+  "map": "MAP11",
+  "config": "v031",
+  "seed": 201,
+  "valid": false,
+  "authority": false,
+  "deaths": 28,
+  "kills": 257,
+  "keys": [],
+  "doors": 18,
+  "cells": 140
+ },
+ {
+  "map": "MAP11",
+  "config": "v031",
+  "seed": 202,
+  "valid": false,
+  "authority": false,
+  "deaths": 25,
+  "kills": 228,
+  "keys": [],
+  "doors": 24,
+  "cells": 131
+ },
+ {
+  "map": "MAP11",
+  "config": "v031",
+  "seed": 203,
+  "valid": false,
+  "authority": false,
+  "deaths": 20,
+  "kills": 206,
+  "keys": [],
+  "doors": 16,
+  "cells": 157
+ },
+ {
+  "map": "MAP13",
+  "config": "planner",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 24,
+  "kills": 279,
+  "keys": [],
+  "doors": 31,
+  "cells": 41
+ },
+ {
+  "map": "MAP13",
+  "config": "planner",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 22,
+  "kills": 261,
+  "keys": [],
+  "doors": 25,
+  "cells": 16
+ },
+ {
+  "map": "MAP13",
+  "config": "planner",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 20,
+  "kills": 245,
+  "keys": [],
+  "doors": 23,
+  "cells": 45
+ },
+ {
+  "map": "MAP13",
+  "config": "v031",
+  "seed": 201,
+  "valid": false,
+  "authority": false,
+  "deaths": 19,
+  "kills": 235,
+  "keys": [],
+  "doors": 25,
+  "cells": 38
+ },
+ {
+  "map": "MAP13",
+  "config": "v031",
+  "seed": 202,
+  "valid": false,
+  "authority": false,
+  "deaths": 19,
+  "kills": 241,
+  "keys": [],
+  "doors": 28,
+  "cells": 38
+ },
+ {
+  "map": "MAP13",
+  "config": "v031",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 20,
+  "kills": 242,
+  "keys": [],
+  "doors": 28,
+  "cells": 42
+ },
+ {
+  "map": "MAP15",
+  "config": "planner",
+  "seed": 201,
+  "valid": true,
+  "authority": true,
+  "deaths": 1,
+  "kills": 7,
+  "keys": [],
+  "doors": 3,
+  "cells": 12
+ },
+ {
+  "map": "MAP15",
+  "config": "planner",
+  "seed": 202,
+  "valid": true,
+  "authority": true,
+  "deaths": 2,
+  "kills": 16,
+  "keys": [],
+  "doors": 5,
+  "cells": 32
+ },
+ {
+  "map": "MAP15",
+  "config": "planner",
+  "seed": 203,
+  "valid": false,
+  "authority": true,
+  "deaths": 1,
+  "kills": 7,
+  "keys": [],
+  "doors": 3,
+  "cells": 24
+ },
+ {
+  "map": "MAP15",
+  "config": "v031",
+  "seed": 201,
+  "valid": false,
+  "authority": true,
+  "deaths": 0,
+  "kills": 1,
+  "keys": [],
+  "doors": 1,
+  "cells": 9
+ },
+ {
+  "map": "MAP15",
+  "config": "v031",
+  "seed": 202,
+  "valid": false,
+  "authority": true,
+  "deaths": 0,
+  "kills": 2,
+  "keys": [],
+  "doors": 1,
+  "cells": 8
+ },
+ {
+  "map": "MAP15",
+  "config": "v031",
+  "seed": 203,
+  "valid": true,
+  "authority": true,
+  "deaths": 0,
+  "kills": 1,
+  "keys": [],
+  "doors": 1,
+  "cells": 9
+ }
+]

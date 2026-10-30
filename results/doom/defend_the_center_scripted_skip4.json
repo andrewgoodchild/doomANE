@@ -1,0 +1,82 @@
+{
+ "scenario": "defend_the_center",
+ "policy": "scripted",
+ "episodes": 10,
+ "skip": 4,
+ "reward_mean": 16.3,
+ "reward_sd": 3.32,
+ "kills_mean": 17.3,
+ "survival_s_mean": 31.73,
+ "deaths": 10,
+ "decisions": 2756,
+ "agreement_with_rule": 1.0,
+ "agreement_by_question": {
+  "aim": 1.0,
+  "fire": 1.0
+ },
+ "latency_ms_p50": null,
+ "latency_ms_p95": null,
+ "episodes_detail": [
+  {
+   "reward": 13.0,
+   "tics": 1060,
+   "kills": 14.0,
+   "dead": true
+  },
+  {
+   "reward": 16.0,
+   "tics": 988,
+   "kills": 17.0,
+   "dead": true
+  },
+  {
+   "reward": 18.0,
+   "tics": 1292,
+   "kills": 19.0,
+   "dead": true
+  },
+  {
+   "reward": 18.0,
+   "tics": 1201,
+   "kills": 19.0,
+   "dead": true
+  },
+  {
+   "reward": 18.0,
+   "tics": 1246,
+   "kills": 19.0,
+   "dead": true
+  },
+  {
+   "reward": 20.0,
+   "tics": 1272,
+   "kills": 21.0,
+   "dead": true
+  },
+  {
+   "reward": 8.0,
+   "tics": 772,
+   "kills": 9.0,
+   "dead": true
+  },
+  {
+   "reward": 16.0,
+   "tics": 1108,
+   "kills": 17.0,
+   "dead": true
+  },
+  {
+   "reward": 17.0,
+   "tics": 932,
+   "kills": 18.0,
+   "dead": true
+  },
+  {
+   "reward": 19.0,
+   "tics": 1236,
+   "kills": 20.0,
+   "dead": true
+  }
+ ],
+ "wall_s": 20.0
+}

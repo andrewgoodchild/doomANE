@@ -1,0 +1,82 @@
+{
+ "scenario": "basic",
+ "policy": "scripted",
+ "episodes": 10,
+ "skip": 4,
+ "reward_mean": 73.0,
+ "reward_sd": 8.44,
+ "kills_mean": 1.0,
+ "survival_s_mean": 0.0,
+ "deaths": 0,
+ "decisions": 75,
+ "agreement_with_rule": 1.0,
+ "agreement_by_question": {
+  "aim": 1.0,
+  "fire": 1.0
+ },
+ "latency_ms_p50": null,
+ "latency_ms_p95": null,
+ "episodes_detail": [
+  {
+   "reward": 79.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 87.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 67.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 71.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 67.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 63.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 71.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 75.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 87.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  },
+  {
+   "reward": 63.0,
+   "tics": 0,
+   "kills": 1.0,
+   "dead": false
+  }
+ ],
+ "wall_s": 1.9
+}

@@ -1,0 +1,87 @@
+{
+  "encoder": "answerdotai/ModernBERT-large",
+  "head_layers": 2,
+  "max_len": 640,
+  "head_max_len": 384,
+  "max_prefixes": 6,
+  "act_costs": {
+    "escalate": 0.5
+  },
+  "cost_wrong_act": 3.0,
+  "amp_dtype": "bf16",
+  "model_name": "laya-typed-decisions",
+  "temperature": [
+    1.0,
+    1.0,
+    1.0
+  ],
+  "temperature_by_options": {},
+  "training": {
+    "updates": 7313,
+    "epochs_completed": 1,
+    "hours": 1.96,
+    "world_size": 1,
+    "fine_tuned_from_checkpoint": true
+  },
+  "gradient_checkpointing": true,
+  "max_tokens_per_batch": 4096,
+  "fine_tuned": true,
+  "doom_adaptation": {
+    "category_weights": {},
+    "weighted_sampling_with_replacement": false,
+    "validation_weights": {
+      "command": 1,
+      "item": 1,
+      "weapon": 1,
+      "switch": 1
+    },
+    "save_at_end": true,
+    "cached_encoder": true,
+    "frozen_encoder": true,
+    "trainable_encoder_layers": 0,
+    "training": "training/map3-compact-movement-v2/train.json",
+    "validation": "training/map3-compact-movement-v2/validation.json",
+    "data_sha256": {
+      "train.json": "5d827f08b25221d6f88c060d8f0d89856150db7cea06f89d735ca4479597aa10",
+      "validation.json": "7d4c419bdf53e6adb775c4b2334f1ff29fe8cf3223d98a3a7db93f97eff818bb"
+    },
+    "seed": 771,
+    "base_checkpoint": "laya-map3-retreat-v1",
+    "learning_rate": 0.0001,
+    "encoder_learning_rate": null,
+    "device": "mps",
+    "laya_source_commit": "42626c348753fbb17572a813127df2278a1ec527",
+    "question_format": "movement-compact-v3-combat",
+    "support_source_sha256": {
+      "training/sampling.py": "f0bfbf3863c1f628fdac00f909eff75ad53c7e356a976c0194cec3d4adddd674"
+    },
+    "input_projection": "movement-compact-v3-combat",
+    "numeric_residual": {
+      "format": "laya-movement-numeric-residual-v3-combat",
+      "spec_sha256": "e0ea5e144f28e8571d7fc172dc39a1f0b5e401612b9b6396cea7473a00ad699a",
+      "weights_sha256": "9c1dd915f83710b4ec411345576ff17e9f1db60534e5a2792a0729344a72170a",
+      "semantic_parent": "laya-v031-movement-numeric-v1",
+      "identity": {
+        "semantic_weights": "437f49e66cd5393cf2654ce2dbb51fd1902b3ce1b19df62120709c7441d012fc",
+        "config": "c884a7e0317021d7bb2896fd17460d73a6633971bf07d3c9e014efe704ffbb17",
+        "rollouts": {
+          "../../results/doom_heads/fight-rollouts-v1.jsonl": "3cd3ec3bcd4bde6e48c4258cfffb6fb517cbf693b96510936b4843541f4513b8"
+        },
+        "validation_runs": [
+          "20261025_080701_182035_repeat-planner_ext_safe-fight1-map04-seed109",
+          "20261025_094736_087794_repeat-planner_ext_safe-fight1-map03-seed4"
+        ]
+      },
+      "seed": 771,
+      "epochs": 200,
+      "best_epoch": 54,
+      "temperature": 5.0,
+      "learning_rate": 0.002,
+      "trainer_sha256": "ed20da414edb90c12c32c935ce17d814b9730b5b2fc54262f269397b91e14adc",
+      "inference_sha256": "f11f86b3c90bd0511a9e5d463c412695b938838f13204fa53d227d467698499a",
+      "projection_sha256": "e19e283a98a49d30a6555b8fb1933b2cef3d8d13e84bfc55ff9367c74a611456",
+      "facts_sha256": "0f9eadad7b68a5480ff0fdbab9ace57853532ee91cd183a425572d9698b4cfb8",
+      "note": "Frozen Laya semantic scores plus a residual trained on replayed outcomes of each movement (health lost, damage dealt, death) from saved engine states. Labels come from the game only; validation on other runs."
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "rule": "Freedoom 2 maps. Development maps may be used for training data, tuning and debugging. Held-out maps are only ever played by a frozen stack for evaluation: no training data, no fixes from their failures, no reading their runs before the evaluation is recorded.",
+  "development": ["MAP01", "MAP02", "MAP03", "MAP04", "MAP06", "MAP08", "MAP10", "MAP12", "MAP14", "MAP16", "MAP18", "MAP20", "MAP22", "MAP24", "MAP26", "MAP28", "MAP30"],
+  "holdout": ["MAP05", "MAP07", "MAP09", "MAP11", "MAP13", "MAP15", "MAP17", "MAP19", "MAP21", "MAP23", "MAP25", "MAP27", "MAP29", "MAP31", "MAP32"],
+  "holdout_seeds": [201, 202, 203],
+  "seconds": 1200,
+  "note": "MAP04 was a held-out map for holdout1 (2026-10-22) and became a development map when its route failures were fixed."
+}

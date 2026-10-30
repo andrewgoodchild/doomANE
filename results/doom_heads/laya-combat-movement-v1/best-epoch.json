@@ -1,0 +1,7 @@
+{
+  "epoch": 54,
+  "validation": {
+    "movement_regret": 1.920044183731079
+  },
+  "numeric_residual": true
+}

@@ -1,0 +1,10 @@
+--checkpoint checkpoints/laya-doom-v031/laya-map2-explicit-v2
+--item-head-checkpoint checkpoints/laya-doom-v031/laya-v031-item-balanced-v1 --item-category-facts
+--command-compact-facts --enemy-without-goal
+--enemy-rank-facts --weapon-compact-facts --movement-compact-facts
+--head-checkpoint movement=checkpoints/laya-doom-v031/laya-v031-movement-numeric-v1
+--head-checkpoint command=checkpoints/laya-doom-v031/laya-v031-command-key-retained-v1
+--head-checkpoint look_gate=checkpoints/laya-doom-v031/laya-map3-look-floor-v2
+--head-checkpoint switch=checkpoints/laya-doom-v031/laya-v031-switch-numeric-v1
+--head-checkpoint enemy=checkpoints/laya-doom-v031/laya-v031-enemy-visibility-v2
+--head-checkpoint weapon=checkpoints/laya-doom-v031/laya-v031-weapon-boundary-v2

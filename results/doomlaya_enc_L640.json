@@ -1,0 +1,10 @@
+{
+ "length": 640,
+ "tokens": 448,
+ "wrapper_vs_hf_max_abs": 0.0,
+ "ane_vs_hf_max_abs": 3.6607472896575928,
+ "ane_vs_hf_mean_abs": 0.007770902011543512,
+ "cosine": 0.99981,
+ "convert_s": 9.7,
+ "ane_ms": 74.4
+}

@@ -1,0 +1,37 @@
+{
+ "scenario": "health_gathering",
+ "policy": "laya",
+ "mode": "ASYNC_PLAYER 35 tics/s",
+ "episodes": [
+  {
+   "decisions": 206,
+   "wall_s": 10.95,
+   "game_s": 11.0,
+   "decisions_per_s": 18.8,
+   "latency_ms_p50": 25.5,
+   "latency_ms_p95": 28.7,
+   "reward": 106.0,
+   "kills": 0.0
+  },
+  {
+   "decisions": 215,
+   "wall_s": 10.97,
+   "game_s": 11.03,
+   "decisions_per_s": 19.6,
+   "latency_ms_p50": 25.3,
+   "latency_ms_p95": 31.0,
+   "reward": 115.0,
+   "kills": 0.0
+  },
+  {
+   "decisions": 215,
+   "wall_s": 10.94,
+   "game_s": 11.0,
+   "decisions_per_s": 19.7,
+   "latency_ms_p50": 25.2,
+   "latency_ms_p95": 29.0,
+   "reward": 115.0,
+   "kills": 0.0
+  }
+ ]
+}
