@@ -1,5 +1,5 @@
 diff --git a/agent.py b/agent.py
-index 1f0226e..08b8e27 100644
+index 1f0226e..09be87f 100644
 --- a/agent.py
 +++ b/agent.py
 @@ -21,6 +21,7 @@ from doomlib.overlay import Overlay, Recorder
@@ -527,7 +527,20 @@ index 1f0226e..08b8e27 100644
              tactic=s['execution']['action']
              gains=s.get('resource',{}).get('gains',{})
              if gains:
-@@ -730,6 +919,16 @@ def main():
+@@ -718,7 +907,11 @@ def main():
+             counts[tactic] += 1
+             reflex_counts.update(refs)
+             enemy_ticks += any(e.get('visible',True) for e in s['enemies'])
+-            emit(handles['telemetry'], {**s, 'tick': tick, 'episode': episode, 'tactic': tactic,
++            if sensors.shadow is not None:
++                # --shadow-engine-packet: the monsters the labels buffer shows on this tic, as truth for offline checks
++                s_row={**s,'engine_enemies':[{k:e[k] for k in ('id','name','x','y')} for e in sensors.shadow_view['enemies'] if e.get('visible')]}
++            else:s_row=s
++            emit(handles['telemetry'], {**s_row, 'tick': tick, 'episode': episode, 'tactic': tactic,
+                                        'wall_seconds': round(time.perf_counter()-started, 6),
+                                        'buttons': action, 'reflexes': refs, 'pending': future is not None})
+             if recorder:
+@@ -730,6 +923,16 @@ def main():
              previous = s
              if args.stop_after_level and next_level_tick is not None and tick-next_level_tick>=3*TICRATE:
                  break
@@ -544,7 +557,7 @@ index 1f0226e..08b8e27 100644
              if args.realtime:
                  delay = started + total_ticks/TICRATE - time.perf_counter()
                  if delay > 0:
-@@ -781,6 +980,9 @@ def main():
+@@ -781,6 +984,9 @@ def main():
                     'resource_gains': dict(resource_counts),
                     'video_frames': recorder.frames if recorder else 0,
                     'laya_health': health, 'run': str(run)}

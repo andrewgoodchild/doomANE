@@ -1212,3 +1212,18 @@ Where they disagree (parent, training): the teacher picks attack on 44 % of deci
 - Can what the agent knows about each remembered track tell them apart? On the 1,592 decisions with remembered pixel enemies and none visible (telemetry at the decision tic), the label being "engine has an enemy": AUC by age of the newest sighting 0.58, by most tics seen 0.59, by total tics seen 0.63, by nearest distance 0.51, by count 0.69. A small MLP on all five, trained on seeds 11–13 and tested on seed 14: 0.68. Track evidence carries little of the answer either.
 Conclusion: the command head's mistakes in pixel games are decisions made on information that does not say whether the remembered enemy is real. Neither filtering the reports (the earlier gates) nor re-weighting the decision (this one) can recover what the detector's output does not contain. The next lever is the evidence itself: what a remembered pixel enemy's report carries, or a detector whose remembered tracks are real far more often than half the time.
 `--shadow-engine-packet`, `doom/distill_command.py` (now with `--drift`, default the registered 0.1), the server's `--command-residual` and the `planner_ext_safe_distill` config stay for later rounds.
+
+**Diagnostic (not pre-registered, no rule): does geometry tell real remembered pixel enemies from phantoms? (2026-11-07)** Question from the user: an internal model with the engine version's states, filled from pixels. Before building it, this checks whether the evidence such a model would add separates real tracks from phantoms. `--shadow-engine-packet` now also writes the engine-visible monsters to telemetry (`engine_enemies`, truth for offline checks only). 6 games, pix3 at 0.79, re-plan on gains, MAP02/03/04, seeds 21 and 22, 180 s (suffix `pix3_truth`, log `results/vision/pix3_truth.log`; all valid and passing authority). `doom/vision/track_evidence.py` → `results/vision/track_evidence.json`.
+- **Unit:** each remembered (listed, not visible) pixel entry at a decision tic, 2,605 in all. Label: the track is real when most of its sightings so far had an engine monster within 96 units + 20 % of distance. 61 % are real (MAP02 80 %, MAP03 42 %, MAP04 59 %). This is a per-track label, so it is not directly comparable with the decision-level 0.68 of the distillation diagnostic.
+- **Features**, only from what was known by that tic. Geometry comes from the WAD's lines, sides and sectors, never its things. AUC by feature:
+  - tics seen 0.77; scatter of the sighting positions 0.67 (real tracks scatter more: monsters move, while a phantom stays fixed to its spot); share of sightings behind a one-sided wall 0.64 (phantom 40 %, real 18 %); distance 0.60; mean position in no open sector 0.59 (phantom 34 %, real 16 %); wall distance 0.59; clear-view misses 0.58; age 0.56; entries listed 0.53.
+- **Small MLP**, trained on seed 21 and tested on seed 22 (1,275 entries): time and counts only 0.80, geometry only 0.78, **all 0.87**.
+- **Operating points (held out):**
+
+| | keep 95 % of real | keep 90 % | keep 80 % |
+|---|---|---|---|
+| time + counts: phantoms removed | 26 % | 38 % | 57 % |
+| all features: phantoms removed | **52 %** | 63 % | 78 % |
+| all: real share of remembered list (now 64 %) | 78 % | 82 % | 87 % |
+
+Reading: geometry and motion double the phantoms removed at the same loss of real enemies. This is the evidence an internal state model would add. Caveats: one test seed, three maps; positions of real monsters also fall in walls or closed sectors often (16–18 %), because depth-based distance is noisy and doors open; static sector heights only. A track-admission threshold on tics seen alone was already gated (`pix3_admit`, 0/4), so the gain to test is the geometric part.
