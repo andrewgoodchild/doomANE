@@ -1,0 +1,14 @@
+{
+ "CPU_AND_NE": {
+  "ms_median": 2.5,
+  "cell_agreement_with_torch": 0.9998
+ },
+ "CPU_AND_GPU": {
+  "ms_median": 9.83,
+  "cell_agreement_with_torch": 1.0
+ },
+ "CPU_ONLY": {
+  "ms_median": 28.81,
+  "cell_agreement_with_torch": 1.0
+ }
+}

@@ -1,0 +1,123 @@
+RESULT MAP01 {"config": "planner_ext_safe", "seed": 54, "run": "runs/20261031_130139_828721_repeat-planner_ext_safe-pix1_pixel-map01-seed54", "server": "ane", "completed": false, "valid": true, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 180.0, "kills": 2, "deaths": 0, "decisions": 351, "latency_ms_median": 229.19, "final_map": "MAP01", "stalled": null, "levels_completed": 0}
+RESULT MAP01 {"config": "planner_ext_safe", "seed": 1, "run": "runs/20261031_130443_498606_repeat-planner_ext_safe-pix1_pixel-map01-seed1", "server": "ane", "completed": false, "valid": true, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 180.0, "kills": 2, "deaths": 0, "decisions": 351, "latency_ms_median": 236.46, "final_map": "MAP01", "stalled": null, "levels_completed": 0}
+RESULT MAP01 {"config": "planner_ext_safe", "seed": 2, "run": "runs/20261031_130747_898701_repeat-planner_ext_safe-pix1_pixel-map01-seed2", "server": "ane", "completed": false, "valid": true, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 180.0, "kills": 2, "deaths": 0, "decisions": 350, "latency_ms_median": 255.78, "final_map": "MAP01", "stalled": null, "levels_completed": 0}
+RESULT MAP01 {"config": "planner_ext_safe", "seed": 3, "run": "runs/20261031_131051_668989_repeat-planner_ext_safe-pix1_pixel-map01-seed3", "server": "ane", "completed": false, "valid": true, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 180.0, "kills": 2, "deaths": 0, "decisions": 351, "latency_ms_median": 217.85, "final_map": "MAP01", "stalled": null, "levels_completed": 0}
+RESULT MAP02 {"config": "planner_ext_safe", "seed": 54, "run": "runs/20261031_131356_517487_repeat-planner_ext_safe-pix1_pixel-map02-seed54", "server": "ane", "completed": false, "valid": true, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 1800.0, "kills": 139, "deaths": 17, "decisions": 3523, "latency_ms_median": 144.44, "final_map": "MAP02", "stalled": null, "levels_completed": 0}
+RESULT MAP03 {"config": "planner_ext_safe", "seed": 54, "run": "runs/20261031_142239_163268_repeat-planner_ext_safe-pix1_pixel-map03-seed54", "server": "ane", "completed": false, "valid": true, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 1200.0, "kills": 0, "deaths": 0, "decisions": 2335, "latency_ms_median": 146.56, "final_map": "MAP03", "stalled": null, "levels_completed": 0}
+RESULT MAP03 {"config": "planner_ext_safe", "seed": 1, "run": "runs/20261031_144400_496246_repeat-planner_ext_safe-pix1_pixel-map03-seed1", "server": "ane", "completed": false, "valid": true, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 1200.0, "kills": 0, "deaths": 0, "decisions": 2335, "latency_ms_median": 147.11, "final_map": "MAP03", "stalled": null, "levels_completed": 0}
+RESULT MAP03 {"config": "planner_ext_safe", "seed": 2, "run": "runs/20261031_150425_705504_repeat-planner_ext_safe-pix1_pixel-map03-seed2", "server": "ane", "completed": false, "valid": true, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 1200.0, "kills": 0, "deaths": 0, "decisions": 2335, "latency_ms_median": 150.64, "final_map": "MAP03", "stalled": null, "levels_completed": 0}
+RESULT MAP03 {"config": "planner_ext_safe", "seed": 3, "run": "runs/20261031_152502_775206_repeat-planner_ext_safe-pix1_pixel-map03-seed3", "server": "ane", "completed": false, "valid": false, "authority": true, "verifier_exit": 1, "status": "completed", "game_seconds": 1200.0, "kills": 0, "deaths": 0, "decisions": 2335, "latency_ms_median": 148.75, "final_map": "MAP03", "stalled": null, "levels_completed": 0}
+Traceback (most recent call last):
+  File "/Users/andrewgoodchild/code/doomANE/ext/doomLaya-dev/../../doom/repeat_map.py", line 312, in <module>
+    main()
+    ~~~~^^
+  File "/Users/andrewgoodchild/code/doomANE/ext/doomLaya-dev/../../doom/repeat_map.py", line 294, in main
+    future.result()
+    ~~~~~~~~~~~~~^^
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ~~~~~~~~~~~~~~~~~^^
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/andrewgoodchild/code/doomANE/ext/doomLaya-dev/../../doom/repeat_map.py", line 289, in job
+    play(config, game_map, seed, port, devices[port])
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andrewgoodchild/code/doomANE/ext/doomLaya-dev/../../doom/repeat_map.py", line 240, in play
+    raise RuntimeError(f'{tag} failed:\n{agent.stdout[-2000:]}{agent.stderr[-2000:]}')
+RuntimeError: repeat-planner_ext_safe-pix1_pixel-map02-seed1 failed:
+t": 0.7126436781609196,
+            "weapon": 1.0,
+            "enemy": 1.0
+          },
+          "seconds": 642.0534448749968
+        },
+        {
+          "epoch": 5,
+          "validation": {
+            "item": 0.41794871794871796,
+            "command": 0.7701149425287356,
+            "combat": 0.98,
+            "switch": 0.8421052631578947,
+            "movement": 0.7931034482758621,
+            "weapon": 0.99,
+            "enemy": 1.0
+          },
+          "seconds": 791.9859826659958
+        },
+        {
+          "epoch": 6,
+          "validation": {
+            "item": 0.3769230769230769,
+            "command": 0.7787356321839081,
+            "combat": 0.99,
+            "switch": 0.8210526315789474,
+            "movement": 0.7471264367816092,
+            "weapon": 1.0,
+            "enemy": 1.0
+          },
+          "seconds": 944.41506595799
+        },
+        {
+          "epoch": 7,
+          "validation": {
+            "item": 0.382051282051282,
+            "command": 0.7385057471264368,
+            "combat": 0.99,
+            "switch": 0.8210526315789474,
+            "movement": 0.7241379310344828,
+            "weapon": 0.99,
+            "enemy": 1.0
+          },
+          "seconds": 1098.154722207997
+        },
+        {
+          "epoch": 8,
+          "validation": {
+            "item": 0.43333333333333335,
+            "command": 0.7241379310344828,
+            "combat": 0.99,
+            "switch": 0.8526315789473684,
+            "movement": 0.7586206896551724,
+            "weapon": 1.0,
+            "enemy": 1.0
+          },
+          "seconds": 1251.3650479579956
+        }
+      ]
+    }
+  },
+  "run": "/Users/andrewgoodchild/code/doomANE/ext/doomLaya-dev/runs/20261031_134414_380046_repeat-planner_ext_safe-pix1_pixel-map02-seed1",
+  "pixel_perception_ms_median": 3.22,
+  "pixel_perception_ms_p90": 4.54
+}
+REPORT /Users/andrewgoodchild/code/doomANE/ext/doomLaya-dev/runs/20261031_134414_380046_repeat-planner_ext_safe-pix1_pixel-map02-seed1/report.html
+/andrewgoodchild/code/doomANE/doom/planner.py", line 788, in mask
+    return planner.update(original_mask(packet, *a, **k))
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andrewgoodchild/code/doomANE/doom/planner.py", line 557, in update
+    self.plan(packet["state"], reason, signature)
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andrewgoodchild/code/doomANE/doom/planner.py", line 571, in plan
+    answer = self._ask(state_text, "objective", question)
+  File "/Users/andrewgoodchild/code/doomANE/doom/planner.py", line 586, in _ask
+    with urllib.request.urlopen(request, timeout=15) as response:
+         ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/urllib/request.py", line 189, in urlopen
+    return opener.open(url, data, timeout)
+           ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/urllib/request.py", line 495, in open
+    response = meth(req, response)
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/urllib/request.py", line 604, in http_response
+    response = self.parent.error(
+        'http', request, response, code, msg, hdrs)
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/urllib/request.py", line 533, in error
+    return self._call_chain(*args)
+           ~~~~~~~~~~~~~~~~^^^^^^^
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/urllib/request.py", line 466, in _call_chain
+    result = func(*args)
+  File "/Users/andrewgoodchild/.local/share/uv/python/cpython-3.13.3-macos-aarch64-none/lib/python3.13/urllib/request.py", line 613, in http_error_default
+    raise HTTPError(req.full_url, code, msg, hdrs, fp)
+urllib.error.HTTPError: HTTP Error 500: Internal Server Error
+

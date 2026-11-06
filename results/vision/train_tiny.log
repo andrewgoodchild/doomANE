@@ -1,0 +1,22 @@
+43 classes: ['none', 'Cell', 'CellPack', 'Clip', 'ClipBox', 'RocketAmmo', 'RocketBox', 'Shell', 'ShellBox', 'ArmorBonus', 'BlueArmor', 'GreenArmor', 'HealthBonus', 'Medikit', 'Stimpack', 'BlueCard', 'Arachnotron', 'BaronOfHell', 'Cacodemon', 'ChaingunGuy', 'Demon', 'DoomImp', 'Fatso', 'HellKnight', 'LostSoul', 'PainElemental', 'Revenant', 'ShotgunGuy', 'Spectre', 'Zombieman', 'Berserk', 'Megasphere', 'Chaingun', 'RocketLauncher', 'Shotgun', 'SuperShotgun', 'OtherMonster', 'OtherHealth', 'OtherArmor', 'OtherAmmo', 'OtherWeapon', 'OtherKey', 'OtherPowerup']
+train (3250, 3, 192, 320) val (1000, 3, 192, 320)
+{"epoch": 1, "loss": 1.7792, "minutes": 0.1}
+{"epoch": 2, "loss": 0.6134, "minutes": 0.3}
+{"epoch": 3, "loss": 0.5677, "minutes": 0.4}
+{"epoch": 4, "loss": 0.5165, "minutes": 0.5}
+{"epoch": 5, "loss": 0.4801, "minutes": 0.6, "val": {"cell_fg_recall": 0.03334583342075348, "cell_fg_precision": 0.028982190415263176, "cell_category_recall": {"Monster": 0.428, "Health": 0.351, "Armor": 0.0, "Ammo": 0.001, "Weapon": 0.0, "Key": 0.0, "Powerup": 0.0}, "cell_category_precision": {"Monster": 0.367, "Health": 0.118, "Ammo": 0.001}, "object_recall": {"Monster": "622/1467 = 0.424", "Health": "153/494 = 0.310", "Ammo": "2/700 = 0.003", "Armor": "0/406 = 0.000", "Weapon": "0/266 = 0.000", "Key": "0/54 = 0.000", "Powerup": "0/3 = 0.000"}, "object_named_right_when_found": {"Monster": 0.193, "Health": 0.242, "Ammo": 0.0}, "object_false_blobs": "3832/4687", "object_column_error_degrees_median": 0.31}}
+{"epoch": 6, "loss": 0.4571, "minutes": 0.8}
+{"epoch": 7, "loss": 0.4305, "minutes": 0.9}
+{"epoch": 8, "loss": 0.4034, "minutes": 1.0}
+{"epoch": 9, "loss": 0.3895, "minutes": 1.1}
+{"epoch": 10, "loss": 0.3628, "minutes": 1.2, "val": {"cell_fg_recall": 0.287896066904068, "cell_fg_precision": 0.3676980137825012, "cell_category_recall": {"Monster": 0.528, "Health": 0.292, "Armor": 0.125, "Ammo": 0.059, "Weapon": 0.005, "Key": 0.0, "Powerup": 0.0}, "cell_category_precision": {"Monster": 0.606, "Health": 0.83, "Armor": 0.414, "Ammo": 0.138, "Weapon": 0.594}, "object_recall": {"Monster": "763/1467 = 0.520", "Health": "130/494 = 0.263", "Ammo": "75/700 = 0.107", "Armor": "85/406 = 0.209", "Weapon": "6/266 = 0.023", "Key": "0/54 = 0.000", "Powerup": "0/3 = 0.000"}, "object_named_right_when_found": {"Monster": 0.459, "Health": 0.631, "Ammo": 0.227, "Armor": 0.965, "Weapon": 0.667}, "object_false_blobs": "1669/2814", "object_column_error_degrees_median": 0.27}}
+{"epoch": 11, "loss": 0.3422, "minutes": 1.4}
+{"epoch": 12, "loss": 0.3198, "minutes": 1.5}
+{"epoch": 13, "loss": 0.3062, "minutes": 1.6}
+{"epoch": 14, "loss": 0.3039, "minutes": 1.7}
+{"epoch": 15, "loss": 0.2752, "minutes": 1.9, "val": {"cell_fg_recall": 0.4258037209510803, "cell_fg_precision": 0.570837140083313, "cell_category_recall": {"Monster": 0.549, "Health": 0.501, "Armor": 0.358, "Ammo": 0.276, "Weapon": 0.14, "Key": 0.031, "Powerup": 0.0}, "cell_category_precision": {"Monster": 0.745, "Health": 0.765, "Armor": 0.572, "Ammo": 0.186, "Weapon": 0.33, "Key": 0.097, "Powerup": 0.0}, "object_recall": {"Monster": "735/1467 = 0.501", "Health": "192/494 = 0.389", "Ammo": "208/700 = 0.297", "Armor": "136/406 = 0.335", "Weapon": "42/266 = 0.158", "Key": "4/54 = 0.074", "Powerup": "0/3 = 0.000"}, "object_named_right_when_found": {"Monster": 0.682, "Health": 0.802, "Ammo": 0.495, "Armor": 0.993, "Weapon": 0.333, "Key": 0.75}, "object_false_blobs": "2195/3595", "object_column_error_degrees_median": 0.24}}
+{"epoch": 16, "loss": 0.254, "minutes": 2.0}
+{"epoch": 17, "loss": 0.2419, "minutes": 2.1}
+{"epoch": 18, "loss": 0.2348, "minutes": 2.2}
+{"epoch": 19, "loss": 0.2302, "minutes": 2.4}
+{"epoch": 20, "loss": 0.2261, "minutes": 2.5, "val": {"cell_fg_recall": 0.4679986834526062, "cell_fg_precision": 0.48339664936065674, "cell_category_recall": {"Monster": 0.629, "Health": 0.575, "Armor": 0.368, "Ammo": 0.282, "Weapon": 0.171, "Key": 0.241, "Powerup": 0.0}, "cell_category_precision": {"Monster": 0.673, "Health": 0.635, "Armor": 0.565, "Ammo": 0.133, "Weapon": 0.201, "Key": 0.121, "Powerup": 0.0}, "object_recall": {"Monster": "800/1467 = 0.545", "Health": "202/494 = 0.409", "Ammo": "194/700 = 0.277", "Armor": "131/406 = 0.323", "Weapon": "52/266 = 0.195", "Key": "15/54 = 0.278", "Powerup": "0/3 = 0.000"}, "object_named_right_when_found": {"Monster": 0.66, "Health": 0.802, "Ammo": 0.521, "Armor": 1.0, "Weapon": 0.577, "Key": 1.0}, "object_false_blobs": "2876/4326", "object_column_error_degrees_median": 0.19}}

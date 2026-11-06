@@ -1,0 +1,162 @@
+diff --git a/doom/planner.py b/doom/planner.py
+index 1bbade1..b289ee1 100644
+--- a/doom/planner.py
++++ b/doom/planner.py
+@@ -45,6 +45,7 @@ STUCK_FORGET_SECONDS = 30  # brief switches to other commands do not reset an it
+ SET_ASIDE_SECONDS = 60
+ OBJECTIVE_FAILURES = 2  # an objective that failed this often is set aside
+ OBJECTIVE_SET_ASIDE_SECONDS = 90
++SPOT_UNITS = 128  # pixel mode: an item seen again this close to where a chased one failed is the same spot
+ LOW_HEALTH = 50
+ LIFT_REST_SECONDS = 45  # a lift just ridden is not offered again straight away (no riding back)
+ FIGHT_SECONDS = 3  # a fight plan is re-asked this often while enemies are visible
+@@ -71,10 +72,11 @@ INSTRUCTIONS = ("Choose the next objective to finish the level. Prefer objective
+ 
+ 
+ class Planner:
+-    def __init__(self, endpoint, log_path=None, fight=False):
++    def __init__(self, endpoint, log_path=None, fight=False, pixel=False):
+         self.endpoint = endpoint
+         self.log_path = log_path
+         self.fight_enabled = fight
++        self.pixel = pixel  # items come from the screen: a sighting gets a new id each time it is lost
+         self.reset()
+ 
+     def reset(self):
+@@ -95,6 +97,7 @@ class Planner:
+         self.pickup_progress = {}  # item id -> best distance, ticks targeted since it, last tick targeted
+         self.objective_set_aside = {}  # option -> tick until which it is not offered
+         self.set_aside = {}  # item id -> tick until which it is not offered
++        self.item_spots = []  # pixel mode: (name, point, tick) of item objectives that ended without a pickup
+ 
+     # ----- what-if reachability -------------------------------------------------------------
+     def _reach(self, nav, origin, unlock=(), open_sectors=(), raise_lift=None, lift_height=None):
+@@ -310,8 +313,11 @@ class Planner:
+         def reachable(point, contact=False):
+             return self._at(nav, point, now, contact)
+ 
+-        def memory(key):
++        def memory(key, o=None):
+             m = self.memory.get(key)
++            if not m and o is not None and o["kind"] in ("weapon", "health"):
++                failed = len(self._spot_failures(o))  # an earlier sighting at this spot was chased in vain
++                m = dict(done=False, chosen=failed, failed=failed) if failed else None
+             if not m:
+                 return "Not tried yet."
+             parts = []
+@@ -386,7 +392,7 @@ class Planner:
+                 kind, label, extra = "health", f"Collect the {name} (#{item_id})", f" Health is {s.get('hp', 0):.0f}."
+             else:
+                 continue
+-            found[f"item_{item_id}"] = dict(kind=kind, target=str(item_id), landmark=f"{name} #{item_id}", label=label, point=point,
++            found[f"item_{item_id}"] = dict(kind=kind, target=str(item_id), landmark=f"{name} #{item_id}", label=label, point=point, name=name,
+                                            distance=math.dist(here, point) / 32, reachable=True, opens=[], extra=extra)
+         if mission.exit:
+             point = mission.objective()
+@@ -430,6 +436,7 @@ class Planner:
+             if self.tick >= until:
+                 del self.objective_set_aside[key]
+         offered = {k: o for k, o in found.items() if o["reachable"] and k not in self.objective_set_aside
++                   and not self._spot_set_aside(o)
+                    and str(o.get("target")) not in s.get("target_failures", {})
+                    and not (o.get("lift") and not o["opens"] and not o.get("needed_for"))}  # a lift that leads nowhere new is not an objective
+         result = {}
+@@ -446,12 +453,37 @@ class Planner:
+                 consequence = f"Opens: {chain(o)}.{o['extra']}"
+                 if o.get("needed_for"):
+                     consequence += f" On the way to: {', '.join(o['needed_for'])}."
+-            result[name] = dict(kind=o["kind"], target=o["target"], point=o.get("point"), lift=o.get("lift", False),
+-                                text=f"{o['label']}, {o['distance']:.0f}m away; {where}. {consequence} {memory(name)}")
++            result[name] = dict(kind=o["kind"], target=o["target"], point=o.get("point"), lift=o.get("lift", False), name=o.get("name"),
++                                text=f"{o['label']}, {o['distance']:.0f}m away; {where}. {consequence} {memory(name, o)}")
+         result["explore"] = dict(kind="explore", target=None, text=(
+             f"No fixed objective: explore accessible areas for another route. {memory('explore')}"))
+         return result
+ 
++    def _spot_failures(self, o):
++        """Pixel mode: the failed item objectives at this option's spot, as ticks."""
++        if not self.pixel or o.get("name") is None:
++            return []
++        return [tick for name, point, tick in self.item_spots
++                if name == o["name"] and math.dist(point, o["point"]) <= SPOT_UNITS]
++
++    def _spot_set_aside(self, o):
++        """The objective rule for a spot: failed this often, it is not offered for a while."""
++        failures = self._spot_failures(o)
++        return len(failures) >= OBJECTIVE_FAILURES and self.tick - max(failures) < OBJECTIVE_SET_ASIDE_SECONDS * 35
++
++    def _collected(self):
++        """Whether an item objective that left the item memory gave the player anything."""
++        o, s = self.objective, self.state
++        if o["kind"] == "weapon":
++            from doomlib.items import WEAPONS
++            return bool(s.get("inventory", {}).get(str(WEAPONS.get(o.get("name"))), {}).get("owned"))
++        return s.get("hp", 0) > o.get("hp", 0)
++
++    def _item_failed(self):
++        o = self.objective
++        if self.pixel and o is not None and o["kind"] in ("weapon", "health") and o.get("point") is not None:
++            self.item_spots.append((o.get("name"), o["point"], self.tick))
++
+     # ----- events -------------------------------------------------------------------------------
+     def _done(self):
+         o, s = self.objective, self.state
+@@ -523,6 +555,10 @@ class Planner:
+         reason = None
+         if self.objective is None:
+             reason = "no objective"
++        elif self._done() and self.pixel and self.objective["kind"] in ("weapon", "health") and not self._collected():
++            self.memory[self.objective["key"]]["failed"] += 1  # forgotten, not picked up: nothing was there
++            self._item_failed()
++            reason = "objective failed"
+         elif self._done():
+             self.memory[self.objective["key"]]["done"] = True
+             if self.objective.get("lift"):
+@@ -530,6 +566,7 @@ class Planner:
+             reason = "objective done"
+         elif self._failed():
+             self.memory[self.objective["key"]]["failed"] += 1
++            self._item_failed()
+             reason = "objective failed"
+         elif signature != self.objective["signature"]:
+             reason = "keys, doors or mechanisms changed"
+@@ -540,6 +577,7 @@ class Planner:
+                 self.objective.update(since_tick=self.tick, distance=distance)  # getting closer: keep it
+             else:
+                 self.memory[self.objective["key"]]["failed"] += 1
++                self._item_failed()
+                 reason = f"no progress in {REPLAN_SECONDS} s"
+         if reason and self.objective is not None and self.memory[self.objective["key"]]["failed"] >= OBJECTIVE_FAILURES \
+                 and not self.memory[self.objective["key"]]["done"]:
+@@ -572,7 +610,7 @@ class Planner:
+         choice = answer["choice"]
+         o = options[choice]
+         self.objective = dict(key=choice, kind=o["kind"], target=o["target"], since_tick=self.tick, signature=signature,
+-                              point=o.get("point"), lift=o.get("lift", False))
++                              point=o.get("point"), lift=o.get("lift", False), name=o.get("name"), hp=self.state.get("hp", 0))
+         self.rode = False
+         self.objective["distance"] = self._distance()
+         m = self.memory.setdefault(choice, dict(chosen=0, failed=0, done=False))
+@@ -762,11 +800,11 @@ class Planner:
+         return packet
+ 
+ 
+-def install(endpoint, log_path):
++def install(endpoint, log_path, pixel=False):
+     sys.path.insert(0, os.getcwd())
+     import doomlib.decision_questions as dq
+     from doomlib.executor import Executor
+-    planner = Planner(endpoint, log_path, fight=os.environ.get("PLANNER_FIGHT") == "1")
++    planner = Planner(endpoint, log_path, fight=os.environ.get("PLANNER_FIGHT") == "1", pixel=pixel)
+ 
+     original_init, original_observe, original_mask = Executor.__init__, Executor.observe, dq.mask_unreachable_items
+ 
+@@ -796,7 +834,7 @@ def main():
+     endpoint = argv[argv.index("--endpoint") + 1] if "--endpoint" in argv else "http://127.0.0.1:8003/predict"
+     if "--mask-unreachable-items" not in argv:
+         raise SystemExit("planner.py hooks --mask-unreachable-items; pass it")
+-    install(endpoint, os.environ.get("PLANNER_LOG"))
++    install(endpoint, os.environ.get("PLANNER_LOG"), pixel="--pixel-perception" in argv)
+     sys.argv = ["agent.py", *argv]
+     runpy.run_path(str(Path.cwd() / "agent.py"), run_name="__main__")
+ 

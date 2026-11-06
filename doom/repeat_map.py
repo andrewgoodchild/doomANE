@@ -175,6 +175,7 @@ def main():
     p.add_argument('--keep-videos', action='store_true', help='keep the video of runs that did not complete')
     p.add_argument('--wads', nargs='+', default=[], type=Path, help='PWADs with a MAP01 each (e.g. Obsidian maps), played as extra maps')
     p.add_argument('--wad-seconds', type=float, default=900)
+    p.add_argument('--seconds', type=float, help='game seconds for every map, in place of its usual budget (short gates)')
     p.add_argument('--extra-flags', nargs='+', default=[], help="agent flags added to every run, quoted after '=', e.g. --extra-flags='--fight-states --combat-facts'")
     p.add_argument('--evaluation', action='store_true', help='allow held-out maps and campaigns (only from a frozen snapshot, doom/snapshot_stack.sh)')
     p.add_argument('--campaign', type=float, metavar='SECONDS', help='one game from the first --maps map on through the next maps, for this many game seconds')
@@ -194,6 +195,8 @@ def main():
         wads[key] = wad.resolve()
         budget[key] = a.wad_seconds
     a.maps = (a.maps or ([] if wads else ['MAP03'])) + list(wads)
+    if a.seconds:
+        budget.update({m: a.seconds for m in a.maps})
     engine_map = {m: m for m in a.maps}
     if a.campaign:
         if wads or len(a.maps) != 1:

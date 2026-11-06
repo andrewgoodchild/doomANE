@@ -1,0 +1,115 @@
+{
+ "model": "../../results/vision/mobileclip_pix3",
+ "engine_MAP01": {
+  "frames": 840,
+  "listed_per_frame": 0.03,
+  "phantom_entries_per_frame": 0.03,
+  "duplicate_entries_per_frame": 0.0,
+  "real_monsters_listed_per_frame": 0.0,
+  "real_monsters_seen_per_frame": 0.0,
+  "frames_listing_a_phantom": 0.029,
+  "visible_phantom_entries_per_frame": 0.03,
+  "remembered_phantom_entries_per_frame": 0.0,
+  "remembered_phantom_or_duplicate_per_frame": 0.0,
+  "most_listed": 2,
+  "items_remembered_per_frame": 0.5,
+  "most_items_remembered": 2,
+  "real_remembered_per_frame": 0.0,
+  "real_remembered_share_shorter_than": {
+   "4": 0.0,
+   "8": 0.0,
+   "12": 0.0,
+   "18": 0.0
+  }
+ },
+ "engine_MAP02": {
+  "frames": 8006,
+  "listed_per_frame": 4.32,
+  "phantom_entries_per_frame": 0.71,
+  "duplicate_entries_per_frame": 1.97,
+  "real_monsters_listed_per_frame": 1.64,
+  "real_monsters_seen_per_frame": 1.21,
+  "frames_listing_a_phantom": 0.234,
+  "visible_phantom_entries_per_frame": 0.48,
+  "remembered_phantom_entries_per_frame": 0.23,
+  "remembered_phantom_or_duplicate_per_frame": 0.47,
+  "most_listed": 39,
+  "items_remembered_per_frame": 9.85,
+  "most_items_remembered": 45,
+  "real_remembered_per_frame": 0.46,
+  "real_remembered_share_shorter_than": {
+   "4": 0.0,
+   "8": 0.0,
+   "12": 0.0,
+   "18": 0.0
+  }
+ },
+ "engine_MAP03": {
+  "frames": 4410,
+  "listed_per_frame": 1.75,
+  "phantom_entries_per_frame": 0.38,
+  "duplicate_entries_per_frame": 0.79,
+  "real_monsters_listed_per_frame": 0.58,
+  "real_monsters_seen_per_frame": 0.44,
+  "frames_listing_a_phantom": 0.163,
+  "visible_phantom_entries_per_frame": 0.28,
+  "remembered_phantom_entries_per_frame": 0.1,
+  "remembered_phantom_or_duplicate_per_frame": 0.15,
+  "most_listed": 33,
+  "items_remembered_per_frame": 10.4,
+  "most_items_remembered": 31,
+  "real_remembered_per_frame": 0.14,
+  "real_remembered_share_shorter_than": {
+   "4": 0.0,
+   "8": 0.0,
+   "12": 0.0,
+   "18": 0.0
+  }
+ },
+ "pix1stuck_MAP01": {
+  "frames": 1260,
+  "listed_per_frame": 2.92,
+  "phantom_entries_per_frame": 1.17,
+  "duplicate_entries_per_frame": 1.15,
+  "real_monsters_listed_per_frame": 0.61,
+  "real_monsters_seen_per_frame": 0.44,
+  "frames_listing_a_phantom": 0.487,
+  "visible_phantom_entries_per_frame": 0.82,
+  "remembered_phantom_entries_per_frame": 0.35,
+  "remembered_phantom_or_duplicate_per_frame": 0.44,
+  "most_listed": 20,
+  "items_remembered_per_frame": 5.54,
+  "most_items_remembered": 18,
+  "real_remembered_per_frame": 0.17,
+  "real_remembered_share_shorter_than": {
+   "4": 0.0,
+   "8": 0.0,
+   "12": 0.0,
+   "18": 0.0
+  }
+ },
+ "pix1stuck_MAP03": {
+  "frames": 2100,
+  "listed_per_frame": 0.13,
+  "phantom_entries_per_frame": 0.11,
+  "duplicate_entries_per_frame": 0.0,
+  "real_monsters_listed_per_frame": 0.02,
+  "real_monsters_seen_per_frame": 0.02,
+  "frames_listing_a_phantom": 0.095,
+  "visible_phantom_entries_per_frame": 0.07,
+  "remembered_phantom_entries_per_frame": 0.04,
+  "remembered_phantom_or_duplicate_per_frame": 0.04,
+  "most_listed": 3,
+  "items_remembered_per_frame": 13.68,
+  "most_items_remembered": 37,
+  "real_remembered_per_frame": 0.0,
+  "real_remembered_share_shorter_than": {
+   "4": 0.0,
+   "8": 0.0,
+   "12": 0.0,
+   "18": 0.0
+  }
+ },
+ "negative_evidence": true,
+ "remember_seen_ticks": 18
+}
