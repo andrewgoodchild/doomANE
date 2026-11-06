@@ -20,6 +20,7 @@ longer rows fall back to the original PyTorch encoder and are counted.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import sys
@@ -374,6 +375,43 @@ def command_memory(path):
     nc.predict_with_numeric_residual = predictor
 
 
+def command_residual(path):
+    """Serve a command residual with the parent's architecture and new weights (`doom/distill_command.py`).
+
+    Replaces the weights of the served command residual on its first call, after checking that it is the
+    parent the weights were trained from; everything else in `predict_with_numeric_residual` is unchanged.
+    Each command answer names the weights it came from (`numeric_residual.adapted`). Must run before the
+    heads load.
+    """
+    import copy
+    from safetensors.torch import load_file
+    import doomlib.numeric_command as nc
+
+    path = Path(path)
+    meta = json.loads((path / "meta.json").read_text())
+    weights = load_file(str(path / "numeric-residual.safetensors"))
+    sha = hashlib.sha256((path / "numeric-residual.safetensors").read_bytes()).hexdigest()
+    inner = nc.predict_with_numeric_residual
+    swapped = set()
+
+    def predictor(agent, state, questions):
+        if id(agent) not in swapped:
+            parent_sha = agent.cfg.get("doom_adaptation", {}).get("numeric_residual", {}).get("weights_sha256")
+            if parent_sha != meta["parent_weights_sha256"]:
+                raise SystemExit(f"--command-residual was trained on parent {meta['parent']}, but the served "
+                                 f"command residual has weights {parent_sha}")
+            m = copy.deepcopy(agent.numeric_residual)
+            m.load_state_dict(weights, strict=True)
+            agent.numeric_residual = m.eval()
+            swapped.add(id(agent))
+        result = inner(agent, state, questions)
+        result["answers"]["command"]["numeric_residual"]["adapted"] = dict(name=meta["name"], weights_sha256=sha)
+        _STATS["command_residual_calls"] += 1
+        return result
+
+    nc.predict_with_numeric_residual = predictor
+
+
 def commit_route(max_hold=20.0, resume=0.0, floor=0.0, pickups=False, margin=1.0):
     """Hold Laya's last route command until the executor finishes it.
 
@@ -489,7 +527,7 @@ def random_chooser(seed):
 
 
 def install(encoder="ane", record_file="encoder_lengths.jsonl", compute_units="CPU_AND_NE", heads="cpu", skip_forced=False,
-            residual_guard=None, memory_path=None, commit=None, commit_resume=0.0, commit_floor=0.0, commit_pickups=False, commit_margin=1.0, random_seed=None):
+            residual_guard=None, memory_path=None, commit=None, commit_resume=0.0, commit_floor=0.0, commit_pickups=False, commit_margin=1.0, random_seed=None, residual_path=None):
     """Patch laya.Agent so every Agent built afterwards uses the chosen encoder (and heads)."""
     sys.path.insert(0, os.getcwd())
     sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -502,6 +540,8 @@ def install(encoder="ane", record_file="encoder_lengths.jsonl", compute_units="C
         skip_single_option()
     if memory_path:
         command_memory(memory_path)
+    if residual_path:
+        command_residual(residual_path)
     if residual_guard:
         guard_residuals(residual_guard)
     if commit:
@@ -548,9 +588,10 @@ def main():
     ap.add_argument("--random-chooser", type=int, metavar="SEED",
                     help="baseline: replace every choice answer with a uniform random option (the model still runs)")
     ap.add_argument("--command-memory", help="repaired command residual with memory (doom/repair_command_residual.py)")
+    ap.add_argument("--command-residual", help="command residual weights distilled for pixel perception (doom/distill_command.py)")
     ours, rest = ap.parse_known_args()
     guard = {q: float(t) for q, t in (g.split("=") for g in ours.residual_guard)}
-    install(ours.encoder, ours.record_file, ours.compute_units, ours.heads, ours.skip_forced, guard, ours.command_memory, ours.commit_route, ours.commit_resume, ours.commit_floor, ours.commit_pickups, ours.commit_margin, ours.random_chooser)
+    install(ours.encoder, ours.record_file, ours.compute_units, ours.heads, ours.skip_forced, guard, ours.command_memory, ours.commit_route, ours.commit_resume, ours.commit_floor, ours.commit_pickups, ours.commit_margin, ours.random_chooser, ours.command_residual)
     sys.argv = ["serve_doom_laya.py"] + rest
     import runpy
     runpy.run_path("serve_doom_laya.py", run_name="__main__")

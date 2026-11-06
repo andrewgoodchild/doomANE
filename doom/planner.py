@@ -569,6 +569,16 @@ class Planner:
             self._hide_extended(narrowed, None)
         return self.fight_update(packet, narrowed) if self.fight_enabled else narrowed
 
+    def shadow(self, packet):
+        """The narrowing update() would apply now, without re-planning."""
+        if self.controller is None or self.state is None or self.controller.mission is None:
+            return packet
+        if self.objective:
+            return self.narrow(packet)
+        narrowed = copy.deepcopy(packet)
+        self._hide_extended(narrowed, None)
+        return narrowed
+
     def plan(self, state_text, reason, signature):
         started = time.perf_counter()
         options = self.options()
@@ -792,7 +802,12 @@ def install(endpoint, log_path):
         return result
 
     def mask(packet, *a, **k):
-        return planner.update(original_mask(packet, *a, **k))
+        packet = original_mask(packet, *a, **k)
+        if getattr(dq, "SHADOW_REQUEST", False):
+            # agent.py --shadow-engine-packet: the recorded engine-perception packet gets the current objective's
+            # narrowing, never a re-plan (a re-plan would change the game and ask the server).
+            return planner.shadow(packet)
+        return planner.update(packet)
 
     Executor.__init__, Executor.observe, dq.mask_unreachable_items = init, observe, mask
     return planner
