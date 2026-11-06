@@ -1,0 +1,127 @@
+{
+ "pix1_engine": {
+  "runs": 4,
+  "pickup_tic_share": 0.224,
+  "episodes": 123,
+  "median_episode_tics": 34,
+  "median_closest_m_unreached": 5.6,
+  "episodes_reached": 0.65,
+  "tics_on_unreached": 0.22,
+  "tics_on_impossible_names": null,
+  "tics_by_category": {
+   "Health": 0.346,
+   "Ammo": 0.284,
+   "Weapon": 0.178,
+   "Armor": 0.16,
+   "null": 0.032
+  },
+  "tics_by_name": {
+   "Stimpack": 0.226,
+   "Clip": 0.221,
+   "Shotgun": 0.178,
+   "ArmorBonus": 0.118,
+   "HealthBonus": 0.076,
+   "Shell": 0.063,
+   "Medikit": 0.044,
+   "null": 0.032,
+   "BlueArmor": 0.028,
+   "GreenArmor": 0.014
+  },
+  "end_of_unreached": {
+   "executing": 32,
+   "unavailable: Selected target is no longer observable or present (ArmorBon": 6,
+   "unavailable: Selected target is no longer observable or present (HealthBo": 1,
+   "blocked: No navigable path to the selected target (HealthBonus #99)": 1,
+   "unavailable: Selected target is no longer observable or present (Clip #11": 1,
+   "blocked: A closed door blocks movement; choose open_door to open it (": 1
+  }
+ },
+ "pix3_gain": {
+  "runs": 4,
+  "pickup_tic_share": 0.394,
+  "episodes": 339,
+  "median_episode_tics": 19,
+  "median_closest_m_unreached": 7.0,
+  "episodes_reached": 0.118,
+  "tics_on_unreached": 0.874,
+  "tics_on_impossible_names": 0.614,
+  "tics_by_category": {
+   "Key": 0.402,
+   "Weapon": 0.265,
+   "Health": 0.141,
+   "Ammo": 0.109,
+   "null": 0.066,
+   "Armor": 0.018
+  },
+  "tics_by_name": {
+   "BlueCard": 0.313,
+   "Chaingun": 0.104,
+   "Shotgun": 0.086,
+   "HealthBonus": 0.078,
+   "null": 0.066,
+   "RedCard": 0.065,
+   "Clip": 0.051,
+   "Stimpack": 0.05,
+   "RocketLauncher": 0.039,
+   "SuperShotgun": 0.028
+  },
+  "end_of_unreached": {
+   "executing": 133,
+   "unavailable: Selected target is no longer observable or present (BlueCard": 32,
+   "unavailable: Selected target is no longer observable or present (Chaingun": 22,
+   "unavailable: Selected target is no longer observable or present (HealthBo": 21,
+   "unavailable: Selected target is no longer observable or present (Shotgun ": 13,
+   "unavailable: Selected target is no longer observable or present (Shell #1": 10
+  }
+ },
+ "pix3_oracle": {
+  "runs": 4,
+  "pickup_tic_share": 0.401,
+  "episodes": 317,
+  "median_episode_tics": 20,
+  "median_closest_m_unreached": 7.5,
+  "episodes_reached": 0.079,
+  "tics_on_unreached": 0.933,
+  "tics_on_impossible_names": 0.622,
+  "tics_by_category": {
+   "Weapon": 0.331,
+   "Key": 0.33,
+   "Health": 0.131,
+   "Ammo": 0.105,
+   "null": 0.069,
+   "Armor": 0.034
+  },
+  "tics_by_name": {
+   "BlueCard": 0.3,
+   "Chaingun": 0.164,
+   "Shotgun": 0.104,
+   "Stimpack": 0.1,
+   "null": 0.069,
+   "SuperShotgun": 0.051,
+   "Clip": 0.047,
+   "Shell": 0.033,
+   "RedCard": 0.029,
+   "ArmorBonus": 0.019
+  },
+  "end_of_unreached": {
+   "executing": 126,
+   "unavailable: Selected target is no longer observable or present (BlueCard": 27,
+   "unavailable: Selected target is no longer observable or present (Chaingun": 24,
+   "unavailable: Selected target is no longer observable or present (Shotgun ": 17,
+   "unavailable: Selected target is no longer observable or present (Stimpack": 17,
+   "unavailable: Selected target is no longer observable or present (Clip #10": 14
+  }
+ },
+ "engine_item_names": [
+  "ArmorBonus",
+  "BlueArmor",
+  "Clip",
+  "GreenArmor",
+  "HealthBonus",
+  "Medikit",
+  "RedCard",
+  "Shell",
+  "Shotgun",
+  "Stimpack"
+ ]
+}
