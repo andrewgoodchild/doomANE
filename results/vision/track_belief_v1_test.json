@@ -1,0 +1,43 @@
+{
+ "scorer": "../../results/vision/track_belief_v1.json",
+ "runs": [
+  "20261107_061723_062914_repeat-planner_ext_safe-pix3_truth-map02-seed25",
+  "20261107_062025_983953_repeat-planner_ext_safe-pix3_truth-map02-seed26",
+  "20261107_062938_795436_repeat-planner_ext_safe-pix3_truth-map03-seed25",
+  "20261107_063305_820445_repeat-planner_ext_safe-pix3_truth-map03-seed26",
+  "20261107_064227_752085_repeat-planner_ext_safe-pix3_truth-map04-seed25",
+  "20261107_064531_819333_repeat-planner_ext_safe-pix3_truth-map04-seed26"
+ ],
+ "examples": 3313,
+ "real": 1862,
+ "phantom": 1451,
+ "real_kept": 0.902,
+ "phantoms_removed": 0.484,
+ "real_share_before": 0.562,
+ "real_share_after": 0.692,
+ "rule": {
+  "keep": 0.9,
+  "remove": 0.5,
+  "passed": false
+ },
+ "by_map": {
+  "MAP02": {
+   "real": 782,
+   "phantom": 418,
+   "real_kept": 0.875,
+   "phantoms_removed": 0.28
+  },
+  "MAP03": {
+   "real": 436,
+   "phantom": 459,
+   "real_kept": 0.943,
+   "phantoms_removed": 0.571
+  },
+  "MAP04": {
+   "real": 644,
+   "phantom": 574,
+   "real_kept": 0.908,
+   "phantoms_removed": 0.564
+  }
+ }
+}

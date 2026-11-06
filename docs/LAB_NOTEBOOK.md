@@ -1227,3 +1227,20 @@ Conclusion: the command head's mistakes in pixel games are decisions made on inf
 | all: real share of remembered list (now 64 %) | 78 % | 82 % | 87 % |
 
 Reading: geometry and motion double the phantoms removed at the same loss of real enemies. This is the evidence an internal state model would add. Caveats: one test seed, three maps; positions of real monsters also fall in walls or closed sectors often (16–18 %), because depth-based distance is noisy and doors open; static sector heights only. A track-admission threshold on tics seen alone was already gated (`pix3_admit`, 0/4), so the gain to test is the geometric part.
+
+**Pre-registration: track belief for remembered pixel enemies (2026-11-07; user go-ahead "yes").** The internal-model step: each pixel enemy track gets a learned probability that it is real, from evidence known at that tic. Only remembered entries scoring at least the threshold are listed, so the packet keeps the engine version's format. Entries seen on this tic, and items, are unchanged.
+- **Module:** `doomlib/track_belief.py`. One class serves both play and the offline scripts, so the features are identical in both:
+  - WAD geometry: lines, sides and sectors, never things;
+  - per-track history: sightings, position, player position, behind a one-sided wall;
+  - clear-view misses.
+  Features: age, tics seen, distance, wall distance, void, behind-wall share, scatter, clear misses. "Entries listed" is dropped: it would depend on the filter itself, and its AUC was 0.53. Scorer: an MLP (8 → 32 → 1) run in numpy, weights in JSON. New agent flag `--pixel-track-belief DIR`, pixel mode only.
+- **Data:** pixel games, pix3 at 0.79, re-plan on gains, `--shadow-engine-packet`, MAP02/03/04, 180 s. Training: seeds 21, 22 (`pix3_truth`) and 23, 24 (new). Test: seeds 25, 26 (new, suffix `pix3_truth`), not read until the scorer and its threshold are frozen. The threshold is set on the training entries to keep 92 % of real ones.
+- **Offline rule (test seeds, remembered entries at decision tics):** at least 90 % of real entries kept and at least 50 % of phantom entries removed. Otherwise stop, no gate.
+- **Gate:** MAP01, 180 s, seeds 54, 1, 2, 3, pix3 at 0.79, re-plan on gains, `--pixel-track-belief`, suffix `pix3_belief`. Passes with ≥ 2/4 finished and ≤ 2 deaths (`pix3_gain` 1/4). Mechanism: share of attack tics aimed at an enemy not detected on that tic (84 %), and tic shares by action (attack 49 %, pickup 39 %, use_switch 5 %).
+**Track belief: result. Fails the offline rule, narrowly; no gate** (`results/vision/track_belief_v1.json`, sha256 c08263c3…, and `track_belief_v1_test.json`; games `results/vision/pix3_truth2.log`).
+- **Games:** the 12 new games (seeds 23–26) all passed authority. MAP03 seed 25 is invalid ("did not sustain real time", 202 s wall for 180 s): my trainer smoke test ran at the same time. Features and labels are per tic, so it stays in the test as registered, and the result without it is also given.
+- **Training:** seeds 21–24, 5,629 remembered entries, 58.5 % real. Threshold 0.354 keeps 92 % of real training entries and removes 63 % of training phantoms.
+- **Test:** seeds 25, 26, 3,313 entries, 56 % real. **Real kept 90.2 % (rule ≥ 90 %, met), phantoms removed 48.4 % (rule ≥ 50 %, missed).** Without MAP03 seed 25: 89.5 % / 47.5 %. Real share of the remembered list 56 → 69 %.
+- **By map:** MAP02 87.5 % kept / 28 % removed; MAP03 94 % / 57 %; MAP04 91 % / 56 %.
+- **Reading:** the diagnostic's 52 % at 95 % came from one train/test split of seeds 21/22. With twice the training data and fresh seeds, the scorer generalises less well, mostly on MAP02, where phantoms are fewer (35 %) and look more like real tracks. The threshold is not moved after the fact.
+- `doomlib/track_belief.py` (with tests), `doom/vision/train_track_belief.py` and the telemetry truth stay. The agent flag `--pixel-track-belief` was prepared but not applied, since there is no gate to run.
