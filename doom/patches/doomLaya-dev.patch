@@ -1778,10 +1778,10 @@ index 25e55d8..705b2d4 100644
          probabilities = dict(zip(MOVEMENTS, scores.cpu().double().softmax(-1).tolist()))
 diff --git a/doomlib/pixel_perception.py b/doomlib/pixel_perception.py
 new file mode 100644
-index 0000000..40296ce
+index 0000000..0b9f4a0
 --- /dev/null
 +++ b/doomlib/pixel_perception.py
-@@ -0,0 +1,209 @@
+@@ -0,0 +1,217 @@
 +"""Pixel perception: enemies and items from the screen alone, in place of the labels buffer.
 +
 +A segmentation model (doomANE doom/vision/train_seg.py, exported by export_seg.py to a compiled Core ML
@@ -1823,6 +1823,7 @@ index 0000000..40296ce
 +# Pieces of one category over the same columns whose depths differ by up to this are one object at the nearer depth:
 +# cell depth at a sprite's edges picks up the floor or wall behind it (0: off).
 +MERGE_DEPTH_M = 0
++ITEM_CATEGORIES = ('Health', 'Armor', 'Ammo', 'Weapon', 'Key', 'Powerup')
 +
 +
 +def near(a, b):
@@ -1840,6 +1841,9 @@ index 0000000..40296ce
 +        # A cell is a monster when its summed monster-class probability reaches this (doomANE operating_point.py).
 +        self.monster_threshold = meta.get('monster_threshold')
 +        self.monster = np.array([c != 'none' and self.category[c] == 'Monster' for c in self.classes])
++        # A cell keeps an item class only when its summed item-class probability reaches this (doomANE item_operating_point.py).
++        self.item_threshold = meta.get('item_threshold')
++        self.item = np.array([c != 'none' and self.category[c] in ITEM_CATEGORIES for c in self.classes])
 +        categories = sorted({self.category[c] for c in self.classes if c != 'none'})
 +        self.category_index = np.array([0 if c == 'none' else 1 + categories.index(self.category[c]) for c in self.classes])
 +        # A compiled model at a stable path: no per-load temporary copies (doomANE CLAUDE.md).
@@ -1855,13 +1859,17 @@ index 0000000..40296ce
 +        view = view[None].astype(np.float16)
 +        logits = self.model.predict({'view': view})['logits'][0].astype(np.float32)
 +        labels = logits.argmax(0)
-+        if self.monster_threshold is None:
++        if self.monster_threshold is None and self.item_threshold is None:
 +            return labels
 +        p = np.exp(logits - logits.max(0))
-+        p_monster = p[self.monster].sum(0) / p.sum(0)
-+        monster_best = np.flatnonzero(self.monster)[logits[self.monster].argmax(0)]
-+        other_best = np.flatnonzero(~self.monster)[logits[~self.monster].argmax(0)]
-+        return np.where(p_monster >= self.monster_threshold, monster_best, np.where(self.monster[labels], other_best, labels))
++        if self.monster_threshold is not None:
++            p_monster = p[self.monster].sum(0) / p.sum(0)
++            monster_best = np.flatnonzero(self.monster)[logits[self.monster].argmax(0)]
++            other_best = np.flatnonzero(~self.monster)[logits[~self.monster].argmax(0)]
++            labels = np.where(p_monster >= self.monster_threshold, monster_best, np.where(self.monster[labels], other_best, labels))
++        if self.item_threshold is not None:
++            labels = np.where(self.item[labels] & (p[self.item].sum(0) / p.sum(0) < self.item_threshold), 0, labels)
++        return labels
 +
 +    def detect(self, screen, depth):
 +        """Objects in the view: class name, category, cell count, median column (pixels) and ray depth (m)."""
@@ -2811,10 +2819,10 @@ index 0000000..bd1b3c6
 +    unittest.main()
 diff --git a/tests/test_pixel_grouping.py b/tests/test_pixel_grouping.py
 new file mode 100644
-index 0000000..ec8df3e
+index 0000000..5cfa716
 --- /dev/null
 +++ b/tests/test_pixel_grouping.py
-@@ -0,0 +1,56 @@
+@@ -0,0 +1,79 @@
 +import unittest
 +
 +import numpy as np
@@ -2871,6 +2879,29 @@ index 0000000..ec8df3e
 +
 +if __name__ == '__main__':
 +    unittest.main()
++
++
++class ItemThreshold(unittest.TestCase):
++    def cells(self, item_threshold):
++        """Three cells: a confident shotgun, an unsure shotgun (item probability about 0.55), a confident imp."""
++        p = perception()
++        p.depth, p.monster_threshold, p.item_threshold = False, 0.5, item_threshold
++        p.monster = np.array([False, True, False])
++        p.item = np.array([False, False, True])
++        logits = np.full((3, pp.CELLS_H, pp.CELLS_W), -9.0, np.float32)
++        logits[0] = 0
++        logits[:, 0, 0] = [0, -9, 4]
++        logits[:, 0, 1] = [0, -9, 0.2]
++        logits[:, 0, 2] = [0, 4, -9]
++        p.model = type('M', (), {'predict': lambda self, x: {'logits': logits[None]}})()
++        return p.cells(np.zeros((480, 640, 3), np.uint8))
++
++    def test_unsure_item_cells_become_none(self):
++        labels = self.cells(0.6)
++        self.assertEqual(list(labels[0, :3]), [2, 0, 1])
++
++    def test_off_keeps_the_argmax(self):
++        self.assertEqual(list(self.cells(None)[0, :3]), [2, 2, 1])
 diff --git a/tests/test_pixel_memory.py b/tests/test_pixel_memory.py
 new file mode 100644
 index 0000000..6eb6b02
