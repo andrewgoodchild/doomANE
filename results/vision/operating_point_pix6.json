@@ -1,0 +1,103 @@
+{
+ "recall_target": 0.783,
+ "results/vision/mobileclip_pix3": {
+  "threshold": 0.7878,
+  "map04_recall": 0.785,
+  "walk_recall": {
+   "MAP01": 0.739,
+   "MAP02": 0.737,
+   "MAP03": 0.932
+  },
+  "walked_views_with_false_monster": 0.051,
+  "engine_MAP01": {
+   "frames": 420,
+   "phantom_tracks_2+_frames": 4,
+   "phantom_tracks_9+_frames": 0,
+   "phantom_tracks_18+_frames": 0,
+   "longest_frames": 3,
+   "per_1000_frames_18+": 0.0
+  },
+  "engine_MAP02": {
+   "frames": 4003,
+   "phantom_tracks_2+_frames": 26,
+   "phantom_tracks_9+_frames": 0,
+   "phantom_tracks_18+_frames": 0,
+   "longest_frames": 5,
+   "per_1000_frames_18+": 0.0
+  },
+  "engine_MAP03": {
+   "frames": 2205,
+   "phantom_tracks_2+_frames": 43,
+   "phantom_tracks_9+_frames": 4,
+   "phantom_tracks_18+_frames": 0,
+   "longest_frames": 11,
+   "per_1000_frames_18+": 0.0
+  },
+  "pix1stuck_MAP01": {
+   "frames": 630,
+   "phantom_tracks_2+_frames": 1,
+   "phantom_tracks_9+_frames": 0,
+   "phantom_tracks_18+_frames": 0,
+   "longest_frames": 3,
+   "per_1000_frames_18+": 0.0
+  },
+  "pix1stuck_MAP03": {
+   "frames": 1050,
+   "phantom_tracks_2+_frames": 13,
+   "phantom_tracks_9+_frames": 0,
+   "phantom_tracks_18+_frames": 0,
+   "longest_frames": 6,
+   "per_1000_frames_18+": 0.0
+  }
+ },
+ "results/vision/mobileclip_pix6": {
+  "threshold": 0.6247,
+  "map04_recall": 0.785,
+  "walk_recall": {
+   "MAP01": 0.739,
+   "MAP02": 0.758,
+   "MAP03": 0.916
+  },
+  "walked_views_with_false_monster": 0.072,
+  "engine_MAP01": {
+   "frames": 420,
+   "phantom_tracks_2+_frames": 0,
+   "phantom_tracks_9+_frames": 0,
+   "phantom_tracks_18+_frames": 0,
+   "longest_frames": 1,
+   "per_1000_frames_18+": 0.0
+  },
+  "engine_MAP02": {
+   "frames": 4003,
+   "phantom_tracks_2+_frames": 59,
+   "phantom_tracks_9+_frames": 3,
+   "phantom_tracks_18+_frames": 1,
+   "longest_frames": 36,
+   "per_1000_frames_18+": 0.25
+  },
+  "engine_MAP03": {
+   "frames": 2205,
+   "phantom_tracks_2+_frames": 46,
+   "phantom_tracks_9+_frames": 0,
+   "phantom_tracks_18+_frames": 0,
+   "longest_frames": 8,
+   "per_1000_frames_18+": 0.0
+  },
+  "pix1stuck_MAP01": {
+   "frames": 630,
+   "phantom_tracks_2+_frames": 8,
+   "phantom_tracks_9+_frames": 0,
+   "phantom_tracks_18+_frames": 0,
+   "longest_frames": 2,
+   "per_1000_frames_18+": 0.0
+  },
+  "pix1stuck_MAP03": {
+   "frames": 1050,
+   "phantom_tracks_2+_frames": 78,
+   "phantom_tracks_9+_frames": 7,
+   "phantom_tracks_18+_frames": 2,
+   "longest_frames": 40,
+   "per_1000_frames_18+": 1.9
+  }
+ }
+}
