@@ -2296,10 +2296,10 @@ index 0000000..25ed19d
 +    return None
 diff --git a/doomlib/track_belief.py b/doomlib/track_belief.py
 new file mode 100644
-index 0000000..7a2be43
+index 0000000..7988cf6
 --- /dev/null
 +++ b/doomlib/track_belief.py
-@@ -0,0 +1,146 @@
+@@ -0,0 +1,202 @@
 +"""Belief that a remembered pixel enemy is real, from evidence known on this tic (--pixel-track-belief).
 +
 +A pixel track is listed while it is seen; once it is only remembered, it stays listed only while a small learned
@@ -2431,11 +2431,12 @@ index 0000000..7a2be43
 +
 +
 +class Scorer:
-+    """The trained MLP (FEATURES -> hidden -> 1), standardised inputs, run in numpy."""
++    """The trained MLP (features -> hidden -> 1), standardised inputs, run in numpy."""
 +
-+    def __init__(self, path):
++    def __init__(self, path, features=FEATURES):
 +        spec = json.loads(Path(path).read_text())
-+        if spec['features'] != list(FEATURES):
++        self.features = tuple(features)
++        if spec['features'] != list(features):
 +            raise ValueError('Track belief features differ')
 +        self.mean, self.std = np.array(spec['mean']), np.array(spec['std'])
 +        self.w1, self.b1 = np.array(spec['w1']), np.array(spec['b1'])
@@ -2443,9 +2444,64 @@ index 0000000..7a2be43
 +        self.threshold = spec['threshold']
 +
 +    def probability(self, f):
-+        x = (np.array([f[k] for k in FEATURES], float) - self.mean) / self.std
++        x = (np.array([f[k] for k in self.features], float) - self.mean) / self.std
 +        z = float((np.maximum(0, x @ self.w1.T + self.b1) @ self.w2.T + self.b2)[0])
 +        return 1 / (1 + math.exp(-z))
++
++
++ITEM_FEATURES = ('seen_tics', 'distance', 'wall_distance', 'void', 'behind_wall', 'scatter', 'missed', 'miss_rate', 'key_or_weapon')
++ITEM_MISS_RANGE = 30 * 32
++
++
++class ItemBelief:
++    """Belief that a pixel item track is a real item (--pixel-item-belief), from the same geometry.
++
++    Items do not move, so every tic on which a track's spot is in clear view within ITEM_MISS_RANGE and it is
++    not seen counts against it (`missed`, never reset). Scenery read as an item tends to lie on a wall, in no
++    sector or behind a wall, and to come and go as the view changes. What depends on the sightings is
++    computed when the track is seen, so scoring a track on a tic costs only the scorer."""
++
++    def __init__(self, geometry, scorer=None):
++        self.geometry = geometry
++        self.scorer = scorer
++        self.history = defaultdict(list)  # id -> [(x, y, distance units, behind a wall)]
++        self.missed = defaultdict(int)
++        self.spots = {}  # id -> (x, y, category) of the latest sighting
++        self.summary = {}  # id -> features fixed by the sightings
++
++    def observe(self, items, px, py, angle):
++        seen = set()
++        for i in items:
++            d = math.hypot(i['x'] - px, i['y'] - py)
++            h = self.history[i['id']]
++            h.append((i['x'], i['y'], d, self.geometry.blocked((px, py), (i['x'], i['y']))))
++            self.spots[i['id']] = (i['x'], i['y'], i.get('category'))
++            xy = np.array([(x, y) for x, y, *_ in h])
++            mean = xy.mean(0)
++            sector = self.geometry.sector(mean)
++            self.summary[i['id']] = dict(seen_tics=len(h), wall_distance=self.geometry.wall_distance(mean),
++                                         void=float(sector is None or sector[1] - sector[0] <= 0),
++                                         behind_wall=sum(s[3] for s in h) / len(h),
++                                         scatter=float(np.hypot(*(xy - mean).T).mean() / max(1.0, np.mean([s[2] for s in h]))),
++                                         key_or_weapon=float(i.get('category') in ('Key', 'Weapon')))
++            seen.add(i['id'])
++        for oid, (x, y, _) in self.spots.items():
++            if oid in seen:
++                continue
++            if abs(bearing(x, y, px, py, angle)) < VIEW_BEARING and math.hypot(x - px, y - py) < ITEM_MISS_RANGE \
++                    and not self.geometry.blocked((px, py), (x, y)):
++                self.missed[oid] += 1
++
++    def features(self, oid, distance):
++        s = self.summary.get(oid)
++        if s is None:
++            return None
++        missed = self.missed[oid]
++        return dict(s, distance=distance, missed=missed, miss_rate=missed / (missed + s['seen_tics']))
++
++    def believed(self, oid, distance):
++        f = self.features(oid, distance)
++        return f is not None and self.scorer.probability(f) >= self.scorer.threshold
 diff --git a/serve_doom_laya.py b/serve_doom_laya.py
 index 5139e7d..782d95c 100644
 --- a/serve_doom_laya.py
@@ -3175,13 +3231,13 @@ index 0000000..02e3277
 +        self.assertEqual(specials.stairs(specials.describe(8), [0], sectors, lines, sides), {0: 8})
 diff --git a/tests/test_track_belief.py b/tests/test_track_belief.py
 new file mode 100644
-index 0000000..7fbab5e
+index 0000000..b3f8068
 --- /dev/null
 +++ b/tests/test_track_belief.py
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,71 @@
 +import unittest
 +
-+from doomlib.track_belief import FEATURES, TrackBelief
++from doomlib.track_belief import FEATURES, ITEM_FEATURES, ItemBelief, TrackBelief
 +
 +
 +class OpenGeometry:
@@ -3224,6 +3280,28 @@ index 0000000..7fbab5e
 +    def test_unseen_track_is_dropped(self):
 +        belief = TrackBelief(OpenGeometry(), Threshold(lambda f: 1.0))
 +        self.assertEqual(belief.keep([enemy(9, False)], 0), [])
++
++
++def item(i, x=320.0, category='Health'):
++    return {'id': i, 'name': 'Medikit', 'category': category, 'x': x, 'y': 0.0, 'distance': x / 32}
++
++
++class ItemBeliefTest(unittest.TestCase):
++    def test_misses_count_while_the_spot_is_in_clear_view_and_never_reset(self):
++        belief = ItemBelief(OpenGeometry())
++        belief.observe([item(1)], 0, 0, 0)
++        belief.observe([], 0, 0, 0)          # straight ahead, not seen
++        belief.observe([], 0, 0, 180)        # facing away: not a miss
++        belief.observe([item(1)], 0, 0, 0)
++        f = belief.features(1, 10.0)
++        self.assertEqual(set(f), set(ITEM_FEATURES))
++        self.assertEqual((f['seen_tics'], f['missed'], f['key_or_weapon']), (2, 1, 0.0))
++        self.assertAlmostEqual(f['miss_rate'], 1 / 3)
++
++    def test_believed_uses_the_scorer(self):
++        belief = ItemBelief(OpenGeometry(), Threshold(lambda f: 1.0 if f['key_or_weapon'] else 0.0))
++        belief.observe([item(1, category='Key'), item(2)], 0, 0, 0)
++        self.assertEqual([belief.believed(1, 10.0), belief.believed(2, 10.0), belief.believed(3, 10.0)], [True, False, False])
 +
 +
 +if __name__ == '__main__':

@@ -1,0 +1,49 @@
+{
+ "scorer": "../../results/vision/item_belief_v1.json",
+ "runs": [
+  "20261107_144729_981839_repeat-planner_ext_safe-pix3_itemtruth-map02-seed23",
+  "20261107_145036_112758_repeat-planner_ext_safe-pix3_itemtruth-map02-seed24",
+  "20261107_145950_337169_repeat-planner_ext_safe-pix3_itemtruth-map03-seed23",
+  "20261107_150255_037402_repeat-planner_ext_safe-pix3_itemtruth-map03-seed24",
+  "20261107_151206_493710_repeat-planner_ext_safe-pix3_itemtruth-map04-seed23",
+  "20261107_151512_403778_repeat-planner_ext_safe-pix3_itemtruth-map04-seed24"
+ ],
+ "examples": 5647,
+ "real": 4963,
+ "phantom": 684,
+ "real_kept": 0.922,
+ "phantoms_removed": 0.452,
+ "real_share_before": 0.879,
+ "real_share_after": 0.924,
+ "keys_and_weapons": {
+  "real_kept": 0.848,
+  "phantoms_removed": 0.663,
+  "real": 788,
+  "phantom": 184
+ },
+ "rule": {
+  "keep": 0.9,
+  "remove": 0.6,
+  "passed": false
+ },
+ "by_map": {
+  "MAP02": {
+   "real": 1788,
+   "phantom": 240,
+   "real_kept": 0.912,
+   "phantoms_removed": 0.567
+  },
+  "MAP03": {
+   "real": 2232,
+   "phantom": 201,
+   "real_kept": 0.951,
+   "phantoms_removed": 0.269
+  },
+  "MAP04": {
+   "real": 943,
+   "phantom": 243,
+   "real_kept": 0.871,
+   "phantoms_removed": 0.49
+  }
+ }
+}
