@@ -1,5 +1,5 @@
 diff --git a/agent.py b/agent.py
-index 1f0226e..46ce210 100644
+index 1f0226e..74f140f 100644
 --- a/agent.py
 +++ b/agent.py
 @@ -21,6 +21,7 @@ from doomlib.overlay import Overlay, Recorder
@@ -550,20 +550,21 @@ index 1f0226e..46ce210 100644
              tactic=s['execution']['action']
              gains=s.get('resource',{}).get('gains',{})
              if gains:
-@@ -718,7 +930,11 @@ def main():
+@@ -718,7 +930,12 @@ def main():
              counts[tactic] += 1
              reflex_counts.update(refs)
              enemy_ticks += any(e.get('visible',True) for e in s['enemies'])
 -            emit(handles['telemetry'], {**s, 'tick': tick, 'episode': episode, 'tactic': tactic,
 +            if sensors.shadow is not None:
-+                # --shadow-engine-packet: the monsters the labels buffer shows on this tic, as truth for offline checks
-+                s_row={**s,'engine_enemies':[{k:e[k] for k in ('id','name','x','y')} for e in sensors.shadow_view['enemies'] if e.get('visible')]}
++                # --shadow-engine-packet: the monsters and items the labels buffer shows on this tic, as truth for offline checks
++                s_row={**s,'engine_enemies':[{k:e[k] for k in ('id','name','x','y')} for e in sensors.shadow_view['enemies'] if e.get('visible')],
++                       'engine_items':[{k:i[k] for k in ('id','name','category','x','y')} for i in sensors.shadow_view['items']]}
 +            else:s_row=s
 +            emit(handles['telemetry'], {**s_row, 'tick': tick, 'episode': episode, 'tactic': tactic,
                                         'wall_seconds': round(time.perf_counter()-started, 6),
                                         'buttons': action, 'reflexes': refs, 'pending': future is not None})
              if recorder:
-@@ -730,6 +946,16 @@ def main():
+@@ -730,6 +947,16 @@ def main():
              previous = s
              if args.stop_after_level and next_level_tick is not None and tick-next_level_tick>=3*TICRATE:
                  break
@@ -580,7 +581,7 @@ index 1f0226e..46ce210 100644
              if args.realtime:
                  delay = started + total_ticks/TICRATE - time.perf_counter()
                  if delay > 0:
-@@ -781,6 +1007,9 @@ def main():
+@@ -781,6 +1008,9 @@ def main():
                     'resource_gains': dict(resource_counts),
                     'video_frames': recorder.frames if recorder else 0,
                     'laya_health': health, 'run': str(run)}
