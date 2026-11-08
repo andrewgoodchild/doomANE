@@ -1,6 +1,7 @@
 # Pixel perception: prior work and experiment backlog
 
-Written 2026-10-31, during pix4 (see `docs/LAB_NOTEBOOK.md`, pix1–pix4). Level 1 means monsters and items
+Written 2026-10-31, during pix4 (see `docs/LAB_NOTEBOOK.md`, pix1–pix4); the status of every item as of
+2026-11-08 is at the end. Level 1 means monsters and items
 come from the screen (and, from pix3, the depth buffer); the map, doors, keys and counters still come from
 the WAD and the engine.
 
@@ -88,6 +89,38 @@ of training while they are the game maps. The order is the proposed order.
     depth and position as a human builds one. Only after level 1 plays within the pix1 rule.
 13. **Continual training loop** (the user's first idea). Once items 1, 2 and 4 exist, run them as a loop on
     the training maps: play, collect disagreements, retrain, gate, keep the model only if it passes.
+
+## Status (2026-11-08)
+
+Notebook entries are in `docs/LAB_NOTEBOOK.md`, from the pix1 entry on; the summary is in `docs/WRITEUP.md`.
+
+| Item | Status |
+|---|---|
+| 1, 1a, 8: persistent phantoms, matched operating point | Done 2026-11-01. pix3 at 0.79 is the best detector at matched recall. |
+| 1b: runtime sequence test | Done 2026-11-01 (`doom/vision/runtime_replay.py`); with cached detections about 2 s per sequence. |
+| 1c: forget on negative evidence | Missed its offline rule; passed the short gate together with re-identification (1e, 2026-11-02); on in pixel mode. |
+| 2: short closed-loop gate | Done 2026-11-02. The full comparison that followed: 0/12 against 6/12. |
+| 3: pix4, distractor classes | Done 2026-10-31; the worst phantoms of pix1–4. |
+| 4: on-policy frames (DAgger) | pix5, 2026-11-04: on pix3's recall-against-phantoms curve; no gate. |
+| 5: motion input | Not started. |
+| 6: larger input for range | Not started. |
+| 7: box detector | Not started. |
+| 9: shot feedback as a fact | Not started. |
+| 10: option length | Cause found 2026-11-01: pixel item ids were never removed from the item memory. Items are now forgotten on negative evidence and reported through `removed_object_ids`; no cap on option length was added. |
+| 11–13 | Not started. |
+
+Tried outside this backlog (2026-11-02 to 11-07, all in the notebook): item spots in the planner (0/4); memory
+admission by track length (0/4); a depth-tolerant merge (0/4); re-plan only on gains (pixel 1/4, engine 4/4,
+kept); the negative-evidence range (no change); memory windows of 35 and 17 tics (1/4, 0/4); a command residual
+distilled from engine-perception choices (missed offline); track belief and item belief from WAD geometry
+(missed offline); an oracle memory filter from engine labels (1/4, diagnostic); an item confidence threshold
+(missed offline); pix6, item hard negatives (missed offline).
+
+Proposed next, from a review on 2026-11-08 (not registered): an oracle ladder from engine perception down to
+plain pixels, one error source at a time (item classes with a class-matched, tight radius; visible enemies;
+positions), to find where the completions are lost; texture diversity for the detector from generated
+development maps (`doom/oblige_maps.py`) rather than more frames of the same 13 maps; eight seeds or a
+pre-registered continuous metric for the gate; the detector on every other tic on crowded maps.
 
 ## Sources
 
