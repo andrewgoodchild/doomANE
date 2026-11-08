@@ -1,0 +1,244 @@
+{
+ "model": "../../results/vision/mobileclip_pix3",
+ "frames": {
+  "MAP01": 241
+ },
+ "predicted_as": {
+  "ArmorBonus": {
+   "cells": 3718,
+   "ArmorBonus": 0.738,
+   "none": 0.24,
+   "Zombieman": 0.017,
+   "ExplosiveBarrel": 0.004,
+   "DeadZombieman": 0.0,
+   "GreenArmor": 0.0
+  },
+  "Medikit": {
+   "cells": 1568,
+   "Medikit": 0.802,
+   "none": 0.181,
+   "GreenArmor": 0.011,
+   "DeadZombieman": 0.004,
+   "HealthBonus": 0.001
+  },
+  "GreenArmor": {
+   "cells": 1435,
+   "GreenArmor": 0.852,
+   "none": 0.146,
+   "Zombieman": 0.002
+  },
+  "Shotgun": {
+   "cells": 796,
+   "Shotgun": 0.504,
+   "none": 0.338,
+   "DeadShotgunGuy": 0.073,
+   "GreenArmor": 0.035,
+   "DeadZombieman": 0.019,
+   "ExplosiveBarrel": 0.019
+  },
+  "Clip": {
+   "cells": 659,
+   "Clip": 0.416,
+   "none": 0.287,
+   "DeadZombieman": 0.184,
+   "ArmorBonus": 0.053,
+   "ExplosiveBarrel": 0.026,
+   "Zombieman": 0.023
+  },
+  "Shell": {
+   "cells": 403,
+   "Shell": 0.591,
+   "none": 0.395,
+   "DeadZombieman": 0.007,
+   "Clip": 0.002,
+   "GreenArmor": 0.002,
+   "ArmorBonus": 0.002
+  },
+  "HealthBonus": {
+   "cells": 270,
+   "none": 0.556,
+   "HealthBonus": 0.3,
+   "GreenArmor": 0.048,
+   "Medikit": 0.03,
+   "Zombieman": 0.026,
+   "DoomImp": 0.022
+  },
+  "Chaingun": {
+   "cells": 233,
+   "none": 0.609,
+   "ExplosiveBarrel": 0.275,
+   "ArmorBonus": 0.069,
+   "Zombieman": 0.021,
+   "Shell": 0.017,
+   "DeadMarine": 0.009
+  },
+  "Stimpack": {
+   "cells": 128,
+   "Stimpack": 0.562,
+   "none": 0.336,
+   "Medikit": 0.062,
+   "DeadMarine": 0.023,
+   "HealthBonus": 0.016
+  },
+  "RocketLauncher": {
+   "cells": 104,
+   "none": 0.885,
+   "GreenArmor": 0.048,
+   "ArmorBonus": 0.038,
+   "Stimpack": 0.019,
+   "Zombieman": 0.01
+  },
+  "BlueCard": {
+   "cells": 85,
+   "none": 0.871,
+   "GreenArmor": 0.082,
+   "TechPillar": 0.024,
+   "ShotgunGuy": 0.024
+  },
+  "RocketAmmo": {
+   "cells": 67,
+   "none": 0.642,
+   "GreenArmor": 0.149,
+   "ExplosiveBarrel": 0.09,
+   "Zombieman": 0.045,
+   "Shotgun": 0.03,
+   "ArmorBonus": 0.015
+  },
+  "RocketBox": {
+   "cells": 67,
+   "none": 0.896,
+   "GreenArmor": 0.075,
+   "ExplosiveBarrel": 0.03
+  },
+  "ShellBox": {
+   "cells": 58,
+   "none": 0.638,
+   "Shell": 0.259,
+   "ArmorBonus": 0.052,
+   "Clip": 0.034,
+   "DeadZombieman": 0.017
+  },
+  "RadSuit": {
+   "cells": 37,
+   "none": 0.595,
+   "GreenArmor": 0.405
+  },
+  "PlasmaRifle": {
+   "cells": 30,
+   "Shotgun": 0.7,
+   "none": 0.3
+  },
+  "Berserk": {
+   "cells": 29,
+   "ArmorBonus": 0.552,
+   "none": 0.31,
+   "GreenArmor": 0.138
+  },
+  "ClipBox": {
+   "cells": 26,
+   "none": 0.808,
+   "Shell": 0.077,
+   "ArmorBonus": 0.077,
+   "Shotgun": 0.038
+  },
+  "CellPack": {
+   "cells": 16,
+   "none": 1.0
+  },
+  "Cell": {
+   "cells": 9,
+   "none": 1.0
+  },
+  "Backpack": {
+   "cells": 7,
+   "none": 0.714,
+   "ArmorBonus": 0.286
+  },
+  "BlueArmor": {
+   "cells": 6,
+   "Zombieman": 0.5,
+   "ArmorBonus": 0.333,
+   "none": 0.167
+  },
+  "SuperShotgun": {
+   "cells": 5,
+   "none": 1.0
+  },
+  "OtherWeapon": {
+   "cells": 2,
+   "none": 0.5,
+   "ArmorBonus": 0.5
+  },
+  "OtherPowerup": {
+   "cells": 1,
+   "none": 1.0
+  }
+ },
+ "true_as": {
+  "ArmorBonus": {
+   "cells": 3014,
+   "ArmorBonus": 0.911,
+   "none": 0.057,
+   "Clip": 0.012,
+   "Chaingun": 0.005,
+   "Berserk": 0.005,
+   "Zombieman": 0.003
+  },
+  "GreenArmor": {
+   "cells": 1406,
+   "GreenArmor": 0.869,
+   "none": 0.042,
+   "Shotgun": 0.02,
+   "Medikit": 0.013,
+   "RadSuit": 0.011,
+   "HealthBonus": 0.009
+  },
+  "Medikit": {
+   "cells": 1277,
+   "Medikit": 0.984,
+   "HealthBonus": 0.006,
+   "Stimpack": 0.006,
+   "none": 0.003
+  },
+  "Shotgun": {
+   "cells": 469,
+   "Shotgun": 0.855,
+   "none": 0.094,
+   "PlasmaRifle": 0.045,
+   "RocketAmmo": 0.004,
+   "ClipBox": 0.002
+  },
+  "Clip": {
+   "cells": 304,
+   "Clip": 0.901,
+   "none": 0.086,
+   "ShellBox": 0.007,
+   "Zombieman": 0.003,
+   "Shell": 0.003
+  },
+  "Shell": {
+   "cells": 276,
+   "Shell": 0.862,
+   "none": 0.054,
+   "ShellBox": 0.054,
+   "Chaingun": 0.014,
+   "ClipBox": 0.007,
+   "Clip": 0.004
+  },
+  "HealthBonus": {
+   "cells": 101,
+   "HealthBonus": 0.802,
+   "none": 0.129,
+   "Medikit": 0.02,
+   "Stimpack": 0.02,
+   "RocketAmmo": 0.01,
+   "Zombieman": 0.01
+  },
+  "Stimpack": {
+   "cells": 77,
+   "Stimpack": 0.935,
+   "none": 0.039,
+   "RocketLauncher": 0.026
+  }
+ }
+}

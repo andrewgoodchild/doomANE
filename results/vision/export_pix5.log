@@ -1,0 +1,9 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+WARNING:huggingface_hub.utils._http:Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Converting PyTorch Frontend ==> MIL Ops:   0%|          | 0/685 [00:00<?, ? ops/s]Converting PyTorch Frontend ==> MIL Ops:  62%|██████▏   | 423/685 [00:00<00:00, 3414.49 ops/s]Converting PyTorch Frontend ==> MIL Ops: 100%|█████████▉| 684/685 [00:00<00:00, 4427.27 ops/s]
+Running MIL frontend_pytorch pipeline:   0%|          | 0/5 [00:00<?, ? passes/s]Running MIL frontend_pytorch pipeline: 100%|██████████| 5/5 [00:00<00:00, 112.26 passes/s]
+Running MIL default pipeline:   0%|          | 0/95 [00:00<?, ? passes/s]Running MIL default pipeline:  14%|█▎        | 13/95 [00:00<00:00, 122.85 passes/s]Running MIL default pipeline:  27%|██▋       | 26/95 [00:00<00:00, 116.69 passes/s]Running MIL default pipeline:  40%|████      | 38/95 [00:00<00:00, 90.00 passes/s] Running MIL default pipeline:  51%|█████     | 48/95 [00:00<00:00, 87.76 passes/s]Running MIL default pipeline:  61%|██████    | 58/95 [00:00<00:00, 83.56 passes/s]Running MIL default pipeline:  71%|███████   | 67/95 [00:01<00:00, 29.95 passes/s]Running MIL default pipeline:  85%|████████▌ | 81/95 [00:01<00:00, 43.40 passes/s]Running MIL default pipeline:  97%|█████████▋| 92/95 [00:01<00:00, 49.10 passes/s]Running MIL default pipeline: 100%|██████████| 95/95 [00:01<00:00, 56.26 passes/s]
+Running MIL backend_mlprogram pipeline:   0%|          | 0/12 [00:00<?, ? passes/s]Running MIL backend_mlprogram pipeline: 100%|██████████| 12/12 [00:00<00:00, 134.25 passes/s]
+CPU_AND_NE {'ms_median': 2.24, 'cell_agreement_with_torch': 0.9999}
+CPU_AND_GPU {'ms_median': 3.57, 'cell_agreement_with_torch': 1.0}
+CPU_ONLY {'ms_median': 15.58, 'cell_agreement_with_torch': 1.0}

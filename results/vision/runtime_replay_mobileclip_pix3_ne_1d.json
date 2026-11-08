@@ -1,0 +1,69 @@
+{
+ "model": "../../results/vision/mobileclip_pix3",
+ "engine_MAP01": {
+  "frames": 840,
+  "listed_per_frame": 0.39,
+  "phantom_entries_per_frame": 0.39,
+  "duplicate_entries_per_frame": 0.0,
+  "real_monsters_listed_per_frame": 0.0,
+  "frames_listing_a_phantom": 0.386,
+  "visible_phantom_entries_per_frame": 0.03,
+  "remembered_phantom_entries_per_frame": 0.36,
+  "most_listed": 2,
+  "items_remembered_per_frame": 0.5,
+  "most_items_remembered": 2
+ },
+ "engine_MAP02": {
+  "frames": 8006,
+  "listed_per_frame": 5.36,
+  "phantom_entries_per_frame": 0.99,
+  "duplicate_entries_per_frame": 2.29,
+  "real_monsters_listed_per_frame": 2.07,
+  "frames_listing_a_phantom": 0.408,
+  "visible_phantom_entries_per_frame": 0.48,
+  "remembered_phantom_entries_per_frame": 0.51,
+  "most_listed": 36,
+  "items_remembered_per_frame": 9.85,
+  "most_items_remembered": 45
+ },
+ "engine_MAP03": {
+  "frames": 4410,
+  "listed_per_frame": 3.16,
+  "phantom_entries_per_frame": 1.0,
+  "duplicate_entries_per_frame": 1.24,
+  "real_monsters_listed_per_frame": 0.92,
+  "frames_listing_a_phantom": 0.435,
+  "visible_phantom_entries_per_frame": 0.28,
+  "remembered_phantom_entries_per_frame": 0.72,
+  "most_listed": 34,
+  "items_remembered_per_frame": 10.4,
+  "most_items_remembered": 31
+ },
+ "pix1stuck_MAP01": {
+  "frames": 1260,
+  "listed_per_frame": 3.91,
+  "phantom_entries_per_frame": 1.56,
+  "duplicate_entries_per_frame": 1.54,
+  "real_monsters_listed_per_frame": 0.8,
+  "frames_listing_a_phantom": 0.704,
+  "visible_phantom_entries_per_frame": 0.82,
+  "remembered_phantom_entries_per_frame": 0.74,
+  "most_listed": 20,
+  "items_remembered_per_frame": 5.54,
+  "most_items_remembered": 18
+ },
+ "pix1stuck_MAP03": {
+  "frames": 2100,
+  "listed_per_frame": 0.56,
+  "phantom_entries_per_frame": 0.42,
+  "duplicate_entries_per_frame": 0.0,
+  "real_monsters_listed_per_frame": 0.13,
+  "frames_listing_a_phantom": 0.343,
+  "visible_phantom_entries_per_frame": 0.07,
+  "remembered_phantom_entries_per_frame": 0.35,
+  "most_listed": 5,
+  "items_remembered_per_frame": 13.68,
+  "most_items_remembered": 37
+ },
+ "negative_evidence": true
+}

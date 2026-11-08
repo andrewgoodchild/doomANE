@@ -1,0 +1,43 @@
+{
+ "format": "doomlaya-command-residual-distilled-v1",
+ "name": "laya-pixel-command-distill-v1",
+ "parent": "laya-v031-command-key-retained-v1",
+ "parent_weights_sha256": "072b09627912b03cc6783cb0ecb893c8a40db2ff8841b1d73666138a567e4d00",
+ "parent_spec_sha256": "aebd31e851352f5ec34ac4a4fb68dd8fbe2f81408b9d5dfa532788b7e5fee89d",
+ "drift": 0.1,
+ "best_epoch": 95,
+ "epochs": 200,
+ "learning_rate": 0.0003,
+ "train_runs": {
+  "runs/20261106_212829_426400_repeat-planner_ext_safe-pix3_shadow-map02-seed11": "9514fffba5004412ca8594af0f0df1ae535aff67ea79ab63df81a0c11d6e8488",
+  "runs/20261106_213132_623337_repeat-planner_ext_safe-pix3_shadow-map02-seed12": "8b2e7dc232f1d5edd20ad590d658afc084389ba286eddc27861c9195ffbb212c",
+  "runs/20261106_213435_492058_repeat-planner_ext_safe-pix3_shadow-map02-seed13": "dc6c3c6c9303b800bab6c1473944249c356ff3bb91345f4103ee4a7c9a025c41",
+  "runs/20261106_214041_263712_repeat-planner_ext_safe-pix3_shadow-map03-seed11": "9091565298d62d211083599afe541a8fd3d78d860f44378dd5e5e493c262a265",
+  "runs/20261106_214346_147748_repeat-planner_ext_safe-pix3_shadow-map03-seed12": "1152b6503a3612a80a2f9c1cf964c464ef0fceb5169539db0f114ca5a9e6325a",
+  "runs/20261106_214656_060658_repeat-planner_ext_safe-pix3_shadow-map03-seed13": "d845525ea84c039cb34c0fd95511a9dae22f2b1e3508f0659084cc3221e0964b",
+  "runs/20261106_215306_431050_repeat-planner_ext_safe-pix3_shadow-map04-seed11": "d0aaf8e948bb13ce7250097ade07b1d32b0092494a4ffe0cc36a2571f14a339b",
+  "runs/20261106_215609_823395_repeat-planner_ext_safe-pix3_shadow-map04-seed12": "1d50fb24e4a36c1d49db8f997da01940236489e6396922f734c450a31160df20",
+  "runs/20261106_215913_191855_repeat-planner_ext_safe-pix3_shadow-map04-seed13": "4663fc7cc321017d6ed9857b9c7db8c3f6137f04ad8304ab1712c0fbed1418d5"
+ },
+ "valid_runs": {
+  "runs/20261106_213738_315294_repeat-planner_ext_safe-pix3_shadow-map02-seed14": "53fa7b6b46ac1a175ed63542deb822ce97a1d63bc36b6a43c0af547f9c0e3799",
+  "runs/20261106_215001_616051_repeat-planner_ext_safe-pix3_shadow-map03-seed14": "2e2c95b9fcee639e3e94ac2161b430fdd47b1ae1e2b4384aff6fcf246d6f05a4",
+  "runs/20261106_220218_292039_repeat-planner_ext_safe-pix3_shadow-map04-seed14": "f35c960878933cbe0ffb0a2be339ad13cd097e4e533c29aabf0ceb43652d0bac"
+ },
+ "teacher_sha256": {
+  "runs/20261106_212829_426400_repeat-planner_ext_safe-pix3_shadow-map02-seed11": "fad16e0cfc7509b4aa6ef3f86fb7dda25cf4c0b06f6d51a6534e890cd8653e05",
+  "runs/20261106_213132_623337_repeat-planner_ext_safe-pix3_shadow-map02-seed12": "939a98c2341a84b7313740b9b920fa727799f242966715756537efa6126c2369",
+  "runs/20261106_213435_492058_repeat-planner_ext_safe-pix3_shadow-map02-seed13": "14848cfb5778e0303a832be04668f1993858514a99daf67e658d4059ce2b998e",
+  "runs/20261106_214041_263712_repeat-planner_ext_safe-pix3_shadow-map03-seed11": "fe70b495673590e97da4c92952dead01542fd8a518f9c675e6c8faee462bfb8d",
+  "runs/20261106_214346_147748_repeat-planner_ext_safe-pix3_shadow-map03-seed12": "8b9bbc0669da30bcce14bfe1be6b9e88b543bd50803b0b96c65bbeae788ca235",
+  "runs/20261106_214656_060658_repeat-planner_ext_safe-pix3_shadow-map03-seed13": "3796746e6e04b3006420034b64e68140041eaac1c6a85f765e7da81122056e1b",
+  "runs/20261106_215306_431050_repeat-planner_ext_safe-pix3_shadow-map04-seed11": "455a73abc4036f58c936fe36cf31eb44f16a4ca92cb70ae54eb32d153a0f5964",
+  "runs/20261106_215609_823395_repeat-planner_ext_safe-pix3_shadow-map04-seed12": "d2ce4028d04bcb3845df395cfcbf03287d9321ac1567ac02382ed04c3178b641",
+  "runs/20261106_215913_191855_repeat-planner_ext_safe-pix3_shadow-map04-seed13": "bac38398a790cf49e7e4bd775ac9577e65e8ef639f60aa72e69e5e36df1b1b40",
+  "runs/20261106_213738_315294_repeat-planner_ext_safe-pix3_shadow-map02-seed14": "07f560484fb0f380a583134b9f2107ed449275101255944ae8da12eded9b4a9a",
+  "runs/20261106_215001_616051_repeat-planner_ext_safe-pix3_shadow-map03-seed14": "07a1ea836f5427ecc9fa54d26b8d6c5041f3a75775c1c6c21732821a760646fe",
+  "runs/20261106_220218_292039_repeat-planner_ext_safe-pix3_shadow-map04-seed14": "4ad836eb3fa56418b09cca33996fd31697758baf38151bdddd0ec3a4b2037fa4"
+ },
+ "trainer_sha256": "280e9b8b37d4fb5ae58a14f9f90719e8c3b264bd5b5a6476be03816b86ac0617",
+ "note": "Teacher: the served command head on the engine-perception question of the same moment. Serve only with --pixel-perception."
+}

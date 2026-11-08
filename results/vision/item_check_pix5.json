@@ -1,0 +1,45 @@
+{
+ "walk_d": {
+  "MAP02": {
+   "mobileclip_pix3": {
+    "recall": 0.8591,
+    "false_per_frame": 0.5105,
+    "instances": 298,
+    "frames": 190
+   },
+   "mobileclip_pix5": {
+    "recall": 0.849,
+    "false_per_frame": 0.4684,
+    "instances": 298,
+    "frames": 190
+   }
+  },
+  "MAP03": {
+   "mobileclip_pix3": {
+    "recall": 0.7823,
+    "false_per_frame": 0.3146,
+    "instances": 271,
+    "frames": 178
+   },
+   "mobileclip_pix5": {
+    "recall": 0.7601,
+    "false_per_frame": 0.2697,
+    "instances": 271,
+    "frames": 178
+   }
+  }
+ },
+ "check": {
+  "MAP02": {
+   "false_share": 0.918,
+   "recall_share": 0.988,
+   "passed": false
+  },
+  "MAP03": {
+   "false_share": 0.857,
+   "recall_share": 0.972,
+   "passed": false
+  }
+ },
+ "passed": false
+}

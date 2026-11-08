@@ -1,0 +1,44 @@
+{
+ "pix1_engine": {
+  "attack_decisions": 274,
+  "blind": 55,
+  "blind_share": 0.201,
+  "enemy_seen_within_3s": 0.909,
+  "hp_lost_within_3s": 0.236,
+  "replay": {},
+  "hidden_choice": {}
+ },
+ "pix3_gain": {
+  "attack_decisions": 663,
+  "blind": 445,
+  "blind_share": 0.671,
+  "enemy_seen_within_3s": 0.845,
+  "hp_lost_within_3s": 0.094,
+  "replay": {
+   "attack": 445
+  },
+  "hidden_choice": {
+   "use_switch": 35,
+   "pickup": 396,
+   "open_door": 3,
+   "explore": 6,
+   "exit": 5
+  }
+ },
+ "pix3_oracle": {
+  "attack_decisions": 451,
+  "blind": 217,
+  "blind_share": 0.481,
+  "enemy_seen_within_3s": 0.728,
+  "hp_lost_within_3s": 0.267,
+  "replay": {
+   "attack": 217
+  },
+  "hidden_choice": {
+   "use_switch": 27,
+   "pickup": 181,
+   "exit": 3,
+   "open_door": 6
+  }
+ }
+}

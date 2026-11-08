@@ -515,6 +515,13 @@ class Planner:
         return (tuple(sorted(s.get("keys", ()))), tuple(s.get("closed_remote_doors", ())),
                 tuple(sorted(m["id"] for m in s.get("switches", ()) if m["activated"] and m.get("kind") != "lift")))
 
+    @staticmethod
+    def _gained(now, then):
+        """A key held, a switch activated or a remote door open that was not under `then`. Losses alone (a door
+        closing again, a repeatable switch dropping out) do not re-plan: they undo a step, not open a new one."""
+        keys, closed, switches = now
+        return bool(set(keys) - set(then[0]) or set(then[1]) - set(closed) or set(switches) - set(then[2]))
+
     def update(self, packet):
         """Re-plan when needed, then narrow the packet's route options to the objective."""
         if self.controller is None or self.state is None or self.controller.mission is None:
@@ -531,7 +538,7 @@ class Planner:
         elif self._failed():
             self.memory[self.objective["key"]]["failed"] += 1
             reason = "objective failed"
-        elif signature != self.objective["signature"]:
+        elif self._gained(signature, self.objective["signature"]):
             reason = "keys, doors or mechanisms changed"
         elif self.tick - self.objective["since_tick"] >= REPLAN_SECONDS * 35:
             distance = self._distance()
@@ -561,6 +568,16 @@ class Planner:
             narrowed = copy.deepcopy(packet)
             self._hide_extended(narrowed, None)
         return self.fight_update(packet, narrowed) if self.fight_enabled else narrowed
+
+    def shadow(self, packet):
+        """The narrowing update() would apply now, without re-planning."""
+        if self.controller is None or self.state is None or self.controller.mission is None:
+            return packet
+        if self.objective:
+            return self.narrow(packet)
+        narrowed = copy.deepcopy(packet)
+        self._hide_extended(narrowed, None)
+        return narrowed
 
     def plan(self, state_text, reason, signature):
         started = time.perf_counter()
@@ -785,7 +802,12 @@ def install(endpoint, log_path):
         return result
 
     def mask(packet, *a, **k):
-        return planner.update(original_mask(packet, *a, **k))
+        packet = original_mask(packet, *a, **k)
+        if getattr(dq, "SHADOW_REQUEST", False):
+            # agent.py --shadow-engine-packet: the recorded engine-perception packet gets the current objective's
+            # narrowing, never a re-plan (a re-plan would change the game and ask the server).
+            return planner.shadow(packet)
+        return planner.update(packet)
 
     Executor.__init__, Executor.observe, dq.mask_unreachable_items = init, observe, mask
     return planner

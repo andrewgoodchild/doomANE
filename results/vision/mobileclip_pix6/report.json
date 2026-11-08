@@ -1,0 +1,444 @@
+{
+ "backbone": "mobileclip",
+ "classes": [
+  "none",
+  "Backpack",
+  "Cell",
+  "CellPack",
+  "Clip",
+  "ClipBox",
+  "RocketAmmo",
+  "RocketBox",
+  "Shell",
+  "ShellBox",
+  "ArmorBonus",
+  "BlueArmor",
+  "GreenArmor",
+  "HealthBonus",
+  "Medikit",
+  "Stimpack",
+  "BlueCard",
+  "RedCard",
+  "RedSkull",
+  "YellowCard",
+  "YellowSkull",
+  "Arachnotron",
+  "BaronOfHell",
+  "Cacodemon",
+  "ChaingunGuy",
+  "Demon",
+  "DoomImp",
+  "Fatso",
+  "HellKnight",
+  "LostSoul",
+  "PainElemental",
+  "Revenant",
+  "ShotgunGuy",
+  "Spectre",
+  "Zombieman",
+  "Berserk",
+  "BlurSphere",
+  "InvulnerabilitySphere",
+  "Megasphere",
+  "RadSuit",
+  "Chaingun",
+  "PlasmaRifle",
+  "RocketLauncher",
+  "Shotgun",
+  "SuperShotgun",
+  "OtherMonster",
+  "OtherHealth",
+  "OtherArmor",
+  "OtherAmmo",
+  "OtherWeapon",
+  "OtherKey",
+  "OtherPowerup"
+ ],
+ "name_counts": {
+  "Ammo/Backpack": 89,
+  "Ammo/Cell": 149,
+  "Ammo/CellPack": 1477,
+  "Ammo/Clip": 5558,
+  "Ammo/ClipBox": 1123,
+  "Ammo/RocketAmmo": 1225,
+  "Ammo/RocketBox": 4066,
+  "Ammo/Shell": 3142,
+  "Ammo/ShellBox": 947,
+  "Armor/ArmorBonus": 1648,
+  "Armor/BlueArmor": 84,
+  "Armor/GreenArmor": 161,
+  "Health/HealthBonus": 1983,
+  "Health/Medikit": 1782,
+  "Health/Soulsphere": 22,
+  "Health/Stimpack": 3047,
+  "Key/BlueCard": 448,
+  "Key/BlueSkull": 7,
+  "Key/RedCard": 287,
+  "Key/RedSkull": 35,
+  "Key/YellowCard": 394,
+  "Key/YellowSkull": 31,
+  "Monster/Arachnotron": 678,
+  "Monster/Archvile": 26,
+  "Monster/BaronOfHell": 894,
+  "Monster/BossBrain": 1,
+  "Monster/Cacodemon": 1746,
+  "Monster/ChaingunGuy": 1052,
+  "Monster/Cyberdemon": 1,
+  "Monster/Demon": 2018,
+  "Monster/DoomImp": 14196,
+  "Monster/Fatso": 840,
+  "Monster/HellKnight": 902,
+  "Monster/LostSoul": 1668,
+  "Monster/PainElemental": 237,
+  "Monster/Revenant": 832,
+  "Monster/ShotgunGuy": 3036,
+  "Monster/Spectre": 916,
+  "Monster/Zombieman": 3529,
+  "Powerup/Berserk": 104,
+  "Powerup/BlurSphere": 52,
+  "Powerup/Infrared": 6,
+  "Powerup/InvulnerabilitySphere": 34,
+  "Powerup/Megasphere": 343,
+  "Powerup/RadSuit": 94,
+  "Weapon/Chaingun": 1024,
+  "Weapon/Chainsaw": 21,
+  "Weapon/PlasmaRifle": 71,
+  "Weapon/RocketLauncher": 158,
+  "Weapon/Shotgun": 4312,
+  "Weapon/SuperShotgun": 135
+ },
+ "train_maps": [
+  "MAP06",
+  "MAP08",
+  "MAP10",
+  "MAP12",
+  "MAP14",
+  "MAP16",
+  "MAP18",
+  "MAP20",
+  "MAP22",
+  "MAP24",
+  "MAP26",
+  "MAP28",
+  "MAP30",
+  "frames_d_MAP06",
+  "frames_d_MAP08",
+  "frames_d_MAP10",
+  "frames_d_MAP12",
+  "frames_d_MAP14",
+  "frames_d_MAP16",
+  "frames_d_MAP18",
+  "frames_d_MAP20",
+  "frames_d_MAP22",
+  "frames_d_MAP24",
+  "frames_d_MAP26",
+  "frames_d_MAP28",
+  "frames_d_MAP30",
+  "onpolicy_d_pix3_MAP06",
+  "onpolicy_d_pix3_MAP08",
+  "onpolicy_d_pix3_MAP10",
+  "onpolicy_d_pix3_MAP12",
+  "onpolicy_d_pix3_MAP14",
+  "onpolicy_d_pix3_MAP16",
+  "pix3_MAP06",
+  "pix3_MAP08",
+  "pix3_MAP10",
+  "pix3_MAP12",
+  "pix3_MAP14",
+  "pix3_MAP16",
+  "scenery_d_MAP06",
+  "scenery_d_MAP08",
+  "scenery_d_MAP10",
+  "scenery_d_MAP12",
+  "scenery_d_MAP14",
+  "scenery_d_MAP16",
+  "scenery_d_MAP18",
+  "scenery_d_MAP20",
+  "scenery_d_MAP22",
+  "scenery_d_MAP24",
+  "scenery_d_MAP26",
+  "scenery_d_MAP28",
+  "scenery_d_MAP30"
+ ],
+ "val_maps": [
+  "MAP01",
+  "MAP02",
+  "MAP03",
+  "MAP04"
+ ],
+ "data": [
+  "ext/vision-data/frames_d",
+  "ext/vision-data/scenery_d",
+  "ext/vision-data/onpolicy_d",
+  "ext/vision-data/itemneg_d",
+  "ext/vision-data/itemneg_d",
+  "ext/vision-data/itemneg_d"
+ ],
+ "background_weight": 0.05000000074505806,
+ "history": [
+  {
+   "epoch": 1,
+   "loss": 1.2608,
+   "minutes": 10.0
+  },
+  {
+   "epoch": 2,
+   "loss": 0.1862,
+   "minutes": 20.1
+  },
+  {
+   "epoch": 3,
+   "loss": 0.1568,
+   "minutes": 30.1
+  },
+  {
+   "epoch": 4,
+   "loss": 0.1388,
+   "minutes": 40.3
+  },
+  {
+   "epoch": 5,
+   "loss": 0.1264,
+   "minutes": 50.3,
+   "val": {
+    "cell_fg_recall": 0.09668616205453873,
+    "cell_fg_precision": 0.4308573007583618,
+    "cell_category_recall": {
+     "Monster": 0.234,
+     "Health": 0.094,
+     "Armor": 0.006,
+     "Ammo": 0.006,
+     "Weapon": 0.007,
+     "Key": 0.196,
+     "Powerup": 0.0
+    },
+    "cell_category_precision": {
+     "Monster": 0.952,
+     "Health": 0.49,
+     "Armor": 0.338,
+     "Ammo": 0.076,
+     "Weapon": 0.235,
+     "Key": 0.114,
+     "Powerup": 0.0
+    },
+    "object_recall": {
+     "Monster": "563/1467 = 0.384",
+     "Health": "79/494 = 0.160",
+     "Ammo": "17/700 = 0.024",
+     "Armor": "12/406 = 0.030",
+     "Weapon": "7/266 = 0.026",
+     "Key": "19/54 = 0.352",
+     "Powerup": "0/3 = 0.000"
+    },
+    "object_named_right_when_found": {
+     "Monster": 0.407,
+     "Health": 0.684,
+     "Ammo": 0.824,
+     "Armor": 0.833,
+     "Weapon": 0.714,
+     "Key": 0.263
+    },
+    "object_false_blobs": "590/1652",
+    "object_column_error_degrees_median": 0.38
+   }
+  },
+  {
+   "epoch": 6,
+   "loss": 0.1136,
+   "minutes": 60.4
+  },
+  {
+   "epoch": 7,
+   "loss": 0.1016,
+   "minutes": 70.6
+  },
+  {
+   "epoch": 8,
+   "loss": 0.0865,
+   "minutes": 80.7
+  },
+  {
+   "epoch": 9,
+   "loss": 0.0744,
+   "minutes": 90.9
+  },
+  {
+   "epoch": 10,
+   "loss": 0.0633,
+   "minutes": 101.1,
+   "val": {
+    "cell_fg_recall": 0.4828004539012909,
+    "cell_fg_precision": 0.6566033363342285,
+    "cell_category_recall": {
+     "Monster": 0.668,
+     "Health": 0.685,
+     "Armor": 0.342,
+     "Ammo": 0.333,
+     "Weapon": 0.408,
+     "Key": 0.378,
+     "Powerup": 0.0
+    },
+    "cell_category_precision": {
+     "Monster": 0.93,
+     "Health": 0.662,
+     "Armor": 0.716,
+     "Ammo": 0.379,
+     "Weapon": 0.42,
+     "Key": 0.429,
+     "Powerup": 0.0
+    },
+    "object_recall": {
+     "Monster": "913/1467 = 0.622",
+     "Health": "299/494 = 0.605",
+     "Ammo": "225/700 = 0.321",
+     "Armor": "140/406 = 0.345",
+     "Weapon": "91/266 = 0.342",
+     "Key": "27/54 = 0.500",
+     "Powerup": "0/3 = 0.000"
+    },
+    "object_named_right_when_found": {
+     "Monster": 0.656,
+     "Health": 0.696,
+     "Ammo": 0.631,
+     "Armor": 0.993,
+     "Weapon": 0.736,
+     "Key": 0.889
+    },
+    "object_false_blobs": "1776/3692",
+    "object_column_error_degrees_median": 0.2
+   }
+  },
+  {
+   "epoch": 11,
+   "loss": 0.0532,
+   "minutes": 111.3
+  },
+  {
+   "epoch": 12,
+   "loss": 0.0447,
+   "minutes": 121.5
+  },
+  {
+   "epoch": 13,
+   "loss": 0.0377,
+   "minutes": 131.7
+  },
+  {
+   "epoch": 14,
+   "loss": 0.0309,
+   "minutes": 141.7
+  },
+  {
+   "epoch": 15,
+   "loss": 0.0258,
+   "minutes": 151.7,
+   "val": {
+    "cell_fg_recall": 0.7319486737251282,
+    "cell_fg_precision": 0.8454222083091736,
+    "cell_category_recall": {
+     "Monster": 0.82,
+     "Health": 0.765,
+     "Armor": 0.646,
+     "Ammo": 0.652,
+     "Weapon": 0.625,
+     "Key": 0.693,
+     "Powerup": 0.0
+    },
+    "cell_category_precision": {
+     "Monster": 0.947,
+     "Health": 0.893,
+     "Armor": 0.88,
+     "Ammo": 0.677,
+     "Weapon": 0.714,
+     "Key": 0.341,
+     "Powerup": 0.0
+    },
+    "object_recall": {
+     "Monster": "1074/1467 = 0.732",
+     "Health": "350/494 = 0.709",
+     "Ammo": "335/700 = 0.479",
+     "Armor": "205/406 = 0.505",
+     "Weapon": "106/266 = 0.398",
+     "Key": "38/54 = 0.704",
+     "Powerup": "0/3 = 0.000"
+    },
+    "object_named_right_when_found": {
+     "Monster": 0.783,
+     "Health": 0.883,
+     "Ammo": 0.851,
+     "Armor": 0.985,
+     "Weapon": 0.84,
+     "Key": 1.0
+    },
+    "object_false_blobs": "970/3182",
+    "object_column_error_degrees_median": 0.1
+   }
+  },
+  {
+   "epoch": 16,
+   "loss": 0.0215,
+   "minutes": 161.8
+  },
+  {
+   "epoch": 17,
+   "loss": 0.0183,
+   "minutes": 171.8
+  },
+  {
+   "epoch": 18,
+   "loss": 0.0161,
+   "minutes": 181.9
+  },
+  {
+   "epoch": 19,
+   "loss": 0.0149,
+   "minutes": 192.0
+  },
+  {
+   "epoch": 20,
+   "loss": 0.0145,
+   "minutes": 202.2,
+   "val": {
+    "cell_fg_recall": 0.7685739994049072,
+    "cell_fg_precision": 0.8759867548942566,
+    "cell_category_recall": {
+     "Monster": 0.838,
+     "Health": 0.74,
+     "Armor": 0.729,
+     "Ammo": 0.701,
+     "Weapon": 0.616,
+     "Key": 0.662,
+     "Powerup": 0.0
+    },
+    "cell_category_precision": {
+     "Monster": 0.949,
+     "Health": 0.918,
+     "Armor": 0.88,
+     "Ammo": 0.76,
+     "Weapon": 0.787,
+     "Key": 0.437,
+     "Powerup": 0.0
+    },
+    "object_recall": {
+     "Monster": "1117/1467 = 0.761",
+     "Health": "356/494 = 0.721",
+     "Ammo": "379/700 = 0.541",
+     "Armor": "223/406 = 0.549",
+     "Weapon": "110/266 = 0.414",
+     "Key": "36/54 = 0.667",
+     "Powerup": "0/3 = 0.000"
+    },
+    "object_named_right_when_found": {
+     "Monster": 0.799,
+     "Health": 0.904,
+     "Ammo": 0.852,
+     "Armor": 0.996,
+     "Weapon": 0.845,
+     "Key": 1.0
+    },
+    "object_false_blobs": "931/3265",
+    "object_column_error_degrees_median": 0.08
+   }
+  }
+ ]
+}

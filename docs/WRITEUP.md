@@ -1,7 +1,8 @@
-# Laya plays Doom from the Neural Engine: write-up (2026-10-30)
+# Laya plays Doom from the Neural Engine: write-up (2026-10-30; pixel perception added 2026-11-08)
 
 A summary of the Doom work in this repo, from 2026-10-18 to 2026-10-25, plus the evaluations after the
-park (two more held-out evaluations, one-hour campaigns and a random-choice baseline, 2026-10-29 to 30). The lab notebook with every
+park (two more held-out evaluations, one-hour campaigns and a random-choice baseline, 2026-10-29 to 30), and the
+level-1 pixel perception phase (2026-10-31 to 11-07, its own section below). The lab notebook with every
 batch, table and dead end is `docs/LAB_NOTEBOOK.md`; this file says what was built, what it achieved, what we learned
 and where it stopped.
 
@@ -190,6 +191,157 @@ in a campaign? Both were pre-registered and played from frozen snapshots on one 
   died 7–10 times per game even at skill 1. With survival mostly taken out, the route is what fails on
   unseen maps. MAP11 and MAP15 lost real time again and have no result.
 
+## Level 1 pixel perception (2026-10-31 to 2026-11-07)
+
+Every result above takes enemies and items from ViZDoom's labels buffer: only what is on screen, but with exact
+names, ids, positions and outlines. The question of this phase: what does it cost to find them from the screen
+instead? Level 1 replaces the enemy and item lists with a detector that sees pixels and the depth buffer (agent
+flag `--pixel-perception DIR`, `doomlib/pixel_perception.py` in the patch, tooling in `doom/vision/`). The map,
+doors, switches and keys known from the WAD and the object list, the counters and the projectile facts stay as
+they were, so this measures perception alone and is not a human-fair game. Every experiment was pre-registered
+in `docs/LAB_NOTEBOOK.md` with its reading fixed beforehand; the prior work and the backlog are in
+`docs/PIXEL_BACKLOG.md`.
+
+### Setup
+
+- **Data** (`doom/vision/collect_frames.py`, `collect_sequences.py`): frames from the 17 development maps with
+  the labels buffer as ground truth, warped to random points near monsters and items, plus plain scenery, plus
+  views along the paths of recorded games (300 per map on MAP01–03, and tic-by-tic sequences for the runtime
+  replay). MAP01–04 are validation maps and never in the detector's training; held-out maps are never touched.
+  No hosted model.
+- **Model** (`train_seg.py`, `export_seg.py`): MobileCLIP-S2's image trunk, fine-tuned, joined with a small CNN
+  on the depth buffer, names every 4x4 cell of the 192x320 view above the status bar (48x80 cells) with one of
+  49 classes. Core ML, 2.1–2.2 ms per frame on the Neural Engine, 99.9 % cell agreement with torch; 60–200
+  minutes of training on the GPU per model.
+- **Runtime:** touching cells of one category at one depth form an object named by its most common class;
+  bearing from the column, distance from the depth buffer along that ray (times 1.07, the median true-to-ray
+  ratio on development maps); ids from a position tracker; reported after 2 consecutive tics; remembered for
+  70 tics after the last sighting.
+- **Offline tests that stood in for play:** views with a false monster along the agent's paths (walked views),
+  phantom tracks that persist over consecutive frames, and the runtime replay (`runtime_replay.py`): the stack's
+  own perception and memory fed tic by tic and compared with the engine's monsters (phantoms, duplicates and
+  real monsters listed, per frame). Models are compared at a matched operating point: each monster threshold is
+  set to the same recall on MAP04.
+- **Gate for every candidate:** MAP01, skill 3, 180 s, seeds 54, 1, 2, 3, `planner_ext_safe` with the pixel
+  flags; passes with 2 or more finished and at most 2 deaths. Engine perception on the same stack: 3/4, then
+  4/4 with re-plan on gains. Before a gate, an offline rule; a miss there meant no gate.
+
+### The detectors
+
+| Model | Change | Walked views with a false monster, matched recall | Monster object recall, validation frames |
+|---|---|---|---|
+| pix1 | MobileCLIP-S2 trunk, RGB | 13.3 % | 71.6 % |
+| pix2 | empty cells weighted like objects | 17.8 % | 50.5 % |
+| pix3 | the depth buffer as a fourth channel | **5.1 %** | 77.3 % |
+| pix4 | classes for corpses, barrels and decorations | 9.7 % | 80.7 % |
+| pix5 | pix3 plus on-policy frames from the agent's own games (DAgger, one round) | 6.5 % | on pix3's curve |
+| pix6 | pix5 plus item hard negatives | 7.2 % | fewer false items on MAP03 only |
+
+pix3 is the detector of every game after pix1. Depth did what it was for: phantoms on bare walls and floors fell
+from 59 to 25 on the walked views. What remains are sprites that are not monsters (barrels, corpses, armour
+bonuses, lamps), which stand out in depth as monsters do, and at a few poses scenery read as high-value items
+(on MAP01 the cells called BlueCard lie on nothing in 87 % of the suspect views).
+
+### Results
+
+| Date | Candidate | Offline rule | Gate (MAP01, 4 seeds) |
+|---|---|---|---|
+| 10-31 | pix1, RGB detector | chosen on recall | 0/4; MAP01–03 0/9 against engine 6/12, one server crash on option length |
+| 10-31 | pix2, pix3, pix4 | all miss (walked-view phantoms above 3.3 %) | none |
+| 11-01 | matched operating point, phantom persistence | pix3 best at matched recall | measurement |
+| 11-01 | forgetting on negative evidence (1c) | misses (16–25 % removed; rule 50 %) | |
+| 11-01/02 | re-identification by a seen enemy (1d, 1e) | miss (real kept 63 %, 71 %; rule 90 %) | |
+| 11-02 | short gate, pix3 plain against pix3 + 1c + 1e | | plain fails; forgetting passes (MAP03: 28 regions, 50 kills) |
+| 11-02 | pix3 + 1c + 1e, full comparison | | MAP01–03 0/12 against 6/12; MAP01 0/4 with 600 s |
+| 11-02 | item spots (planner: a failed item's spot keeps its history) | | 0/4 |
+| 11-03 | memory admission by track length (K = 4) | no K passes; K = 4 gated as registered | 0/4 |
+| 11-03 | depth-tolerant merge of sprite pieces | 0.5 m misses by 0.003 extras per frame | 0/4 (gated later on new evidence) |
+| 11-04 | re-plan only on gains (planner) | | pixel 1/4; engine 4/4, kept |
+| 11-04 | pix5, on-policy frames | misses (phantoms 124 % / 116 % of pix3's; rule 70 %) | |
+| 11-04 | negative-evidence range 20–30 m | no change: the spots are behind walls | |
+| 11-04 | memory facts in the enemy question | withdrawn: the server's projection drops added facts | |
+| 11-04 | memory window 35 / 17 tics | | 1/4; 0/4 |
+| 11-06 | command residual distilled from engine-perception choices | misses (+0.6 points; rule 10) | |
+| 11-07 | track belief from WAD geometry (MLP, AUC 0.87) | misses narrowly (48.4 % phantoms removed; rule 50 %) | |
+| 11-07 | oracle memory filter from engine labels (diagnostic) | | 1/4: the memory is not the main bottleneck |
+| 11-07 | item confidence threshold | misses (false items 69 % / 57 % of argmax; rule 50 %) | |
+| 11-07 | item belief from geometry; pix5's items | miss (45 % removed; rule 60 %) and (92 % / 86 %; rule 50 %) | |
+| 11-07 | pix6, item hard negatives | misses (93 % / 63 %; false monsters 7.2 % against 6.1 %) | |
+
+About 110 pixel games were played. All passed the authority audit; six lost real time and have no result (one
+pix1 MAP03 game, the four on-policy games on MAP10 and MAP12, one MAP03 data-collection game).
+
+### What worked
+
+1. **Depth as an input.** The one detector change that moved precision: pix3 at matched recall has a third of
+   pix1's walked-view phantoms and almost none on the MAP03 path where pix1 stalled.
+2. **Testing along the agent's own paths, and through its own memory.** Per-frame false-object rates over random
+   views (pix1's 0.33 per frame) said nothing about play; persistent phantoms on walked paths, and the runtime
+   replay of perception plus memory, explained each failure before the next game. The replay runs a sequence in
+   about 2 s once the detections are cached, so parameter sweeps take minutes.
+3. **Forgetting on negative evidence and re-identification.** They missed their offline rule and passed the
+   short closed-loop gate: forgetting junk entries matters more than the remembered real monsters it loses. They
+   are on in pixel mode.
+4. **Re-plan only on gains.** Found through the pixel games (they last longer, so the door-closing loop showed),
+   it took engine MAP01 from 3/4 to 4/4 and is the planner baseline for both modes.
+5. **Diagnostics that localised the loss:** blind attacks (84 % of attack tics at enemies not in view), pickup
+   time (61 % on item classes not on the map), item confusion at the suspect poses (scenery, not misnamed items).
+   Each took a few hours offline on recorded games.
+
+### What did not work
+
+- **Retraining the detector** on more scenery (pix2), with distractor classes (pix4), on the agent's own views
+  (pix5) or with item hard negatives (pix6). Each moved along one recall-against-phantoms curve or below it.
+  Textures a new map brings have never been seen, and MAP01's phantom keys are of that kind.
+- **Filtering the memory.** Track length, class consistency, a depth merge, a longer range for negative evidence,
+  a shorter window, and learned real-or-phantom scorers from geometry: real monsters are often seen for only a
+  few tics, so every filter that removed phantoms removed them too, and the oracle shows that even a perfect one
+  gives 1/4.
+- **Adapting the decision.** The distilled command residual could not fit its own training data (74 %): the pixel
+  packet carries the same counts and distances for a real remembered enemy and a phantom.
+- **Planner-side item history** (item spots): new detections land more than 128 units from earlier spots, so the
+  menu refilled with "Not tried yet" weapons and keys.
+
+### Lessons
+
+1. **Phantoms cost more than misses, and persistent ones most of all.** A missed monster costs a shot; one phantom
+   in a fixed view holds a goal-directed agent in a fight with a wall for the whole game.
+2. **Score perception through the agent's memory on its own paths.** Frame metrics on random views misled twice
+   (pix1's 0.33 false objects per frame; pix4's best recall with the worst phantoms).
+3. **A decision head trained on perfect perception trusts what it is told.** The command head attacks remembered
+   pixel enemies as it learned to attack remembered engine enemies, which were few and real, and it chases a
+   phantom blue key because keys are what the planner values most. Nothing downstream can recover what the
+   detector's output does not carry.
+4. **Removing one false source moves the time to the other.** A shorter memory cut blind attacks and the time went
+   to pixel pickups, not to switches and doors.
+5. **Gates of four seeds separate 0 from 4, not 1 from 0.** 1/4 against 0/4 recurred and is noise.
+
+### Mechanisms left in the code, and their defaults
+
+| Switch | Where | Default | Why |
+|---|---|---|---|
+| Confirmation on 2 consecutive tics; unnamed weapons and keys not reported | `pixel_perception.py` | on | pix1's false-object rate, before any game |
+| Monster threshold at matched MAP04 recall (0.7883 for pix3) | `classes.json` | on | matched operating point |
+| Item threshold | `classes.json` | unset | item operating point missed |
+| Forgetting on negative evidence and re-identification (1c, 1e); `--pixel-memory-plain` turns them off | `agent.py` | on | short gate |
+| `REMEMBER_SEEN_TICKS` | `agent.py` | 0 | K = 4 gate 0/4 |
+| `MERGE_DEPTH_M` | `pixel_perception.py` | 0 | gate 0/4 |
+| `NEGATIVE_EVIDENCE_M` | `agent.py` | 15 | no range changed the replay |
+| `--pixel-enemy-memory-ticks` | `agent.py` | 70 | 35 and 17 failed |
+| `--pixel-oracle-filter`, `--shadow-engine-packet` | `agent.py` | off | diagnostics and data collection that read engine labels |
+| `--command-residual`, config `planner_ext_safe_distill` | server, `repeat_map.py` | off | distillation missed |
+| `doomlib/track_belief.py` (enemy and item belief, with tests) | patch | not wired to a flag | both scorers missed |
+| Re-plan on gains | `doom/planner.py` | on, both modes | engine 4/4 |
+
+### Where it stands
+
+Level 1 is open. From pixels MAP01 finishes in 1 of 4 games at best, and MAP02 and MAP03 in none. The chain of
+evidence points at the detector: about a third of confirmed, visible enemy sightings match a distinct real
+monster, the rest are phantoms or fragments, and at a few poses scenery is read as the items the planner values
+most. Filters, planner changes and re-weighting the decision have each been tried and cannot recover that. The
+next lever is the detector's output itself: its precision on sprites that are not monsters and on item classes,
+and what each report carries about its own reliability.
+
 ## Open directions
 
 - **Train the command head on game outcomes** (expert iteration) only with repeated rollouts per
@@ -204,6 +356,20 @@ in a campaign? Both were pre-registered and played from frozen snapshots on one 
 - **A stricter "only what has been seen" map mode**, since the current route knowledge is like a full
   automap that also says what every line does.
 
+For level 1:
+
+- **Bound the gap before the next fix.** Engine perception gives 4/4 and plain pixels 1/4. Step down from engine one
+  error source at a time (item classes with a class-matched, tight radius; visible enemies; positions) to find where
+  the completions are lost. The item oracle so far matched by position only and let scenery near real items pass.
+- **Detector precision rather than more filters:** motion input, a larger input or a box detector (backlog items
+  5–7), and texture diversity from generated development maps (`doom/oblige_maps.py`) rather than more frames of
+  the same 13 maps, since the phantom keys on MAP01 are textures the detector never saw.
+- **Shot feedback as a fact** (backlog item 9), for the model to weigh.
+- **Real time on crowded maps:** the detector runs every tic at 2.2–3.2 ms, 8–11 % of the tic budget, and MAP10
+  and MAP12 lost real time in pixel games.
+- **Gate power:** eight seeds, or a pre-registered continuous metric (distance to the exit at timeout, share of tics
+  on route actions), since 1/4 against 0/4 cannot be read.
+
 ## Reproducing
 
 - Stack: `ext/doomLaya-dev` (doomLaya v0.3.1 plus `doom/patches/doomLaya-dev.patch`), as of 2026-10-29;
@@ -214,3 +380,9 @@ in a campaign? Both were pre-registered and played from frozen snapshots on one 
   `doom/scenarios.py`; movement rollouts and training: `doom/fight_rollouts.py`,
   `training/finetune_combat_movement.py`.
 - Held-out maps: `doom/map_split.json`; played only from `ext/snap/` with `--evaluation`.
+- Pixel perception (level 1): `doom/vision/collect_frames.py` (random warps, `--scenery`, `--from-runs`) and
+  `collect_sequences.py`; `train_seg.py --depth`; `export_seg.py`; `operating_point.py` for the monster threshold;
+  games with `repeat_map.py ... --extra-flags='--pixel-perception <model dir>'`; `runtime_replay.py` for the
+  offline replay of perception plus memory. The detector weights and Core ML packages (`results/vision/*/model.pt`,
+  `*.mlpackage`) and the frame sets (`ext/vision-data/`) are not in the repository; reports, operating points,
+  replays and belief scorers are.

@@ -44,6 +44,9 @@ CONFIGS = {
     'planner_ext_run': ['--encoder', 'ane', '--heads', 'ane', '--skip-forced'],
     'planner_ext_safe': ['--encoder', 'ane', '--heads', 'ane', '--skip-forced'],
     'planner_ext_fast': ['--encoder', 'ane', '--heads', 'ane', '--skip-forced'],
+    # pixel games with the command residual distilled from engine-perception choices (doom/distill_command.py)
+    'planner_ext_safe_distill': ['--encoder', 'ane', '--heads', 'ane', '--skip-forced',
+                                 '--command-residual', str(REPO / 'results/doom_heads/laya-pixel-command-distill-v1')],
     'random_ext_safe': ['--encoder', 'ane', '--heads', 'ane', '--skip-forced', '--random-chooser', '0'],  # baseline: uniform random answers
     'combat_move1': ['--encoder', 'ane', '--heads', 'ane', '--skip-forced'],
     'fight': ['--encoder', 'ane', '--heads', 'ane', '--skip-forced'],
@@ -58,7 +61,7 @@ CONFIGS = {
                '--choice-temperature', '1', '--sample-questions', 'command', 'switch'],
 }
 # configs whose game client is a wrapper around agent.py (same arguments)
-CLIENTS = {'planner': 'doom/planner.py', 'planner_ext': 'doom/planner.py', 'planner_run': 'doom/planner.py', 'planner_ext_run': 'doom/planner.py', 'planner_ext_safe': 'doom/planner.py', 'random_ext_safe': 'doom/planner.py', 'planner_ext_fast': 'doom/planner.py', 'combat_move1': 'doom/planner.py', 'fight': 'doom/planner.py', 'planner6': 'doom/planner_v6.py', 'legacyfire': 'doom/planner.py', 'legacyweapon': 'doom/planner.py', 'diaghold': 'doom/planner.py',
+CLIENTS = {'planner': 'doom/planner.py', 'planner_ext': 'doom/planner.py', 'planner_run': 'doom/planner.py', 'planner_ext_run': 'doom/planner.py', 'planner_ext_safe': 'doom/planner.py', 'planner_ext_safe_distill': 'doom/planner.py', 'random_ext_safe': 'doom/planner.py', 'planner_ext_fast': 'doom/planner.py', 'combat_move1': 'doom/planner.py', 'fight': 'doom/planner.py', 'planner6': 'doom/planner_v6.py', 'legacyfire': 'doom/planner.py', 'legacyweapon': 'doom/planner.py', 'diaghold': 'doom/planner.py',
            'system2': 'doom/system2.py', 'system2_27b': 'doom/system2.py'}  # planner6: v6 frozen for A/B
 CLIENT_ENV = {'fight': {'PLANNER_FIGHT': '1'}, 'legacyfire': {'DOOM_FIRE_LEGACY': '1'},
               'legacyweapon': {'DOOM_WEAPON_TEXT_LEGACY': '1'},
@@ -70,6 +73,7 @@ CLIENT_ENV = {'fight': {'PLANNER_FIGHT': '1'}, 'legacyfire': {'DOOM_FIRE_LEGACY'
 CLIENT_FLAGS = {'planner_ext': ['--extended-mechanisms'], 'planner_run': ['--run-combat-movement'],
                 'planner_ext_run': ['--extended-mechanisms', '--run-combat-movement'],
                 'planner_ext_safe': ['--extended-mechanisms', '--run-combat-movement', '--crusher-safety'],
+                'planner_ext_safe_distill': ['--extended-mechanisms', '--run-combat-movement', '--crusher-safety'],
                 'random_ext_safe': ['--extended-mechanisms', '--run-combat-movement', '--crusher-safety'],
                 'planner_ext_fast': ['--extended-mechanisms', '--run-combat-movement', '--crusher-safety', '--run-navigation'],
                 'combat_move1': ['--extended-mechanisms', '--run-combat-movement', '--crusher-safety', '--combat-facts']}
@@ -175,6 +179,7 @@ def main():
     p.add_argument('--keep-videos', action='store_true', help='keep the video of runs that did not complete')
     p.add_argument('--wads', nargs='+', default=[], type=Path, help='PWADs with a MAP01 each (e.g. Obsidian maps), played as extra maps')
     p.add_argument('--wad-seconds', type=float, default=900)
+    p.add_argument('--seconds', type=float, help='game seconds for every map, in place of its usual budget (short gates)')
     p.add_argument('--extra-flags', nargs='+', default=[], help="agent flags added to every run, quoted after '=', e.g. --extra-flags='--fight-states --combat-facts'")
     p.add_argument('--evaluation', action='store_true', help='allow held-out maps and campaigns (only from a frozen snapshot, doom/snapshot_stack.sh)')
     p.add_argument('--campaign', type=float, metavar='SECONDS', help='one game from the first --maps map on through the next maps, for this many game seconds')
@@ -194,6 +199,8 @@ def main():
         wads[key] = wad.resolve()
         budget[key] = a.wad_seconds
     a.maps = (a.maps or ([] if wads else ['MAP03'])) + list(wads)
+    if a.seconds:
+        budget.update({m: a.seconds for m in a.maps})
     engine_map = {m: m for m in a.maps}
     if a.campaign:
         if wads or len(a.maps) != 1:
