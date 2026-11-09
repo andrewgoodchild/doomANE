@@ -1,0 +1,128 @@
+{
+ "poc": "dream: action-conditioned next-frame model of Freedoom on the Apple Neural Engine",
+ "date": "2026-11-08",
+ "criterion": {
+  "ane_ms_median_max": 28,
+  "one_step_psnr_min_db": 25,
+  "rollout": "recognisable Doom view at 35 steps (judged from the GIF and strip)"
+ },
+ "verdict": {
+  "speed": "pass",
+  "one_step_psnr": "pass",
+  "rollout": "fail",
+  "summary": "Speed and one-step quality pass by wide margins; the autoregressive rollout blurs into an unrecognisable smear within about 10 frames, so the 35-frame criterion fails."
+ },
+ "data": {
+  "maps": {
+   "MAP01": {
+    "frames": 70000,
+    "episodes": 100,
+    "episode_tics": 700,
+    "seconds": 48.2,
+    "fps": 1451.2
+   },
+   "MAP02": {
+    "frames": 45000,
+    "episodes": 65,
+    "episode_tics": 700,
+    "seconds": 29.7,
+    "fps": 1514.2
+   },
+   "MAP03": {
+    "frames": 45000,
+    "episodes": 65,
+    "episode_tics": 700,
+    "seconds": 50.8,
+    "fps": 886.7
+   }
+  },
+  "frames_total": 160000,
+  "frame_shape": [
+   96,
+   128,
+   3
+  ],
+  "recording_seconds": 128.7,
+  "policy": "random with momentum, god mode, skill 3"
+ },
+ "model": {
+  "parameters": 4391195,
+  "context_frames": 4,
+  "type": "conv U-Net, deterministic L1, residual on the last frame",
+  "package_mb": 8.8
+ },
+ "training": {
+  "steps": 18824,
+  "minutes": 55.0,
+  "batch": 64,
+  "train_samples": 143176,
+  "test_samples": 15896,
+  "best_test_psnr_during_training": 28.72
+ },
+ "timing_ms_per_frame_with_loop": {
+  "CPU_AND_NE": {
+   "ms_median": 0.64,
+   "ms_p90": 0.65,
+   "fps_at_median": 1569.5,
+   "mean_abs_diff_vs_torch": 0.00353
+  },
+  "CPU_AND_GPU": {
+   "ms_median": 1.2,
+   "ms_p90": 1.36,
+   "fps_at_median": 835.9,
+   "mean_abs_diff_vs_torch": 0.00019
+  },
+  "CPU_ONLY": {
+   "ms_median": 3.9,
+   "ms_p90": 3.98,
+   "fps_at_median": 256.5,
+   "mean_abs_diff_vs_torch": 0.00128
+  }
+ },
+ "one_step_psnr_db": {
+  "MAP01": {
+   "model": 28.25,
+   "copy_last": 24.6
+  },
+  "MAP02": {
+   "model": 30.28,
+   "copy_last": 26.26
+  },
+  "MAP03": {
+   "model": 27.48,
+   "copy_last": 24.17
+  },
+  "all": {
+   "model": 28.56,
+   "copy_last": 24.92
+  }
+ },
+ "rollout_psnr_db": {
+  "model": {
+   "1": 28.25,
+   "5": 22.43,
+   "10": 20.41,
+   "20": 19.61,
+   "35": 18.45
+  },
+  "copy_last_frame": {
+   "1": 24.0,
+   "5": 20.15,
+   "10": 19.13,
+   "20": 17.91,
+   "35": 17.41
+  },
+  "rollouts": 24
+ },
+ "action_response": {
+  "contexts": 200,
+  "opposite_and_correct_sign_share": 0.365,
+  "mean_shift_turn_left_px": 2.97,
+  "mean_shift_turn_right_px": -2.9,
+  "note": "positive shift = view content moved right, expected for turning left"
+ },
+ "media": {
+  "gif": "results/poc/dream/rollout.gif (2 s, real above, predicted below)",
+  "strip": "results/poc/dream/rollout_strip.png (t+1, t+5, t+10, t+20, t+35)"
+ }
+}

@@ -1,0 +1,76 @@
+{
+ "states": 82,
+ "deaths": {
+  "planner_ext_safe": 30,
+  "planner_ext_safe_judge": 33
+ },
+ "death_ratio": 1.1,
+ "discordant": {
+  "judge_worse": 8,
+  "judge_better": 5
+ },
+ "sign_test_p": 0.8666,
+ "rule": {
+  "death_ratio_max": 0.8,
+  "sign_test_p_max": 0.1
+ },
+ "passed": false,
+ "health_lost": {
+  "planner_ext_safe": 15.4,
+  "planner_ext_safe_judge": 15.5
+ },
+ "dealt": {
+  "planner_ext_safe": 112.9,
+  "planner_ext_safe_judge": 104.3
+ },
+ "per_map": {
+  "MAP02": {
+   "states": 18,
+   "deaths": {
+    "planner_ext_safe": 5,
+    "planner_ext_safe_judge": 7
+   }
+  },
+  "MAP03": {
+   "states": 20,
+   "deaths": {
+    "planner_ext_safe": 5,
+    "planner_ext_safe_judge": 6
+   }
+  },
+  "MAP04": {
+   "states": 44,
+   "deaths": {
+    "planner_ext_safe": 20,
+    "planner_ext_safe_judge": 20
+   }
+  }
+ },
+ "mechanism": {
+  "decisions": 1742,
+  "attack_decisions": 771,
+  "judged": 771,
+  "yes": 8,
+  "applied": 8,
+  "capped": 0,
+  "fall_back_tics": 16,
+  "other_attack_tics": 12815,
+  "fall_backs": 1,
+  "share_yes": 0.0104,
+  "probability_quartiles": [
+   0.017,
+   0.032,
+   0.066
+  ],
+  "hp_per_tic_fall_back": 0.0,
+  "hp_per_tic_other_attack": -0.0714,
+  "mean_fall_back_tics": 16.0,
+  "authority": {
+   "passed": 76,
+   "failed": 6
+  },
+  "authority_errors": {
+   "No accepted model decisions": 6
+  }
+ }
+}

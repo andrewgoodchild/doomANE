@@ -1,0 +1,836 @@
+{
+ "runs": {
+  "map01_s1_done": {
+   "objectives": 9,
+   "unresolved": 0,
+   "seen_view": 0.4444444444444444,
+   "seen_map": 0.4444444444444444,
+   "reachable_strict": 0.4444444444444444,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.4444444444444444,
+   "reachable_strict_wadvalid": 0.3333333333333333,
+   "done": 0.4444444444444444,
+   "path_over_straight_median": 5.237162595159044,
+   "walked_over_path_median_done": 0.5563733051067532,
+   "walked_over_path_n": 2,
+   "by_kind": {
+    "switch": {
+     "n": 9,
+     "seen_view": 0.4444444444444444,
+     "seen_map": 0.4444444444444444,
+     "reachable_strict": 0.4444444444444444,
+     "reachable_strict_wadvalid": 0.3333333333333333,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.4444444444444444,
+     "done": 0.4444444444444444
+    }
+   },
+   "explore_choices": 1,
+   "frames": 869,
+   "frames_skipped": 90,
+   "mapping_ms": {
+    "median": 2.0377500914037228,
+    "p90": 2.6054088491946463
+   },
+   "planning_ms_per_call": {
+    "median": 3.673083381727338,
+    "p90": 6.462766835466027
+   },
+   "final_free_share_of_walkable": 0.14852379298367488,
+   "level_completed": true,
+   "map": "MAP01"
+  },
+  "map01_s3_timeout": {
+   "objectives": 8,
+   "unresolved": 0,
+   "seen_view": 0.5,
+   "seen_map": 0.5,
+   "reachable_strict": 0.5,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.5,
+   "reachable_strict_wadvalid": 0.5,
+   "done": 0.25,
+   "path_over_straight_median": 3.6206860961316067,
+   "walked_over_path_median_done": 0.2586453193182344,
+   "walked_over_path_n": 1,
+   "by_kind": {
+    "switch": {
+     "n": 8,
+     "seen_view": 0.5,
+     "seen_map": 0.5,
+     "reachable_strict": 0.5,
+     "reachable_strict_wadvalid": 0.5,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.5,
+     "done": 0.25
+    }
+   },
+   "explore_choices": 0,
+   "frames": 1050,
+   "frames_skipped": 133,
+   "mapping_ms": {
+    "median": 2.0352089777588844,
+    "p90": 2.634182758629322
+   },
+   "planning_ms_per_call": {
+    "median": 3.8885416773458323,
+    "p90": 8.319844654761255
+   },
+   "final_free_share_of_walkable": 0.12601597777005905,
+   "level_completed": false,
+   "map": "MAP01"
+  },
+  "map01_s54_done": {
+   "objectives": 7,
+   "unresolved": 0,
+   "seen_view": 0.42857142857142855,
+   "seen_map": 0.42857142857142855,
+   "reachable_strict": 0.42857142857142855,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.42857142857142855,
+   "reachable_strict_wadvalid": 0.42857142857142855,
+   "done": 0.5714285714285714,
+   "path_over_straight_median": 1.550554349332776,
+   "walked_over_path_median_done": 0.7837177294497267,
+   "walked_over_path_n": 1,
+   "by_kind": {
+    "switch": {
+     "n": 5,
+     "seen_view": 0.4,
+     "seen_map": 0.4,
+     "reachable_strict": 0.4,
+     "reachable_strict_wadvalid": 0.4,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.4,
+     "done": 0.4
+    },
+    "item": {
+     "n": 1,
+     "seen_view": 0.0,
+     "seen_map": 0.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 1.0
+    },
+    "exit": {
+     "n": 1,
+     "seen_view": 1.0,
+     "seen_map": 1.0,
+     "reachable_strict": 1.0,
+     "reachable_strict_wadvalid": 1.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 1.0,
+     "done": 1.0
+    }
+   },
+   "explore_choices": 2,
+   "frames": 1015,
+   "frames_skipped": 132,
+   "mapping_ms": {
+    "median": 2.0737089216709137,
+    "p90": 2.6371501386165623
+   },
+   "planning_ms_per_call": {
+    "median": 7.296125016485651,
+    "p90": 17.047414012874167
+   },
+   "final_free_share_of_walkable": 0.15901354637026746,
+   "level_completed": true,
+   "map": "MAP01"
+  },
+  "map02_s1_timeout": {
+   "objectives": 54,
+   "unresolved": 0,
+   "seen_view": 0.7777777777777778,
+   "seen_map": 0.7777777777777778,
+   "reachable_strict": 0.7592592592592593,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.7592592592592593,
+   "reachable_strict_wadvalid": 0.7592592592592593,
+   "done": 0.42592592592592593,
+   "path_over_straight_median": 1.6470373621760777,
+   "walked_over_path_median_done": 2.147891405577888,
+   "walked_over_path_n": 17,
+   "by_kind": {
+    "switch": {
+     "n": 36,
+     "seen_view": 0.7222222222222222,
+     "seen_map": 0.7222222222222222,
+     "reachable_strict": 0.7222222222222222,
+     "reachable_strict_wadvalid": 0.7222222222222222,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.7222222222222222,
+     "done": 0.2777777777777778
+    },
+    "item": {
+     "n": 3,
+     "seen_view": 0.6666666666666666,
+     "seen_map": 1.0,
+     "reachable_strict": 0.6666666666666666,
+     "reachable_strict_wadvalid": 0.6666666666666666,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.6666666666666666,
+     "done": 1.0
+    },
+    "weapon_marker": {
+     "n": 11,
+     "seen_view": 0.9090909090909091,
+     "seen_map": 0.9090909090909091,
+     "reachable_strict": 0.9090909090909091,
+     "reachable_strict_wadvalid": 0.9090909090909091,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.9090909090909091,
+     "done": 0.5454545454545454
+    },
+    "key": {
+     "n": 4,
+     "seen_view": 1.0,
+     "seen_map": 0.75,
+     "reachable_strict": 0.75,
+     "reachable_strict_wadvalid": 0.75,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.75,
+     "done": 1.0
+    }
+   },
+   "explore_choices": 2,
+   "frames": 10500,
+   "frames_skipped": 1073,
+   "mapping_ms": {
+    "median": 2.078708028420806,
+    "p90": 2.6813498698174953
+   },
+   "planning_ms_per_call": {
+    "median": 7.754611317068338,
+    "p90": 11.744400005166732
+   },
+   "final_free_share_of_walkable": 0.7302037065400521,
+   "level_completed": false,
+   "map": "MAP02"
+  },
+  "map02_s2_timeout": {
+   "objectives": 56,
+   "unresolved": 0,
+   "seen_view": 0.7678571428571429,
+   "seen_map": 0.7678571428571429,
+   "reachable_strict": 0.7321428571428571,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.7321428571428571,
+   "reachable_strict_wadvalid": 0.7321428571428571,
+   "done": 0.3392857142857143,
+   "path_over_straight_median": 1.621790020373941,
+   "walked_over_path_median_done": 3.4053438569833263,
+   "walked_over_path_n": 14,
+   "by_kind": {
+    "switch": {
+     "n": 40,
+     "seen_view": 0.675,
+     "seen_map": 0.725,
+     "reachable_strict": 0.675,
+     "reachable_strict_wadvalid": 0.675,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.675,
+     "done": 0.275
+    },
+    "item": {
+     "n": 1,
+     "seen_view": 1.0,
+     "seen_map": 1.0,
+     "reachable_strict": 1.0,
+     "reachable_strict_wadvalid": 1.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 1.0,
+     "done": 1.0
+    },
+    "weapon_marker": {
+     "n": 10,
+     "seen_view": 1.0,
+     "seen_map": 0.9,
+     "reachable_strict": 0.9,
+     "reachable_strict_wadvalid": 0.9,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.9,
+     "done": 0.2
+    },
+    "key": {
+     "n": 5,
+     "seen_view": 1.0,
+     "seen_map": 0.8,
+     "reachable_strict": 0.8,
+     "reachable_strict_wadvalid": 0.8,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.8,
+     "done": 1.0
+    }
+   },
+   "explore_choices": 1,
+   "frames": 10500,
+   "frames_skipped": 1036,
+   "mapping_ms": {
+    "median": 2.1592084085568786,
+    "p90": 2.8027465334162125
+   },
+   "planning_ms_per_call": {
+    "median": 9.234569307106238,
+    "p90": 22.755104194705684
+   },
+   "final_free_share_of_walkable": 0.7300505437279828,
+   "level_completed": false,
+   "map": "MAP02"
+  },
+  "map02_s54_done": {
+   "objectives": 46,
+   "unresolved": 0,
+   "seen_view": 0.8043478260869565,
+   "seen_map": 0.782608695652174,
+   "reachable_strict": 0.6956521739130435,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.6956521739130435,
+   "reachable_strict_wadvalid": 0.6956521739130435,
+   "done": 0.4782608695652174,
+   "path_over_straight_median": 1.6340577091390958,
+   "walked_over_path_median_done": 3.09317448180886,
+   "walked_over_path_n": 12,
+   "by_kind": {
+    "switch": {
+     "n": 31,
+     "seen_view": 0.8387096774193549,
+     "seen_map": 0.8064516129032258,
+     "reachable_strict": 0.8064516129032258,
+     "reachable_strict_wadvalid": 0.8064516129032258,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.8064516129032258,
+     "done": 0.3870967741935484
+    },
+    "item": {
+     "n": 1,
+     "seen_view": 0.0,
+     "seen_map": 1.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 1.0
+    },
+    "weapon_marker": {
+     "n": 7,
+     "seen_view": 0.7142857142857143,
+     "seen_map": 0.7142857142857143,
+     "reachable_strict": 0.7142857142857143,
+     "reachable_strict_wadvalid": 0.7142857142857143,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.7142857142857143,
+     "done": 0.42857142857142855
+    },
+    "key": {
+     "n": 6,
+     "seen_view": 0.8333333333333334,
+     "seen_map": 0.6666666666666666,
+     "reachable_strict": 0.3333333333333333,
+     "reachable_strict_wadvalid": 0.3333333333333333,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.3333333333333333,
+     "done": 0.8333333333333334
+    },
+    "exit": {
+     "n": 1,
+     "seen_view": 1.0,
+     "seen_map": 1.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 1.0
+    }
+   },
+   "explore_choices": 5,
+   "frames": 8405,
+   "frames_skipped": 1089,
+   "mapping_ms": {
+    "median": 2.1153329871594906,
+    "p90": 2.7427085442468524
+   },
+   "planning_ms_per_call": {
+    "median": 5.485451314598322,
+    "p90": 15.357868202651542
+   },
+   "final_free_share_of_walkable": 0.6539286261295757,
+   "level_completed": true,
+   "map": "MAP02"
+  },
+  "map03_s1_done": {
+   "objectives": 32,
+   "unresolved": 0,
+   "seen_view": 0.53125,
+   "seen_map": 0.53125,
+   "reachable_strict": 0.4375,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.4375,
+   "reachable_strict_wadvalid": 0.4375,
+   "done": 0.65625,
+   "path_over_straight_median": 1.2430810843226716,
+   "walked_over_path_median_done": 1.83610972495851,
+   "walked_over_path_n": 9,
+   "by_kind": {
+    "switch": {
+     "n": 20,
+     "seen_view": 0.45,
+     "seen_map": 0.45,
+     "reachable_strict": 0.35,
+     "reachable_strict_wadvalid": 0.35,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.35,
+     "done": 0.8
+    },
+    "item": {
+     "n": 5,
+     "seen_view": 1.0,
+     "seen_map": 0.8,
+     "reachable_strict": 0.8,
+     "reachable_strict_wadvalid": 0.8,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.8,
+     "done": 0.2
+    },
+    "weapon_marker": {
+     "n": 2,
+     "seen_view": 0.0,
+     "seen_map": 0.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 0.5
+    },
+    "key": {
+     "n": 4,
+     "seen_view": 0.75,
+     "seen_map": 0.75,
+     "reachable_strict": 0.75,
+     "reachable_strict_wadvalid": 0.75,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.75,
+     "done": 0.5
+    },
+    "exit": {
+     "n": 1,
+     "seen_view": 0.0,
+     "seen_map": 1.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 1.0
+    }
+   },
+   "explore_choices": 0,
+   "frames": 3119,
+   "frames_skipped": 567,
+   "mapping_ms": {
+    "median": 2.0538335666060448,
+    "p90": 2.6314624352380633
+   },
+   "planning_ms_per_call": {
+    "median": 3.3686320142199597,
+    "p90": 44.0212291742986
+   },
+   "final_free_share_of_walkable": 0.24476894639556376,
+   "level_completed": true,
+   "map": "MAP03"
+  },
+  "map03_s3_done": {
+   "objectives": 35,
+   "unresolved": 0,
+   "seen_view": 0.5142857142857142,
+   "seen_map": 0.42857142857142855,
+   "reachable_strict": 0.45714285714285713,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.45714285714285713,
+   "reachable_strict_wadvalid": 0.45714285714285713,
+   "done": 0.6285714285714286,
+   "path_over_straight_median": 1.2622700161563802,
+   "walked_over_path_median_done": 3.7880253119840663,
+   "walked_over_path_n": 11,
+   "by_kind": {
+    "switch": {
+     "n": 24,
+     "seen_view": 0.4583333333333333,
+     "seen_map": 0.375,
+     "reachable_strict": 0.4166666666666667,
+     "reachable_strict_wadvalid": 0.4166666666666667,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.4166666666666667,
+     "done": 0.7083333333333334
+    },
+    "item": {
+     "n": 6,
+     "seen_view": 0.8333333333333334,
+     "seen_map": 0.6666666666666666,
+     "reachable_strict": 0.6666666666666666,
+     "reachable_strict_wadvalid": 0.6666666666666666,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.6666666666666666,
+     "done": 0.3333333333333333
+    },
+    "weapon_marker": {
+     "n": 2,
+     "seen_view": 0.0,
+     "seen_map": 0.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 0.5
+    },
+    "key": {
+     "n": 3,
+     "seen_view": 0.6666666666666666,
+     "seen_map": 0.6666666666666666,
+     "reachable_strict": 0.6666666666666666,
+     "reachable_strict_wadvalid": 0.6666666666666666,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.6666666666666666,
+     "done": 0.6666666666666666
+    }
+   },
+   "explore_choices": 1,
+   "frames": 3801,
+   "frames_skipped": 635,
+   "mapping_ms": {
+    "median": 2.073354087769985,
+    "p90": 2.6426665717735887
+   },
+   "planning_ms_per_call": {
+    "median": 3.6712499956289926,
+    "p90": 38.33940010517836
+   },
+   "final_free_share_of_walkable": 0.28011090573012937,
+   "level_completed": true,
+   "map": "MAP03"
+  },
+  "map03_s54_timeout": {
+   "objectives": 87,
+   "unresolved": 0,
+   "seen_view": 0.7816091954022989,
+   "seen_map": 0.7701149425287356,
+   "reachable_strict": 0.7701149425287356,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.7701149425287356,
+   "reachable_strict_wadvalid": 0.7701149425287356,
+   "done": 0.6091954022988506,
+   "path_over_straight_median": 1.0082668405024844,
+   "walked_over_path_median_done": 3.0598008311826224,
+   "walked_over_path_n": 48,
+   "by_kind": {
+    "switch": {
+     "n": 47,
+     "seen_view": 0.851063829787234,
+     "seen_map": 0.851063829787234,
+     "reachable_strict": 0.8723404255319149,
+     "reachable_strict_wadvalid": 0.8723404255319149,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.8723404255319149,
+     "done": 0.723404255319149
+    },
+    "item": {
+     "n": 13,
+     "seen_view": 1.0,
+     "seen_map": 1.0,
+     "reachable_strict": 1.0,
+     "reachable_strict_wadvalid": 1.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 1.0,
+     "done": 0.5384615384615384
+    },
+    "weapon_marker": {
+     "n": 14,
+     "seen_view": 0.21428571428571427,
+     "seen_map": 0.21428571428571427,
+     "reachable_strict": 0.21428571428571427,
+     "reachable_strict_wadvalid": 0.21428571428571427,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.21428571428571427,
+     "done": 0.14285714285714285
+    },
+    "key": {
+     "n": 13,
+     "seen_view": 0.9230769230769231,
+     "seen_map": 0.8461538461538461,
+     "reachable_strict": 0.7692307692307693,
+     "reachable_strict_wadvalid": 0.7692307692307693,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.7692307692307693,
+     "done": 0.7692307692307693
+    }
+   },
+   "explore_choices": 0,
+   "frames": 7000,
+   "frames_skipped": 884,
+   "mapping_ms": {
+    "median": 2.059500082395971,
+    "p90": 2.5803539901971817
+   },
+   "planning_ms_per_call": {
+    "median": 2.3368890397250652,
+    "p90": 15.625608277817568
+   },
+   "final_free_share_of_walkable": 0.3041035120147874,
+   "level_completed": false,
+   "map": "MAP03"
+  }
+ },
+ "by_map": {
+  "MAP01": {
+   "objectives": 24,
+   "unresolved": 0,
+   "seen_view": 0.4583333333333333,
+   "seen_map": 0.4583333333333333,
+   "reachable_strict": 0.4583333333333333,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.4583333333333333,
+   "reachable_strict_wadvalid": 0.4166666666666667,
+   "done": 0.4166666666666667,
+   "path_over_straight_median": 2.8787397342539305,
+   "walked_over_path_median_done": 0.546098728164879,
+   "walked_over_path_n": 4,
+   "by_kind": {
+    "switch": {
+     "n": 22,
+     "seen_view": 0.45454545454545453,
+     "seen_map": 0.45454545454545453,
+     "reachable_strict": 0.45454545454545453,
+     "reachable_strict_wadvalid": 0.4090909090909091,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.45454545454545453,
+     "done": 0.36363636363636365
+    },
+    "item": {
+     "n": 1,
+     "seen_view": 0.0,
+     "seen_map": 0.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 1.0
+    },
+    "exit": {
+     "n": 1,
+     "seen_view": 1.0,
+     "seen_map": 1.0,
+     "reachable_strict": 1.0,
+     "reachable_strict_wadvalid": 1.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 1.0,
+     "done": 1.0
+    }
+   },
+   "explore_choices": 3
+  },
+  "MAP02": {
+   "objectives": 156,
+   "unresolved": 0,
+   "seen_view": 0.782051282051282,
+   "seen_map": 0.7756410256410257,
+   "reachable_strict": 0.7307692307692307,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.7307692307692307,
+   "reachable_strict_wadvalid": 0.7307692307692307,
+   "done": 0.41025641025641024,
+   "path_over_straight_median": 1.6340577091390958,
+   "walked_over_path_median_done": 3.0514798760104087,
+   "walked_over_path_n": 43,
+   "by_kind": {
+    "switch": {
+     "n": 107,
+     "seen_view": 0.7383177570093458,
+     "seen_map": 0.7476635514018691,
+     "reachable_strict": 0.7289719626168224,
+     "reachable_strict_wadvalid": 0.7289719626168224,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.7289719626168224,
+     "done": 0.308411214953271
+    },
+    "item": {
+     "n": 5,
+     "seen_view": 0.6,
+     "seen_map": 1.0,
+     "reachable_strict": 0.6,
+     "reachable_strict_wadvalid": 0.6,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.6,
+     "done": 1.0
+    },
+    "weapon_marker": {
+     "n": 28,
+     "seen_view": 0.8928571428571429,
+     "seen_map": 0.8571428571428571,
+     "reachable_strict": 0.8571428571428571,
+     "reachable_strict_wadvalid": 0.8571428571428571,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.8571428571428571,
+     "done": 0.39285714285714285
+    },
+    "key": {
+     "n": 15,
+     "seen_view": 0.9333333333333333,
+     "seen_map": 0.7333333333333333,
+     "reachable_strict": 0.6,
+     "reachable_strict_wadvalid": 0.6,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.6,
+     "done": 0.9333333333333333
+    },
+    "exit": {
+     "n": 1,
+     "seen_view": 1.0,
+     "seen_map": 1.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 1.0
+    }
+   },
+   "explore_choices": 8
+  },
+  "MAP03": {
+   "objectives": 154,
+   "unresolved": 0,
+   "seen_view": 0.6688311688311688,
+   "seen_map": 0.6428571428571429,
+   "reachable_strict": 0.6298701298701299,
+   "reachable_optimistic": 1.0,
+   "reachable_doors": 0.6298701298701299,
+   "reachable_strict_wadvalid": 0.6298701298701299,
+   "done": 0.6233766233766234,
+   "path_over_straight_median": 1.096339708652311,
+   "walked_over_path_median_done": 2.994458700227466,
+   "walked_over_path_n": 68,
+   "by_kind": {
+    "switch": {
+     "n": 91,
+     "seen_view": 0.6593406593406593,
+     "seen_map": 0.6373626373626373,
+     "reachable_strict": 0.6373626373626373,
+     "reachable_strict_wadvalid": 0.6373626373626373,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.6373626373626373,
+     "done": 0.7362637362637363
+    },
+    "item": {
+     "n": 24,
+     "seen_view": 0.9583333333333334,
+     "seen_map": 0.875,
+     "reachable_strict": 0.875,
+     "reachable_strict_wadvalid": 0.875,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.875,
+     "done": 0.4166666666666667
+    },
+    "weapon_marker": {
+     "n": 18,
+     "seen_view": 0.16666666666666666,
+     "seen_map": 0.16666666666666666,
+     "reachable_strict": 0.16666666666666666,
+     "reachable_strict_wadvalid": 0.16666666666666666,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.16666666666666666,
+     "done": 0.2222222222222222
+    },
+    "key": {
+     "n": 20,
+     "seen_view": 0.85,
+     "seen_map": 0.8,
+     "reachable_strict": 0.75,
+     "reachable_strict_wadvalid": 0.75,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.75,
+     "done": 0.7
+    },
+    "exit": {
+     "n": 1,
+     "seen_view": 0.0,
+     "seen_map": 1.0,
+     "reachable_strict": 0.0,
+     "reachable_strict_wadvalid": 0.0,
+     "reachable_optimistic": 1.0,
+     "reachable_doors": 0.0,
+     "done": 1.0
+    }
+   },
+   "explore_choices": 1
+  }
+ },
+ "overall": {
+  "objectives": 334,
+  "unresolved": 0,
+  "seen_view": 0.7065868263473054,
+  "seen_map": 0.6916167664670658,
+  "reachable_strict": 0.6646706586826348,
+  "reachable_optimistic": 1.0,
+  "reachable_doors": 0.6646706586826348,
+  "reachable_strict_wadvalid": 0.6616766467065869,
+  "done": 0.5089820359281437,
+  "path_over_straight_median": 1.3515118451851402,
+  "walked_over_path_median_done": 2.9257938043449205,
+  "walked_over_path_n": 115,
+  "by_kind": {
+   "switch": {
+    "n": 220,
+    "seen_view": 0.6772727272727272,
+    "seen_map": 0.6727272727272727,
+    "reachable_strict": 0.6636363636363637,
+    "reachable_strict_wadvalid": 0.6590909090909091,
+    "reachable_optimistic": 1.0,
+    "reachable_doors": 0.6636363636363637,
+    "done": 0.4909090909090909
+   },
+   "item": {
+    "n": 30,
+    "seen_view": 0.8666666666666667,
+    "seen_map": 0.8666666666666667,
+    "reachable_strict": 0.8,
+    "reachable_strict_wadvalid": 0.8,
+    "reachable_optimistic": 1.0,
+    "reachable_doors": 0.8,
+    "done": 0.5333333333333333
+   },
+   "weapon_marker": {
+    "n": 46,
+    "seen_view": 0.6086956521739131,
+    "seen_map": 0.5869565217391305,
+    "reachable_strict": 0.5869565217391305,
+    "reachable_strict_wadvalid": 0.5869565217391305,
+    "reachable_optimistic": 1.0,
+    "reachable_doors": 0.5869565217391305,
+    "done": 0.32608695652173914
+   },
+   "key": {
+    "n": 35,
+    "seen_view": 0.8857142857142857,
+    "seen_map": 0.7714285714285715,
+    "reachable_strict": 0.6857142857142857,
+    "reachable_strict_wadvalid": 0.6857142857142857,
+    "reachable_optimistic": 1.0,
+    "reachable_doors": 0.6857142857142857,
+    "done": 0.8
+   },
+   "exit": {
+    "n": 3,
+    "seen_view": 0.6666666666666666,
+    "seen_map": 1.0,
+    "reachable_strict": 0.3333333333333333,
+    "reachable_strict_wadvalid": 0.3333333333333333,
+    "reachable_optimistic": 1.0,
+    "reachable_doors": 0.3333333333333333,
+    "done": 1.0
+   }
+  },
+  "explore_choices": 12,
+  "mapping_ms_median_over_runs": 2.073354087769985,
+  "planning_ms_median_over_runs": 3.8885416773458323
+ }
+}

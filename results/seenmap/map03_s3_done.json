@@ -1,0 +1,1783 @@
+{
+ "name": "map03_s3_done",
+ "run": "20261031_124947_937385_repeat-planner_ext_safe-pix1_engine-map03-seed3",
+ "map": "MAP03",
+ "level_completed": true,
+ "frames": 3801,
+ "frames_skipped": 635,
+ "stride": 6,
+ "tics": 22804,
+ "objectives": [
+  {
+   "tick": 0,
+   "choice": "switch_1850",
+   "kind": "switch",
+   "reason": "no objective",
+   "probability": 0.9115,
+   "player": [
+    224.0,
+    1184.0
+   ],
+   "episode": 0,
+   "target": [
+    -416.0,
+    400.0
+   ],
+   "seen_point": [
+    -456.0,
+    400.0
+   ],
+   "done": true,
+   "end_tick": 786,
+   "died_before_end": false,
+   "walked_units": 4281.53689069228,
+   "straight_units": 1012.055334455582,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 1001.0966799187801,
+   "path_doors_units": null,
+   "free_cells": 1,
+   "known_cells": 1,
+   "frontier_cells": 1
+  },
+  {
+   "tick": 786,
+   "choice": "switch_688",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.8524,
+   "player": [
+    -431.64674377441406,
+    388.9725036621094
+   ],
+   "episode": 0,
+   "target": [
+    -488.0,
+    -352.0
+   ],
+   "seen_point": [
+    -448.0,
+    -352.0
+   ],
+   "done": true,
+   "end_tick": 1344,
+   "died_before_end": false,
+   "walked_units": 3814.0337672773157,
+   "straight_units": 743.1123338167125,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 807.2935059634509,
+   "path_doors_units": null,
+   "free_cells": 559,
+   "known_cells": 1162,
+   "frontier_cells": 428
+  },
+  {
+   "tick": 1344,
+   "choice": "item_58",
+   "kind": "item",
+   "reason": "objective done",
+   "probability": 0.964,
+   "player": [
+    -419.2588806152344,
+    -425.16331481933594
+   ],
+   "episode": 0,
+   "target": [
+    -256.0,
+    -352.0
+   ],
+   "seen_point": [
+    -256.0,
+    -352.0
+   ],
+   "done": false,
+   "end_tick": 1726,
+   "died_before_end": false,
+   "walked_units": 2365.3695477172755,
+   "straight_units": 178.90313785703316,
+   "nav_path_length_raw": 14,
+   "seen_view": true,
+   "seen_view_min_distance": 204.84628383253624,
+   "seen_view_first_tick": 1320,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 161.1370849898476,
+   "path_doors_units": null,
+   "free_cells": 1047,
+   "known_cells": 1960,
+   "frontier_cells": 800
+  },
+  {
+   "tick": 1726,
+   "choice": "switch_1393",
+   "kind": "switch",
+   "reason": "keys, doors or mechanisms changed",
+   "probability": 0.7361,
+   "player": [
+    -187.73146057128906,
+    -719.4828948974609
+   ],
+   "episode": 0,
+   "target": [
+    2296.0,
+    -896.0
+   ],
+   "seen_point": [
+    2336.0,
+    -896.0
+   ],
+   "done": false,
+   "end_tick": 2793,
+   "died_before_end": false,
+   "walked_units": 7711.5649843132505,
+   "straight_units": 2489.9960354637856,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 2518.1564209736034,
+   "path_doors_units": null,
+   "free_cells": 1361,
+   "known_cells": 2561,
+   "frontier_cells": 1007
+  },
+  {
+   "tick": 2793,
+   "choice": "switch_1393",
+   "kind": "switch",
+   "reason": "no progress in 30 s",
+   "probability": 0.6421,
+   "player": [
+    222.10462951660156,
+    604.6248321533203
+   ],
+   "episode": 0,
+   "target": [
+    2296.0,
+    -896.0
+   ],
+   "seen_point": [
+    2336.0,
+    -896.0
+   ],
+   "done": false,
+   "end_tick": 3282,
+   "died_before_end": false,
+   "walked_units": 2537.509837194598,
+   "straight_units": 2559.866577497283,
+   "nav_path_length_raw": 179,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 2674.859448803046,
+   "path_doors_units": null,
+   "free_cells": 2001,
+   "known_cells": 3588,
+   "frontier_cells": 1243
+  },
+  {
+   "tick": 3282,
+   "choice": "switch_1850",
+   "kind": "switch",
+   "reason": "no objective",
+   "probability": 0.9115,
+   "player": [
+    224.0,
+    1184.0
+   ],
+   "episode": 1,
+   "target": [
+    -416.0,
+    400.0
+   ],
+   "seen_point": [
+    -456.0,
+    400.0
+   ],
+   "done": true,
+   "end_tick": 5183,
+   "died_before_end": false,
+   "walked_units": 8792.248798941057,
+   "straight_units": 1012.055334455582,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 81.58431221748455,
+   "seen_view_first_tick": 156,
+   "seen_map": true,
+   "target_cell_state": 1,
+   "path_strict_wadvalid_units": 1435.175756957359,
+   "path_strict_units": 1435.175756957359,
+   "path_optimistic_units": 1296.1950929411153,
+   "path_doors_units": 1435.175756957359,
+   "free_cells": 2142,
+   "known_cells": 4118,
+   "frontier_cells": 1369
+  },
+  {
+   "tick": 5183,
+   "choice": "switch_688",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.8579,
+   "player": [
+    -423.8570861816406,
+    376.89654541015625
+   ],
+   "episode": 1,
+   "target": [
+    -488.0,
+    -352.0
+   ],
+   "seen_point": [
+    -448.0,
+    -352.0
+   ],
+   "done": true,
+   "end_tick": 5795,
+   "died_before_end": false,
+   "walked_units": 4182.252555585722,
+   "straight_units": 731.713391502417,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 71.84010022264724,
+   "seen_view_first_tick": 1254,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": 923.6467529817257,
+   "path_strict_units": 923.6467529817257,
+   "path_optimistic_units": 831.5290039756342,
+   "path_doors_units": 923.6467529817257,
+   "free_cells": 2647,
+   "known_cells": 4813,
+   "frontier_cells": 1413
+  },
+  {
+   "tick": 5795,
+   "choice": "item_58",
+   "kind": "item",
+   "reason": "objective done",
+   "probability": 0.9347,
+   "player": [
+    -303.89369201660156,
+    -570.6046752929688
+   ],
+   "episode": 1,
+   "target": [
+    -256.0,
+    -352.0
+   ],
+   "seen_point": [
+    -256.0,
+    -352.0
+   ],
+   "done": false,
+   "end_tick": 5804,
+   "died_before_end": false,
+   "walked_units": 145.06286791519824,
+   "straight_units": 223.7896552455573,
+   "nav_path_length_raw": 5,
+   "seen_view": true,
+   "seen_view_min_distance": 27.85677655436824,
+   "seen_view_first_tick": 1320,
+   "seen_map": true,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": 509.25483399593907,
+   "path_strict_units": 509.25483399593907,
+   "path_optimistic_units": 211.8822509939086,
+   "path_doors_units": 509.25483399593907,
+   "free_cells": 2882,
+   "known_cells": 5057,
+   "frontier_cells": 1484
+  },
+  {
+   "tick": 5804,
+   "choice": "switch_1393",
+   "kind": "switch",
+   "reason": "keys, doors or mechanisms changed",
+   "probability": 0.8777,
+   "player": [
+    -199.56272888183594,
+    -693.3061828613281
+   ],
+   "episode": 1,
+   "target": [
+    2296.0,
+    -896.0
+   ],
+   "seen_point": [
+    2336.0,
+    -896.0
+   ],
+   "done": false,
+   "end_tick": 6167,
+   "died_before_end": false,
+   "walked_units": 195.1500592140571,
+   "straight_units": 2503.7807646218553,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 3325.6450198781768,
+   "path_doors_units": null,
+   "free_cells": 2890,
+   "known_cells": 5063,
+   "frontier_cells": 1481
+  },
+  {
+   "tick": 6167,
+   "choice": "switch_1850",
+   "kind": "switch",
+   "reason": "no objective",
+   "probability": 0.9115,
+   "player": [
+    224.0,
+    1184.0
+   ],
+   "episode": 2,
+   "target": [
+    -416.0,
+    400.0
+   ],
+   "seen_point": [
+    -456.0,
+    400.0
+   ],
+   "done": true,
+   "end_tick": 7183,
+   "died_before_end": false,
+   "walked_units": 4839.012658029758,
+   "straight_units": 1012.055334455582,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 39.408120990476064,
+   "seen_view_first_tick": 156,
+   "seen_map": true,
+   "target_cell_state": 1,
+   "path_strict_wadvalid_units": 1254.822509939085,
+   "path_strict_units": 1254.822509939085,
+   "path_optimistic_units": 1217.3321779309629,
+   "path_doors_units": 1254.822509939085,
+   "free_cells": 3011,
+   "known_cells": 5170,
+   "frontier_cells": 1471
+  },
+  {
+   "tick": 7183,
+   "choice": "switch_688",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.4069,
+   "player": [
+    -415.4730682373047,
+    398.35862731933594
+   ],
+   "episode": 2,
+   "target": [
+    -488.0,
+    -352.0
+   ],
+   "seen_point": [
+    -448.0,
+    -352.0
+   ],
+   "done": true,
+   "end_tick": 7921,
+   "died_before_end": false,
+   "walked_units": 4183.392248817282,
+   "straight_units": 753.8555733185692,
+   "nav_path_length_raw": 67,
+   "seen_view": true,
+   "seen_view_min_distance": 71.84010022264724,
+   "seen_view_first_tick": 1254,
+   "seen_map": true,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": 879.5290039756342,
+   "path_strict_units": 879.5290039756342,
+   "path_optimistic_units": 870.1564209736036,
+   "path_doors_units": 879.5290039756342,
+   "free_cells": 3140,
+   "known_cells": 5290,
+   "frontier_cells": 1482
+  },
+  {
+   "tick": 7921,
+   "choice": "item_58",
+   "kind": "item",
+   "reason": "objective done",
+   "probability": 0.9896,
+   "player": [
+    -375.67108154296875,
+    -494.0657043457031
+   ],
+   "episode": 2,
+   "target": [
+    -256.0,
+    -352.0
+   ],
+   "seen_point": [
+    -256.0,
+    -352.0
+   ],
+   "done": false,
+   "end_tick": 8029,
+   "died_before_end": false,
+   "walked_units": 587.9003237047642,
+   "straight_units": 185.75207161403236,
+   "nav_path_length_raw": 10,
+   "seen_view": true,
+   "seen_view_min_distance": 27.85677655436824,
+   "seen_view_first_tick": 1320,
+   "seen_map": true,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": 358.62741699796953,
+   "path_strict_units": 358.62741699796953,
+   "path_optimistic_units": 151.76450198781714,
+   "path_doors_units": 358.62741699796953,
+   "free_cells": 3265,
+   "known_cells": 5468,
+   "frontier_cells": 1463
+  },
+  {
+   "tick": 8029,
+   "choice": "switch_1455",
+   "kind": "switch",
+   "reason": "keys, doors or mechanisms changed",
+   "probability": 0.4491,
+   "player": [
+    -177.12326049804688,
+    -684.8107452392578
+   ],
+   "episode": 2,
+   "target": [
+    2400.0,
+    -464.0
+   ],
+   "seen_point": [
+    2400.0,
+    -424.0
+   ],
+   "done": false,
+   "end_tick": 8146,
+   "died_before_end": false,
+   "walked_units": 295.08788951417216,
+   "straight_units": 2586.5656158337065,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 2761.567675943146,
+   "path_doors_units": null,
+   "free_cells": 3274,
+   "known_cells": 5472,
+   "frontier_cells": 1454
+  },
+  {
+   "tick": 8146,
+   "choice": "switch_1850",
+   "kind": "switch",
+   "reason": "no objective",
+   "probability": 0.9115,
+   "player": [
+    224.0,
+    1184.0
+   ],
+   "episode": 3,
+   "target": [
+    -416.0,
+    400.0
+   ],
+   "seen_point": [
+    -456.0,
+    400.0
+   ],
+   "done": true,
+   "end_tick": 9844,
+   "died_before_end": false,
+   "walked_units": 7518.129997913928,
+   "straight_units": 1012.055334455582,
+   "nav_path_length_raw": 3,
+   "seen_view": true,
+   "seen_view_min_distance": 39.408120990476064,
+   "seen_view_first_tick": 156,
+   "seen_map": true,
+   "target_cell_state": 1,
+   "path_strict_wadvalid_units": 1238.8225099390847,
+   "path_strict_units": 1238.8225099390847,
+   "path_optimistic_units": 1217.3321779309626,
+   "path_doors_units": 1238.8225099390847,
+   "free_cells": 3278,
+   "known_cells": 5473,
+   "frontier_cells": 1451
+  },
+  {
+   "tick": 9844,
+   "choice": "key_blue",
+   "kind": "key",
+   "reason": "objective done",
+   "probability": 0.5016,
+   "player": [
+    -431.96266174316406,
+    409.69110107421875
+   ],
+   "episode": 3,
+   "target": [
+    -192.0,
+    -716.0
+   ],
+   "seen_point": [
+    -192.0,
+    -716.0
+   ],
+   "done": false,
+   "end_tick": 10348,
+   "died_before_end": false,
+   "walked_units": 3325.9777361199735,
+   "straight_units": 1150.983290090934,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 6.4031242374328485,
+   "seen_view_first_tick": 1266,
+   "seen_map": true,
+   "target_cell_state": 1,
+   "path_strict_wadvalid_units": 1376.1950929411153,
+   "path_strict_units": 1376.1950929411153,
+   "path_optimistic_units": 1329.3321779309626,
+   "path_doors_units": 1376.1950929411153,
+   "free_cells": 3491,
+   "known_cells": 5645,
+   "frontier_cells": 1462
+  },
+  {
+   "tick": 10348,
+   "choice": "item_58",
+   "kind": "item",
+   "reason": "keys, doors or mechanisms changed",
+   "probability": 0.9727,
+   "player": [
+    -332.7113037109375,
+    -466.2712860107422
+   ],
+   "episode": 3,
+   "target": [
+    -256.0,
+    -352.0
+   ],
+   "seen_point": [
+    -256.0,
+    -352.0
+   ],
+   "done": true,
+   "end_tick": 10515,
+   "died_before_end": false,
+   "walked_units": 766.7514569459655,
+   "straight_units": 137.63194005600783,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 27.85677655436824,
+   "seen_view_first_tick": 1320,
+   "seen_map": true,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": 349.25483399593907,
+   "path_strict_units": 349.25483399593907,
+   "path_optimistic_units": 115.88225099390856,
+   "path_doors_units": 349.25483399593907,
+   "free_cells": 3551,
+   "known_cells": 5715,
+   "frontier_cells": 1448
+  },
+  {
+   "tick": 10515,
+   "choice": "key_blue",
+   "kind": "key",
+   "reason": "objective done",
+   "probability": 1.0,
+   "player": [
+    -276.57362365722656,
+    -320.7356719970703
+   ],
+   "episode": 3,
+   "target": [
+    -192.0,
+    -716.0
+   ],
+   "seen_point": [
+    -192.0,
+    -716.0
+   ],
+   "done": true,
+   "end_tick": 10798,
+   "died_before_end": false,
+   "walked_units": 2214.5237948364957,
+   "straight_units": 404.21106715442835,
+   "nav_path_length_raw": 1,
+   "seen_view": true,
+   "seen_view_min_distance": 6.4031242374328485,
+   "seen_view_first_tick": 1266,
+   "seen_map": true,
+   "target_cell_state": 1,
+   "path_strict_wadvalid_units": 426.50966799187813,
+   "path_strict_units": 426.50966799187813,
+   "path_optimistic_units": 389.0193359837562,
+   "path_doors_units": 426.50966799187813,
+   "free_cells": 3569,
+   "known_cells": 5732,
+   "frontier_cells": 1442
+  },
+  {
+   "tick": 10798,
+   "choice": "switch_1455",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.5968,
+   "player": [
+    -209.39498901367188,
+    -682.6585693359375
+   ],
+   "episode": 3,
+   "target": [
+    2400.0,
+    -464.0
+   ],
+   "seen_point": [
+    2400.0,
+    -424.0
+   ],
+   "done": false,
+   "end_tick": 12670,
+   "died_before_end": false,
+   "walked_units": 10424.915813295644,
+   "straight_units": 2618.540390873072,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 4919.212695821323,
+   "path_doors_units": null,
+   "free_cells": 3650,
+   "known_cells": 5805,
+   "frontier_cells": 1382
+  },
+  {
+   "tick": 12670,
+   "choice": "switch_1455",
+   "kind": "switch",
+   "reason": "keys, doors or mechanisms changed",
+   "probability": 0.9384,
+   "player": [
+    2329.83837890625,
+    -879.3166351318359
+   ],
+   "episode": 3,
+   "target": [
+    2400.0,
+    -464.0
+   ],
+   "seen_point": [
+    2400.0,
+    -424.0
+   ],
+   "done": false,
+   "end_tick": 13732,
+   "died_before_end": false,
+   "walked_units": 5368.137618461759,
+   "straight_units": 421.2013301162919,
+   "nav_path_length_raw": 1,
+   "seen_view": true,
+   "seen_view_min_distance": 280.25167260874645,
+   "seen_view_first_tick": 12612,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 401.13708498984766,
+   "path_doors_units": null,
+   "free_cells": 4500,
+   "known_cells": 7328,
+   "frontier_cells": 1870
+  },
+  {
+   "tick": 13732,
+   "choice": "item_29",
+   "kind": "item",
+   "reason": "no progress in 30 s",
+   "probability": 0.8871,
+   "player": [
+    955.0947875976562,
+    213.54649353027344
+   ],
+   "episode": 3,
+   "target": [
+    -832.0,
+    -112.0
+   ],
+   "seen_point": [
+    -832.0,
+    -112.0
+   ],
+   "done": true,
+   "end_tick": 13930,
+   "died_before_end": false,
+   "walked_units": 2430.1580317591392,
+   "straight_units": 1816.5044176408073,
+   "nav_path_length_raw": 121,
+   "seen_view": true,
+   "seen_view_min_distance": 0.0,
+   "seen_view_first_tick": 1158,
+   "seen_map": true,
+   "target_cell_state": 1,
+   "path_strict_wadvalid_units": 2414.1160159025385,
+   "path_strict_units": 2414.1160159025385,
+   "path_optimistic_units": 2357.880517890355,
+   "path_doors_units": 2414.1160159025385,
+   "free_cells": 4942,
+   "known_cells": 8142,
+   "frontier_cells": 2041
+  },
+  {
+   "tick": 13930,
+   "choice": "switch_1455",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.9977,
+   "player": [
+    -831.8248901367188,
+    -111.97921752929688
+   ],
+   "episode": 3,
+   "target": [
+    2400.0,
+    -464.0
+   ],
+   "seen_point": [
+    2400.0,
+    -424.0
+   ],
+   "done": true,
+   "end_tick": 15172,
+   "died_before_end": false,
+   "walked_units": 7358.857971601318,
+   "straight_units": 3250.939979728709,
+   "nav_path_length_raw": 1,
+   "seen_view": true,
+   "seen_view_min_distance": 280.25167260874645,
+   "seen_view_first_tick": 12612,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 4955.094946815233,
+   "path_doors_units": null,
+   "free_cells": 4987,
+   "known_cells": 8185,
+   "frontier_cells": 2044
+  },
+  {
+   "tick": 15172,
+   "choice": "item_weapon_211",
+   "kind": "weapon_marker",
+   "reason": "objective done",
+   "probability": 0.9998,
+   "player": [
+    2369.0785369873047,
+    -471.91571044921875
+   ],
+   "episode": 3,
+   "target": [
+    2544.0,
+    128.0
+   ],
+   "seen_point": [
+    2544.0,
+    128.0
+   ],
+   "done": false,
+   "end_tick": 15334,
+   "died_before_end": false,
+   "walked_units": 1095.4035221450688,
+   "straight_units": 624.8970938212888,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 2362.8998538741107,
+   "path_doors_units": null,
+   "free_cells": 5309,
+   "known_cells": 8560,
+   "frontier_cells": 2212
+  },
+  {
+   "tick": 15334,
+   "choice": "key_yellow",
+   "kind": "key",
+   "reason": "keys, doors or mechanisms changed",
+   "probability": 0.9047,
+   "player": [
+    2391.425491333008,
+    186.8857421875
+   ],
+   "episode": 3,
+   "target": [
+    2400.0,
+    680.0
+   ],
+   "seen_point": [
+    2400.0,
+    680.0
+   ],
+   "done": true,
+   "end_tick": 15363,
+   "died_before_end": false,
+   "walked_units": 465.2006763356315,
+   "straight_units": 493.18880102538117,
+   "nav_path_length_raw": 26,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 454.62741699796953,
+   "path_doors_units": null,
+   "free_cells": 5379,
+   "known_cells": 8752,
+   "frontier_cells": 2261
+  },
+  {
+   "tick": 15363,
+   "choice": "switch_1863",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.7859,
+   "player": [
+    2395.328582763672,
+    667.1053924560547
+   ],
+   "episode": 3,
+   "target": [
+    2336.0,
+    128.0
+   ],
+   "seen_point": [
+    2296.0,
+    128.0
+   ],
+   "done": false,
+   "end_tick": 15381,
+   "died_before_end": false,
+   "walked_units": 21.656061510871275,
+   "straight_units": 542.3601247399578,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": true,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": 528.0,
+   "path_strict_units": 528.0,
+   "path_optimistic_units": 502.62741699796953,
+   "path_doors_units": 528.0,
+   "free_cells": 5408,
+   "known_cells": 8862,
+   "frontier_cells": 2290
+  },
+  {
+   "tick": 15381,
+   "choice": "switch_1863",
+   "kind": "switch",
+   "reason": "keys, doors or mechanisms changed",
+   "probability": 0.821,
+   "player": [
+    2397.339340209961,
+    687.6134948730469
+   ],
+   "episode": 3,
+   "target": [
+    2336.0,
+    128.0
+   ],
+   "seen_point": [
+    2296.0,
+    128.0
+   ],
+   "done": true,
+   "end_tick": 15525,
+   "died_before_end": false,
+   "walked_units": 707.9370556411303,
+   "straight_units": 562.9651661527727,
+   "nav_path_length_raw": 3,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": true,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": 544.0,
+   "path_strict_units": 544.0,
+   "path_optimistic_units": 518.6274169979695,
+   "path_doors_units": 544.0,
+   "free_cells": 5449,
+   "known_cells": 8904,
+   "frontier_cells": 2312
+  },
+  {
+   "tick": 15525,
+   "choice": "item_weapon_211",
+   "kind": "weapon_marker",
+   "reason": "objective done",
+   "probability": 0.5238,
+   "player": [
+    2312.0752563476562,
+    139.9996337890625
+   ],
+   "episode": 3,
+   "target": [
+    2544.0,
+    128.0
+   ],
+   "seen_point": [
+    2544.0,
+    128.0
+   ],
+   "done": true,
+   "end_tick": 15849,
+   "died_before_end": false,
+   "walked_units": 1106.7834314860215,
+   "straight_units": 232.23496276245095,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 230.62741699796953,
+   "path_doors_units": null,
+   "free_cells": 5513,
+   "known_cells": 9013,
+   "frontier_cells": 2371
+  },
+  {
+   "tick": 15849,
+   "choice": "switch_721",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.6482,
+   "player": [
+    2479.979766845703,
+    143.9412841796875
+   ],
+   "episode": 3,
+   "target": [
+    1184.0,
+    -576.0
+   ],
+   "seen_point": [
+    1144.0,
+    -576.0
+   ],
+   "done": true,
+   "end_tick": 17499,
+   "died_before_end": false,
+   "walked_units": 8281.854798413027,
+   "straight_units": 1482.5245390008695,
+   "nav_path_length_raw": 1,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 1696.1950929411153,
+   "path_doors_units": null,
+   "free_cells": 5621,
+   "known_cells": 9216,
+   "frontier_cells": 2434
+  },
+  {
+   "tick": 17499,
+   "choice": "switch_702",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.8728,
+   "player": [
+    1168.1856079101562,
+    -580.8353271484375
+   ],
+   "episode": 3,
+   "target": [
+    124.0,
+    -448.0
+   ],
+   "seen_point": [
+    164.0,
+    -448.0
+   ],
+   "done": true,
+   "end_tick": 18534,
+   "died_before_end": false,
+   "walked_units": 4794.00612729328,
+   "straight_units": 1052.6009727837682,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 1883.8418459228408,
+   "path_doors_units": null,
+   "free_cells": 5961,
+   "known_cells": 9803,
+   "frontier_cells": 2534
+  },
+  {
+   "tick": 18534,
+   "choice": "switch_262",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.9602,
+   "player": [
+    131.68655395507812,
+    -453.5191192626953
+   ],
+   "episode": 3,
+   "target": [
+    320.0,
+    -40.0
+   ],
+   "seen_point": [
+    320.0,
+    0.0
+   ],
+   "done": true,
+   "end_tick": 18606,
+   "died_before_end": false,
+   "walked_units": 562.6673732899319,
+   "straight_units": 454.3787142429858,
+   "nav_path_length_raw": null,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 791.2935059634513,
+   "path_doors_units": null,
+   "free_cells": 6477,
+   "known_cells": 10923,
+   "frontier_cells": 2901
+  },
+  {
+   "tick": 18606,
+   "choice": "switch_332",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.9987,
+   "player": [
+    286.4754180908203,
+    85.30758666992188
+   ],
+   "episode": 3,
+   "target": [
+    320.0,
+    160.0
+   ],
+   "seen_point": [
+    320.0,
+    128.0
+   ],
+   "done": true,
+   "end_tick": 18732,
+   "died_before_end": false,
+   "walked_units": 445.871244351025,
+   "straight_units": 81.87096067139147,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 97.41663102366043,
+   "seen_view_first_tick": 18594,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 147.88225099390857,
+   "path_doors_units": null,
+   "free_cells": 6541,
+   "known_cells": 11029,
+   "frontier_cells": 2959
+  },
+  {
+   "tick": 18732,
+   "choice": "explore",
+   "kind": "explore",
+   "reason": "objective done",
+   "probability": 1.0,
+   "player": [
+    304.0230255126953,
+    134.84669494628906
+   ],
+   "episode": 3,
+   "target": null,
+   "seen_point": null,
+   "done": false,
+   "end_tick": 19773,
+   "died_before_end": false,
+   "walked_units": 4435.124994892859,
+   "straight_units": null,
+   "nav_path_length_raw": 1,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "unresolved": true
+  },
+  {
+   "tick": 19773,
+   "choice": "switch_295",
+   "kind": "switch",
+   "reason": "keys, doors or mechanisms changed",
+   "probability": 0.9749,
+   "player": [
+    322.3588409423828,
+    319.7721710205078
+   ],
+   "episode": 3,
+   "target": [
+    864.0,
+    -672.0
+   ],
+   "seen_point": [
+    864.0,
+    -640.0
+   ],
+   "done": true,
+   "end_tick": 20007,
+   "died_before_end": false,
+   "walked_units": 1400.7644392264533,
+   "straight_units": 1130.038576507904,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 50.44799302251776,
+   "seen_view_first_tick": 3036,
+   "seen_map": true,
+   "target_cell_state": 1,
+   "path_strict_wadvalid_units": 1863.764501987817,
+   "path_strict_units": 1863.764501987817,
+   "path_optimistic_units": 1376.6660889654813,
+   "path_doors_units": 1854.3919189857866,
+   "free_cells": 6779,
+   "known_cells": 11657,
+   "frontier_cells": 3097
+  },
+  {
+   "tick": 20007,
+   "choice": "switch_294",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.9888,
+   "player": [
+    843.5417938232422,
+    -732.4433898925781
+   ],
+   "episode": 3,
+   "target": [
+    864.0,
+    -704.0
+   ],
+   "seen_point": [
+    832.0,
+    -704.0
+   ],
+   "done": true,
+   "end_tick": 20115,
+   "died_before_end": false,
+   "walked_units": 70.6744879031484,
+   "straight_units": 35.036618394929995,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 64.35060217278468,
+   "seen_view_first_tick": 3024,
+   "seen_map": true,
+   "target_cell_state": 1,
+   "path_strict_wadvalid_units": 0.0,
+   "path_strict_units": 0.0,
+   "path_optimistic_units": 0.0,
+   "path_doors_units": 0.0,
+   "free_cells": 6856,
+   "known_cells": 11797,
+   "frontier_cells": 3112
+  },
+  {
+   "tick": 20115,
+   "choice": "switch_2839",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.9477,
+   "player": [
+    880.5111541748047,
+    -675.143310546875
+   ],
+   "episode": 3,
+   "target": [
+    3696.0,
+    -392.0
+   ],
+   "seen_point": [
+    3696.0,
+    -432.0
+   ],
+   "done": true,
+   "end_tick": 21590,
+   "died_before_end": false,
+   "walked_units": 7902.665457648369,
+   "straight_units": 2829.690367385367,
+   "nav_path_length_raw": 280,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 3987.9965337929007,
+   "path_doors_units": null,
+   "free_cells": 6842,
+   "known_cells": 11798,
+   "frontier_cells": 3108
+  },
+  {
+   "tick": 21590,
+   "choice": "switch_2365",
+   "kind": "switch",
+   "reason": "objective done",
+   "probability": 0.9744,
+   "player": [
+    3672.666305541992,
+    -399.9102020263672
+   ],
+   "episode": 3,
+   "target": [
+    3536.0,
+    -896.0
+   ],
+   "seen_point": [
+    3568.0,
+    -896.0
+   ],
+   "done": true,
+   "end_tick": 22112,
+   "died_before_end": false,
+   "walked_units": 1606.8922639029704,
+   "straight_units": 514.5704681810033,
+   "nav_path_length_raw": null,
+   "seen_view": true,
+   "seen_view_min_distance": 32.2490309931942,
+   "seen_view_first_tick": 21264,
+   "seen_map": true,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": 1837.254833995939,
+   "path_strict_units": 1837.254833995939,
+   "path_optimistic_units": 888.9015869776647,
+   "path_doors_units": 1837.254833995939,
+   "free_cells": 7324,
+   "known_cells": 12933,
+   "frontier_cells": 3457
+  },
+  {
+   "tick": 22112,
+   "choice": "item_118",
+   "kind": "item",
+   "reason": "objective done",
+   "probability": 0.9677,
+   "player": [
+    3457.319839477539,
+    -889.0373077392578
+   ],
+   "episode": 3,
+   "target": [
+    2544.0,
+    128.0
+   ],
+   "seen_point": [
+    2544.0,
+    128.0
+   ],
+   "done": false,
+   "end_tick": 22803,
+   "died_before_end": false,
+   "walked_units": 3944.499314516761,
+   "straight_units": 1366.9374581584907,
+   "nav_path_length_raw": 1,
+   "seen_view": false,
+   "seen_view_min_distance": null,
+   "seen_view_first_tick": null,
+   "seen_map": false,
+   "target_cell_state": 0,
+   "path_strict_wadvalid_units": null,
+   "path_strict_units": null,
+   "path_optimistic_units": 1395.1353518862918,
+   "path_doors_units": null,
+   "free_cells": 7479,
+   "known_cells": 13230,
+   "frontier_cells": 3577
+  }
+ ],
+ "coverage": [
+  {
+   "tick": 0,
+   "free": 1,
+   "known": 1,
+   "walkable": 27050
+  },
+  {
+   "tick": 354,
+   "free": 394,
+   "known": 754,
+   "walkable": 27050
+  },
+  {
+   "tick": 702,
+   "free": 528,
+   "known": 1025,
+   "walkable": 27050
+  },
+  {
+   "tick": 1050,
+   "free": 688,
+   "known": 1325,
+   "walkable": 27050
+  },
+  {
+   "tick": 1404,
+   "free": 1155,
+   "known": 2146,
+   "walkable": 27050
+  },
+  {
+   "tick": 1752,
+   "free": 1361,
+   "known": 2561,
+   "walkable": 27050
+  },
+  {
+   "tick": 2100,
+   "free": 1559,
+   "known": 2849,
+   "walkable": 27050
+  },
+  {
+   "tick": 2454,
+   "free": 1781,
+   "known": 3306,
+   "walkable": 27050
+  },
+  {
+   "tick": 2802,
+   "free": 2001,
+   "known": 3588,
+   "walkable": 27050
+  },
+  {
+   "tick": 3150,
+   "free": 2076,
+   "known": 3942,
+   "walkable": 27050
+  },
+  {
+   "tick": 3504,
+   "free": 2171,
+   "known": 4181,
+   "walkable": 27050
+  },
+  {
+   "tick": 3852,
+   "free": 2336,
+   "known": 4432,
+   "walkable": 27050
+  },
+  {
+   "tick": 4200,
+   "free": 2444,
+   "known": 4568,
+   "walkable": 27050
+  },
+  {
+   "tick": 4554,
+   "free": 2528,
+   "known": 4688,
+   "walkable": 27050
+  },
+  {
+   "tick": 4902,
+   "free": 2617,
+   "known": 4772,
+   "walkable": 27050
+  },
+  {
+   "tick": 5250,
+   "free": 2647,
+   "known": 4814,
+   "walkable": 27050
+  },
+  {
+   "tick": 5604,
+   "free": 2797,
+   "known": 4958,
+   "walkable": 27050
+  },
+  {
+   "tick": 5952,
+   "free": 2950,
+   "known": 5117,
+   "walkable": 27050
+  },
+  {
+   "tick": 6300,
+   "free": 3026,
+   "known": 5181,
+   "walkable": 27050
+  },
+  {
+   "tick": 6654,
+   "free": 3082,
+   "known": 5228,
+   "walkable": 27050
+  },
+  {
+   "tick": 7002,
+   "free": 3135,
+   "known": 5279,
+   "walkable": 27050
+  },
+  {
+   "tick": 7350,
+   "free": 3150,
+   "known": 5296,
+   "walkable": 27050
+  },
+  {
+   "tick": 7704,
+   "free": 3230,
+   "known": 5429,
+   "walkable": 27050
+  },
+  {
+   "tick": 8052,
+   "free": 3274,
+   "known": 5472,
+   "walkable": 27050
+  },
+  {
+   "tick": 8400,
+   "free": 3295,
+   "known": 5483,
+   "walkable": 27050
+  },
+  {
+   "tick": 8754,
+   "free": 3333,
+   "known": 5524,
+   "walkable": 27050
+  },
+  {
+   "tick": 9102,
+   "free": 3439,
+   "known": 5604,
+   "walkable": 27050
+  },
+  {
+   "tick": 9450,
+   "free": 3465,
+   "known": 5623,
+   "walkable": 27050
+  },
+  {
+   "tick": 9804,
+   "free": 3484,
+   "known": 5641,
+   "walkable": 27050
+  },
+  {
+   "tick": 10152,
+   "free": 3505,
+   "known": 5677,
+   "walkable": 27050
+  },
+  {
+   "tick": 10500,
+   "free": 3565,
+   "known": 5728,
+   "walkable": 27050
+  },
+  {
+   "tick": 10854,
+   "free": 3702,
+   "known": 5857,
+   "walkable": 27050
+  },
+  {
+   "tick": 11202,
+   "free": 3819,
+   "known": 5979,
+   "walkable": 27050
+  },
+  {
+   "tick": 11550,
+   "free": 3892,
+   "known": 6096,
+   "walkable": 27050
+  },
+  {
+   "tick": 11904,
+   "free": 4062,
+   "known": 6300,
+   "walkable": 27050
+  },
+  {
+   "tick": 12252,
+   "free": 4258,
+   "known": 6853,
+   "walkable": 27050
+  },
+  {
+   "tick": 12600,
+   "free": 4409,
+   "known": 7108,
+   "walkable": 27050
+  },
+  {
+   "tick": 12954,
+   "free": 4617,
+   "known": 7625,
+   "walkable": 27050
+  },
+  {
+   "tick": 13302,
+   "free": 4741,
+   "known": 7846,
+   "walkable": 27050
+  },
+  {
+   "tick": 13650,
+   "free": 4921,
+   "known": 8117,
+   "walkable": 27050
+  },
+  {
+   "tick": 14004,
+   "free": 5025,
+   "known": 8228,
+   "walkable": 27050
+  },
+  {
+   "tick": 14352,
+   "free": 5134,
+   "known": 8356,
+   "walkable": 27050
+  },
+  {
+   "tick": 14700,
+   "free": 5206,
+   "known": 8447,
+   "walkable": 27050
+  },
+  {
+   "tick": 15054,
+   "free": 5239,
+   "known": 8483,
+   "walkable": 27050
+  },
+  {
+   "tick": 15402,
+   "free": 5452,
+   "known": 8907,
+   "walkable": 27050
+  },
+  {
+   "tick": 15750,
+   "free": 5597,
+   "known": 9186,
+   "walkable": 27050
+  },
+  {
+   "tick": 16104,
+   "free": 5698,
+   "known": 9322,
+   "walkable": 27050
+  },
+  {
+   "tick": 16452,
+   "free": 5765,
+   "known": 9536,
+   "walkable": 27050
+  },
+  {
+   "tick": 16800,
+   "free": 5908,
+   "known": 9724,
+   "walkable": 27050
+  },
+  {
+   "tick": 17154,
+   "free": 5923,
+   "known": 9748,
+   "walkable": 27050
+  },
+  {
+   "tick": 17502,
+   "free": 5961,
+   "known": 9803,
+   "walkable": 27050
+  },
+  {
+   "tick": 17850,
+   "free": 6256,
+   "known": 10380,
+   "walkable": 27050
+  },
+  {
+   "tick": 18204,
+   "free": 6370,
+   "known": 10757,
+   "walkable": 27050
+  },
+  {
+   "tick": 18552,
+   "free": 6477,
+   "known": 10927,
+   "walkable": 27050
+  },
+  {
+   "tick": 18900,
+   "free": 6661,
+   "known": 11308,
+   "walkable": 27050
+  },
+  {
+   "tick": 19254,
+   "free": 6687,
+   "known": 11410,
+   "walkable": 27050
+  },
+  {
+   "tick": 19602,
+   "free": 6773,
+   "known": 11647,
+   "walkable": 27050
+  },
+  {
+   "tick": 19950,
+   "free": 6847,
+   "known": 11778,
+   "walkable": 27050
+  },
+  {
+   "tick": 20304,
+   "free": 6860,
+   "known": 11826,
+   "walkable": 27050
+  },
+  {
+   "tick": 20652,
+   "free": 6961,
+   "known": 11945,
+   "walkable": 27050
+  },
+  {
+   "tick": 21000,
+   "free": 7022,
+   "known": 12004,
+   "walkable": 27050
+  },
+  {
+   "tick": 21354,
+   "free": 7137,
+   "known": 12334,
+   "walkable": 27050
+  },
+  {
+   "tick": 21702,
+   "free": 7402,
+   "known": 13030,
+   "walkable": 27050
+  },
+  {
+   "tick": 22050,
+   "free": 7478,
+   "known": 13220,
+   "walkable": 27050
+  },
+  {
+   "tick": 22404,
+   "free": 7620,
+   "known": 13582,
+   "walkable": 27050
+  },
+  {
+   "tick": 22752,
+   "free": 7793,
+   "known": 13842,
+   "walkable": 27050
+  },
+  {
+   "tick": 22800,
+   "free": 7802,
+   "known": 13867,
+   "walkable": 27050
+  }
+ ],
+ "mapping_ms": {
+  "median": 2.3398955818265676,
+  "p90": 3.020270843990147
+ },
+ "planning_ms_per_call": {
+  "median": 4.364958265796304,
+  "p90": 51.645933231338866
+ },
+ "final": {
+  "free": 7802,
+  "known": 13867,
+  "walkable": 27050
+ }
+}
