@@ -1,0 +1,104 @@
+{
+ "checkpoint_step": 18000,
+ "maps": [
+  "MAP01",
+  "MAP02",
+  "MAP03"
+ ],
+ "one_step_psnr": {
+  "MAP01": {
+   "model": 28.25,
+   "copy_last": 24.6
+  },
+  "MAP02": {
+   "model": 30.28,
+   "copy_last": 26.26
+  },
+  "MAP03": {
+   "model": 27.48,
+   "copy_last": 24.17
+  },
+  "all": {
+   "model": 28.56,
+   "copy_last": 24.92
+  }
+ },
+ "strip": {
+  "steps": [
+   1,
+   5,
+   10,
+   20,
+   35
+  ],
+  "layout": "real above, predicted below",
+  "map": "MAP02",
+  "start_frame": 41654
+ },
+ "rollout_psnr": {
+  "steps": {
+   "1": 28.25,
+   "5": 22.43,
+   "10": 20.41,
+   "20": 19.61,
+   "35": 18.45
+  },
+  "copy_last_at_same_steps": {
+   "1": 24.0,
+   "5": 20.15,
+   "10": 19.13,
+   "20": 17.91,
+   "35": 17.41
+  },
+  "rollouts": 24,
+  "per_step": [
+   28.25,
+   25.79,
+   24.0,
+   22.91,
+   22.43,
+   21.9,
+   21.14,
+   20.92,
+   20.59,
+   20.41,
+   20.18,
+   20.05,
+   19.93,
+   19.84,
+   19.8,
+   19.73,
+   19.64,
+   19.68,
+   19.61,
+   19.61,
+   19.73,
+   19.62,
+   19.37,
+   19.12,
+   19.08,
+   19.12,
+   19.04,
+   19.04,
+   18.75,
+   18.63,
+   18.65,
+   18.48,
+   18.46,
+   18.45,
+   18.45
+  ]
+ },
+ "gif": {
+  "frames": 70,
+  "seconds": 2.0,
+  "layout": "real above, predicted below, 2x nearest"
+ },
+ "action_response": {
+  "contexts": 200,
+  "opposite_and_correct_sign_share": 0.365,
+  "mean_shift_turn_left_px": 2.97,
+  "mean_shift_turn_right_px": -2.9,
+  "note": "positive shift = view content moved right, expected for turning left"
+ }
+}
