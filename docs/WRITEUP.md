@@ -355,6 +355,17 @@ and what each report carries about its own reliability.
   maps only.
 - **A stricter "only what has been seen" map mode**, since the current route knowledge is like a full
   automap that also says what every line does.
+- **A calibrated zero-shot baseline for the judgement questions** (added 2026-11-08): WaterSheep, a
+  ModernBERT-base decision model with temperature-calibrated yes/no answers that serves the Jev request format
+  locally (Apache-2.0, github.com/SamratDuttaOfficial/WaterSheep). Ask it the same "pull back?" question on the
+  held-out states where Laya's noul head scored 0.53 and the trained judgement head 0.76 (poc/judgement/), and
+  report its AUROC and calibration beside them. Not Doom-trained, so a baseline, not a candidate.
+- **A Doom-tuned small decision model with calibrated nouls, if phase 3 shows judgement matters** (added
+  2026-11-08): the LLM-as-Jev recipe (Li and Wagle, Microsoft, arXiv 2610.02076) scores a frozen causal LLM over
+  a trie of candidate suffixes and fine-tunes compact models with a listwise loss and KL anchors; its finding
+  that fine-tuning pays off for small models in specialised domains matches our OpenDecider and Qwen results.
+  A Qwen3-0.6B tuned this way on our outcome labels would keep calibrated yes/no answers and could take
+  multimodal input. Needs an MLX or Core ML path; the released code is CUDA-only.
 
 For level 1:
 
